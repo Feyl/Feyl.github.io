@@ -199,6 +199,115 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://feyl.github.io/2022/01/18/%E4%BD%8D%E8%BF%90%E7%AE%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avater.png">
+      <meta itemprop="name" content="Feng Yuliang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Flow">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/18/%E4%BD%8D%E8%BF%90%E7%AE%97/" class="post-title-link" itemprop="url">位运算</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-01-18 13:29:12 / Modified: 13:30:46" itemprop="dateCreated datePublished" datetime="2022-01-18T13:29:12+08:00">2022-01-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>775</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a target="_blank" rel="noopener" href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="https://feyl.github.io/2022/01/17/Lambda-%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1017,15 +1126,21 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
 </div>
@@ -1074,7 +1189,7 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">39k</span>
+    <span title="Symbols count total">40k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
