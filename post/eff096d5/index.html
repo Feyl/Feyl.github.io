@@ -28,16 +28,16 @@
 <meta property="og:site_name" content="Flow">
 <meta property="og:description" content="Spring IOC是什么？Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。在Java开发中，Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下： 谁控制谁，控制什么：传统Java">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://images0.cnblogs.com/blog/289233/201501/261421378318292.jpg">
+<meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png">
 <meta property="article:published_time" content="2022-01-19T08:14:38.000Z">
-<meta property="article:modified_time" content="2022-01-19T08:25:59.044Z">
+<meta property="article:modified_time" content="2022-01-19T08:55:09.553Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="后端">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="Spring">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://images0.cnblogs.com/blog/289233/201501/261421378318292.jpg">
+<meta name="twitter:image" content="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg">
 
 <link rel="canonical" href="https://feyl.github.io/post/eff096d5/">
 
@@ -234,7 +234,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2022-01-19 16:14:38 / Modified: 16:25:59" itemprop="dateCreated datePublished" datetime="2022-01-19T16:14:38+08:00">2022-01-19</time>
+              <time title="Created: 2022-01-19 16:14:38 / Modified: 16:55:09" itemprop="dateCreated datePublished" datetime="2022-01-19T16:14:38+08:00">2022-01-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -283,7 +283,7 @@
 <li><strong>哪些方面反转了？依赖对象的获取被反转了。</strong></li>
 </ul>
 <p>传统程序设计，都是主动去创建相关对象然后再组合起来：</p>
-<p><img src="https://images0.cnblogs.com/blog/289233/201501/261421378318292.jpg" alt="img"></p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg"></p>
 <p>当有了IoC/DI的容器后，在客户端类中不再主动去创建这些对象了：</p>
 <p><img src="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png"></p>
 <p><strong>Spring所倡导的开发方式</strong>：<strong>所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。</strong></p>

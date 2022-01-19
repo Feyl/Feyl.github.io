@@ -224,7 +224,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2022-01-19 16:14:38 / Modified: 16:25:59" itemprop="dateCreated datePublished" datetime="2022-01-19T16:14:38+08:00">2022-01-19</time>
+              <time title="Created: 2022-01-19 16:14:38 / Modified: 16:55:09" itemprop="dateCreated datePublished" datetime="2022-01-19T16:14:38+08:00">2022-01-19</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -273,7 +273,7 @@
 <li><strong>哪些方面反转了？依赖对象的获取被反转了。</strong></li>
 </ul>
 <p>传统程序设计，都是主动去创建相关对象然后再组合起来：</p>
-<p><img src="https://images0.cnblogs.com/blog/289233/201501/261421378318292.jpg" alt="img"></p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg"></p>
 <p>当有了IoC/DI的容器后，在客户端类中不再主动去创建这些对象了：</p>
 <p><img src="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png"></p>
 <p><strong>Spring所倡导的开发方式</strong>：<strong>所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。</strong></p>
