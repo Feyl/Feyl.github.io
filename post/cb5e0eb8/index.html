@@ -21,17 +21,20 @@
     var CONFIG = {"hostname":"feyl.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="categories">
-<meta property="og:url" content="https://feyl.github.io/categories/index.html">
+  <meta name="description" content="简介记忆化搜索是一种典型的空间换时间的思想。 一般说来，动态规划总要遍历所有的状态，而搜索可以排除一些无效状态。更重要的是搜索还可以剪枝，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记忆化搜索">
+<meta property="og:url" content="https://feyl.github.io/post/cb5e0eb8/index.html">
 <meta property="og:site_name" content="破晓">
+<meta property="og:description" content="简介记忆化搜索是一种典型的空间换时间的思想。 一般说来，动态规划总要遍历所有的状态，而搜索可以排除一些无效状态。更重要的是搜索还可以剪枝，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-01-16T15:02:39.000Z">
-<meta property="article:modified_time" content="2022-01-16T15:02:46.069Z">
+<meta property="article:published_time" content="2022-01-21T09:40:13.000Z">
+<meta property="article:modified_time" content="2022-01-21T09:40:56.887Z">
 <meta property="article:author" content="Feng Yuliang">
+<meta property="article:tag" content="记忆化搜索">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://feyl.github.io/categories/">
+<link rel="canonical" href="https://feyl.github.io/post/cb5e0eb8/">
 
 
 <script id="page-configurations">
@@ -39,13 +42,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'en'
   };
 </script>
 
-  <title>categories | 破晓
-</title>
+  <title>记忆化搜索 | 破晓</title>
   
 
 
@@ -195,51 +197,143 @@
       <div class="main-inner">
         <div class="content-wrap">
           
-  
-  
 
-          <div class="content page posts-expand">
+          <div class="content post posts-expand">
             
 
     
-    
-    
-    <div class="post-block" lang="en">
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://feyl.github.io/post/cb5e0eb8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avater.png">
+      <meta itemprop="name" content="Feng Yuliang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="破晓">
+    </span>
       <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记忆化搜索
+        </h1>
 
-<h1 class="post-title" itemprop="name headline">categories
-</h1>
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
 
-<div class="post-meta">
+              <time title="Created: 2022-01-21 17:40:13 / Modified: 17:40:56" itemprop="dateCreated datePublished" datetime="2022-01-21T17:40:13+08:00">2022-01-21</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="Symbols count in article">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">Symbols count in article: </span>
+              <span>517</span>
+            </span>
+            <span class="post-meta-item" title="Reading time">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">Reading time &asymp;</span>
+              <span>1 mins.</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
+<span id="more"></span>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+</ul>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<blockquote>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/multiply-strings/"><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2/" rel="tag"><i class="fa fa-tag"></i> 记忆化搜索</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/post/d1f7904c/" rel="prev" title="模拟">
+      <i class="fa fa-chevron-left"></i> 模拟
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
-          <div class="category-all-page">
-            <div class="category-all-title">
-              4 categories in total
-            </div>
-            <div class="category-all">
-              <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E6%A1%86%E6%9E%B6/">开发框架</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E7%AE%97%E6%B3%95/">算法</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a><span class="category-list-count">1</span></li></ul>
-            </div>
-          </div>
-        
-      </div>
-      
-      
-      
-    </div>
-    
-
-    
-    
-    
 
 
           </div>
@@ -290,6 +384,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">3.</span> <span class="nav-text">题目</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
