@@ -1,6 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>位运算</title>
+    <url>/post/2633a26/</url>
+    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java项目开发命名规范</title>
     <url>/post/158b228/</url>
     <content><![CDATA[<h2 id="Java中的命名规范"><a href="#Java中的命名规范" class="headerlink" title="Java中的命名规范"></a>Java中的命名规范</h2><p>好的命名能体现出代码的特征，含义或者是用途，让阅读者可以根据名称的含义快速理清程序的脉络。不同语言中采用的命名形式大相径庭，Java 中常用到的命名形式共有三种，既首字母大写的 UpperCamelCase ，首字母小写的 lowerCamelCase 以及全部大写的并用下划线分割单词的UPPER_CAMEL_UNSER_SCORE。通常约定，<strong>类一般采用大驼峰命名，方法和局部变量使用小驼峰命名，而大写下划线命名通常是常量和枚举中使用。</strong></p>
@@ -852,129 +892,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Spring IOC</title>
-    <url>/post/eff096d5/</url>
-    <content><![CDATA[<h2 id="Spring-IOC是什么？"><a href="#Spring-IOC是什么？" class="headerlink" title="Spring IOC是什么？"></a>Spring IOC是什么？</h2><p><strong>Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。</strong>在Java开发中，<strong>Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。</strong>如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
-<p><strong>谁控制谁，控制什么：</strong>传统Java SE程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而<strong>IoC是有专门一个容器来创建这些对象，即由Ioc容器来控制对象的创建</strong>；</p>
-<ul>
-<li><p><strong>谁控制谁？当然是IoC 容器控制了对象；</strong></p>
-</li>
-<li><p><strong>控制什么？那就是主要控制了外部资源获取（不只是对象包括比如文件等）。</strong></p>
-<span id="more"></span></li>
-<li><p><strong>为何是反转，哪些方面反转了：</strong>有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；</p>
-</li>
-<li><p><strong>为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；</strong></p>
-</li>
-<li><p><strong>哪些方面反转了？依赖对象的获取被反转了。</strong></p>
-</li>
-</ul>
-<p>传统程序设计，都是主动去创建相关对象然后再组合起来：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg"></p>
-<p>当有了IoC/DI的容器后，在客户端类中不再主动去创建这些对象了：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png"></p>
-<p><strong>Spring所倡导的开发方式</strong>：<strong>所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。</strong></p>
-<h2 id="IoC能做什么？"><a href="#IoC能做什么？" class="headerlink" title="IoC能做什么？"></a>IoC能做什么？</h2><p>​        <strong>IoC 不是一种技术，只是一种思想</strong>，一个重要的<strong>面向对象编程的法则</strong>，它能指导我们如何设计出<strong>松耦合</strong>、更优良的程序。传统应用程序都是由我们在类内部主动创建依赖对象，从而导致类与类之间高耦合，难于测试；有了IoC容器后，把创建和查找依赖对象的控制权交给了容器，由容器进行注入组合对象，所以对象与对象之间是松散耦合，这样也方便测试，利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活。</p>
-<p>​        其实<strong>IoC对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在IoC/DI思想中，应用程序就变成被动的了，被动的等待IoC容器来创建并注入它所需要的资源了。</strong></p>
-<p>​        <strong>IoC很好的体现了面向对象设计法则之一—— 好莱坞法则：“别找我们，我们找你”；即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找。</strong></p>
-<h2 id="IoC和DI"><a href="#IoC和DI" class="headerlink" title="IoC和DI"></a>IoC和DI</h2><p>　<strong>DI—Dependency Injection</strong>，即“依赖注入”：组件之间依赖关系由容器在<strong>运行期决定</strong>，形象的说，即<strong>由容器动态的将某个依赖关系注入到组件之中</strong>。<strong>依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。</strong>通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。</p>
-<p>DI是如何实现的呢？ Java 1.3之后一个重要特征是<strong>反射（reflection）</strong>，它允许程序<strong>在运行的时候动态的生成对象、执行对象的方法、改变对象的属性，spring就是通过反射来实现注入的</strong>。</p>
-<p>理解DI的关键是：“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”，那我们来深入分析一下：</p>
-<ul>
-<li><strong>谁依赖于谁：</strong>当然是<strong>应用程序依赖于IoC容器</strong>；</li>
-<li><strong>为什么需要依赖：</strong> <strong>应用程序需要IoC容器来提供对象需要的外部资源</strong>；</li>
-<li><strong>谁注入谁：</strong>很明显是<strong>IoC容器注入应用程序某个对象，应用程序依赖的对象</strong>；</li>
-<li><strong>注入了什么：</strong>就是<strong>注入某个对象所需要的外部资源（包括对象、资源、常量数据）</strong>。</li>
-</ul>
-<p><strong>IoC和DI</strong>由什么<strong>关系</strong>呢？其实它们<strong>是同一个概念的不同角度描述</strong>，由于控制反转概念比较含糊（可能只是理解为容器控制对象这一个层面，很难让人想到谁来维护对象关系），所以2004年大师级人物Martin Fowler又给出了一个新的名字：“依赖注入”，相对IoC 而言，<strong>“</strong> <strong>依赖注入”</strong> <strong>明确描述了“被注入对象依赖IoC</strong> <strong>容器配置依赖对象”。</strong></p>
-<h2 id="对IoC-控制反转-和DI-依赖注入-的理解"><a href="#对IoC-控制反转-和DI-依赖注入-的理解" class="headerlink" title="对IoC(控制反转)和DI(依赖注入)的理解"></a>对IoC(控制反转)和DI(依赖注入)的理解</h2><p>​        在平时的java应用开发中，我们要实现某一个功能或者说是完成某个业务逻辑时至少需要两个或以上的对象来协作完成，在没有使用Spring的时候，每个对象在需要使用他的合作对象时，自己均要使用像<code>new object()</code> 这样的语法来将合作对象创建出来，这个合作对象是由自己主动创建出来的，创建合作对象的主动权在自己手上，自己需要哪个合作对象，就主动去创建，创建合作对象的主动权和创建时机是由自己把控的，而这样就会使得对象间的耦合度高了，A对象需要使用合作对象B来共同完成一件事，A要使用B，那么A就对B产生了依赖，也就是A和B之间存在一种耦合关系，并且是紧密耦合在一起，而使用了Spring之后就不一样了，创建合作对象B的工作是由Spring来做的，Spring创建好B对象，然后存储到一个容器里面，当A对象需要使用B对象时，Spring就从存放对象的那个容器里面取出A要使用的那个B对象，然后交给A对象使用，至于Spring是如何创建那个对象，以及什么时候创建好对象的，A对象不需要关心这些细节问题(你是什么时候生的，怎么生出来的我可不关心，能帮我干活就行)，A得到Spring给我们的对象之后，两个人一起协作完成要完成的工作即可。</p>
-<p>　　所以<strong>控制反转IoC(Inversion of Control)是说创建对象的控制权进行转移，以前创建对象的主动权和创建时机是由自己把控的，而现在这种权力转移到第三方</strong>，比如转移交给了IoC容器，它就是一个专门用来创建对象的工厂，你要什么对象，它就给你什么对象，有了 IoC容器，依赖关系就变了，原先的依赖关系就没了，它们都依赖IoC容器了，通过IoC容器来建立它们之间的关系。</p>
-<hr>
-<p>相关文章：</p>
-<p> <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Dependency_injection">Dependency injection </a></p>
-<p> <a href="https://link.zhihu.com/?target=https://martinfowler.com/articles/injection.html">Inversion of Control Containers and the Dependency Injection pattern</a> </p>
-<p><a href="https://javadoop.com/post/spring-ioc">Spring IOC 容器源码分析</a></p>
-<p>参考总结来源：</p>
-<p><a href="https://www.cnblogs.com/xdp-gacl/p/4249939.html">谈谈对Spring IOC的理解</a></p>
-]]></content>
-      <categories>
-        <category>开发框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>后端</tag>
-        <tag>Spring</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>位运算</title>
-    <url>/post/2633a26/</url>
-    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
-<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
-</li>
-<li><p><strong>判断两个数是否异号</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
-</li>
-<li><p><strong>不用临时变量交换两个数</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>加一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>减一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
-</blockquote>
-</li>
-</ol>
-<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Lambda 表达式</title>
     <url>/post/9fa75fc1/</url>
     <content><![CDATA[<p>Java <em>Lambda 表达式</em>的一个重要用法是简化某些<em>匿名内部类</em>（<code>Anonymous Classes</code>）的写法。实际上 Lambda 表达式并不仅仅是匿名内部类的语法糖，JVM 内部是通过<em>invokedynamic</em>指令来实现 Lambda 表达式的。具体原理放到下一篇。本篇我们首先感受一下使用 Lambda 表达式带来的便利之处。</p>
@@ -1518,6 +1435,257 @@
       </categories>
   </entry>
   <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>模拟</title>
+    <url>/post/d1f7904c/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
+<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
+<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
+<span id="more"></span>
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
+<ul>
+<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
+<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
+<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
+<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
+<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
+</ul>
+<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+<span id="more"></span>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>字符集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring IOC</title>
+    <url>/post/eff096d5/</url>
+    <content><![CDATA[<h2 id="Spring-IOC是什么？"><a href="#Spring-IOC是什么？" class="headerlink" title="Spring IOC是什么？"></a>Spring IOC是什么？</h2><p><strong>Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。</strong>在Java开发中，<strong>Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。</strong>如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
+<p><strong>谁控制谁，控制什么：</strong>传统Java SE程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而<strong>IoC是有专门一个容器来创建这些对象，即由Ioc容器来控制对象的创建</strong>；</p>
+<ul>
+<li><p><strong>谁控制谁？当然是IoC 容器控制了对象；</strong></p>
+</li>
+<li><p><strong>控制什么？那就是主要控制了外部资源获取（不只是对象包括比如文件等）。</strong></p>
+<span id="more"></span></li>
+<li><p><strong>为何是反转，哪些方面反转了：</strong>有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；</p>
+</li>
+<li><p><strong>为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；</strong></p>
+</li>
+<li><p><strong>哪些方面反转了？依赖对象的获取被反转了。</strong></p>
+</li>
+</ul>
+<p>传统程序设计，都是主动去创建相关对象然后再组合起来：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg"></p>
+<p>当有了IoC/DI的容器后，在客户端类中不再主动去创建这些对象了：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png"></p>
+<p><strong>Spring所倡导的开发方式</strong>：<strong>所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。</strong></p>
+<h2 id="IoC能做什么？"><a href="#IoC能做什么？" class="headerlink" title="IoC能做什么？"></a>IoC能做什么？</h2><p>​        <strong>IoC 不是一种技术，只是一种思想</strong>，一个重要的<strong>面向对象编程的法则</strong>，它能指导我们如何设计出<strong>松耦合</strong>、更优良的程序。传统应用程序都是由我们在类内部主动创建依赖对象，从而导致类与类之间高耦合，难于测试；有了IoC容器后，把创建和查找依赖对象的控制权交给了容器，由容器进行注入组合对象，所以对象与对象之间是松散耦合，这样也方便测试，利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活。</p>
+<p>​        其实<strong>IoC对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在IoC/DI思想中，应用程序就变成被动的了，被动的等待IoC容器来创建并注入它所需要的资源了。</strong></p>
+<p>​        <strong>IoC很好的体现了面向对象设计法则之一—— 好莱坞法则：“别找我们，我们找你”；即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找。</strong></p>
+<h2 id="IoC和DI"><a href="#IoC和DI" class="headerlink" title="IoC和DI"></a>IoC和DI</h2><p>　<strong>DI—Dependency Injection</strong>，即“依赖注入”：组件之间依赖关系由容器在<strong>运行期决定</strong>，形象的说，即<strong>由容器动态的将某个依赖关系注入到组件之中</strong>。<strong>依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。</strong>通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。</p>
+<p>DI是如何实现的呢？ Java 1.3之后一个重要特征是<strong>反射（reflection）</strong>，它允许程序<strong>在运行的时候动态的生成对象、执行对象的方法、改变对象的属性，spring就是通过反射来实现注入的</strong>。</p>
+<p>理解DI的关键是：“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”，那我们来深入分析一下：</p>
+<ul>
+<li><strong>谁依赖于谁：</strong>当然是<strong>应用程序依赖于IoC容器</strong>；</li>
+<li><strong>为什么需要依赖：</strong> <strong>应用程序需要IoC容器来提供对象需要的外部资源</strong>；</li>
+<li><strong>谁注入谁：</strong>很明显是<strong>IoC容器注入应用程序某个对象，应用程序依赖的对象</strong>；</li>
+<li><strong>注入了什么：</strong>就是<strong>注入某个对象所需要的外部资源（包括对象、资源、常量数据）</strong>。</li>
+</ul>
+<p><strong>IoC和DI</strong>由什么<strong>关系</strong>呢？其实它们<strong>是同一个概念的不同角度描述</strong>，由于控制反转概念比较含糊（可能只是理解为容器控制对象这一个层面，很难让人想到谁来维护对象关系），所以2004年大师级人物Martin Fowler又给出了一个新的名字：“依赖注入”，相对IoC 而言，<strong>“</strong> <strong>依赖注入”</strong> <strong>明确描述了“被注入对象依赖IoC</strong> <strong>容器配置依赖对象”。</strong></p>
+<h2 id="对IoC-控制反转-和DI-依赖注入-的理解"><a href="#对IoC-控制反转-和DI-依赖注入-的理解" class="headerlink" title="对IoC(控制反转)和DI(依赖注入)的理解"></a>对IoC(控制反转)和DI(依赖注入)的理解</h2><p>​        在平时的java应用开发中，我们要实现某一个功能或者说是完成某个业务逻辑时至少需要两个或以上的对象来协作完成，在没有使用Spring的时候，每个对象在需要使用他的合作对象时，自己均要使用像<code>new object()</code> 这样的语法来将合作对象创建出来，这个合作对象是由自己主动创建出来的，创建合作对象的主动权在自己手上，自己需要哪个合作对象，就主动去创建，创建合作对象的主动权和创建时机是由自己把控的，而这样就会使得对象间的耦合度高了，A对象需要使用合作对象B来共同完成一件事，A要使用B，那么A就对B产生了依赖，也就是A和B之间存在一种耦合关系，并且是紧密耦合在一起，而使用了Spring之后就不一样了，创建合作对象B的工作是由Spring来做的，Spring创建好B对象，然后存储到一个容器里面，当A对象需要使用B对象时，Spring就从存放对象的那个容器里面取出A要使用的那个B对象，然后交给A对象使用，至于Spring是如何创建那个对象，以及什么时候创建好对象的，A对象不需要关心这些细节问题(你是什么时候生的，怎么生出来的我可不关心，能帮我干活就行)，A得到Spring给我们的对象之后，两个人一起协作完成要完成的工作即可。</p>
+<p>　　所以<strong>控制反转IoC(Inversion of Control)是说创建对象的控制权进行转移，以前创建对象的主动权和创建时机是由自己把控的，而现在这种权力转移到第三方</strong>，比如转移交给了IoC容器，它就是一个专门用来创建对象的工厂，你要什么对象，它就给你什么对象，有了 IoC容器，依赖关系就变了，原先的依赖关系就没了，它们都依赖IoC容器了，通过IoC容器来建立它们之间的关系。</p>
+<hr>
+<p>相关文章：</p>
+<p> <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Dependency_injection">Dependency injection </a></p>
+<p> <a href="https://link.zhihu.com/?target=https://martinfowler.com/articles/injection.html">Inversion of Control Containers and the Dependency Injection pattern</a> </p>
+<p><a href="https://javadoop.com/post/spring-ioc">Spring IOC 容器源码分析</a></p>
+<p>参考总结来源：</p>
+<p><a href="https://www.cnblogs.com/xdp-gacl/p/4249939.html">谈谈对Spring IOC的理解</a></p>
+]]></content>
+      <categories>
+        <category>开发框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>后端</tag>
+        <tag>Spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记忆化搜索</title>
+    <url>/post/cb5e0eb8/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
+<span id="more"></span>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+</ul>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<blockquote>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>记忆化搜索</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>数据库基础知识</title>
     <url>/post/1ad06ab1/</url>
     <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
@@ -1671,129 +1839,6 @@
       </tags>
   </entry>
   <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记忆化搜索</title>
-    <url>/post/cb5e0eb8/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
-<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
-<span id="more"></span>
-
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>函数有返回值</li>
-<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
-<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
-</ul>
-<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
-<blockquote>
-<p>本质上是自顶向下的动态规划加备忘录。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
-<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>记忆化搜索</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>面试规则</title>
     <url>/post/d13fc60c/</url>
     <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
@@ -1858,50 +1903,5 @@
       <categories>
         <category>面试</category>
       </categories>
-  </entry>
-  <entry>
-    <title>模拟</title>
-    <url>/post/d1f7904c/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
-<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
-<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
-<span id="more"></span>
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
-<ul>
-<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
-<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
-<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
-<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
-<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
-</ul>
-<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>模拟</tag>
-      </tags>
   </entry>
 </search>
