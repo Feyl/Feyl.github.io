@@ -1,6 +1,857 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Java项目开发命名规范</title>
+    <url>/post/158b228/</url>
+    <content><![CDATA[<h2 id="Java中的命名规范"><a href="#Java中的命名规范" class="headerlink" title="Java中的命名规范"></a>Java中的命名规范</h2><p>好的命名能体现出代码的特征，含义或者是用途，让阅读者可以根据名称的含义快速理清程序的脉络。不同语言中采用的命名形式大相径庭，Java 中常用到的命名形式共有三种，既首字母大写的 UpperCamelCase ，首字母小写的 lowerCamelCase 以及全部大写的并用下划线分割单词的UPPER_CAMEL_UNSER_SCORE。通常约定，<strong>类一般采用大驼峰命名，方法和局部变量使用小驼峰命名，而大写下划线命名通常是常量和枚举中使用。</strong></p>
+<span id="more"></span>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">约束</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">项目名</td>
+<td align="left">全部小写，多个单词用中划线分隔 ‘-’</td>
+<td align="left">spring-cloud</td>
+</tr>
+<tr>
+<td align="left">包名</td>
+<td align="left">全部小写</td>
+<td align="left">com.alibaba.fastjson</td>
+</tr>
+<tr>
+<td align="left">类名</td>
+<td align="left">单词首字母大写</td>
+<td align="left">Feature, ParserConfig,DefaultFieldDeserializer</td>
+</tr>
+<tr>
+<td align="left">变量名</td>
+<td align="left">首字母小写，多个单词组成时，除首个单词，其他单词首字母都要大写</td>
+<td align="left">password, userName</td>
+</tr>
+<tr>
+<td align="left">常量名</td>
+<td align="left">全部大写，多个单词，用’_’分隔</td>
+<td align="left">CACHE_EXPIRED_TIME</td>
+</tr>
+<tr>
+<td align="left">方法</td>
+<td align="left">同变量</td>
+<td align="left">read(), readObject(), getById()</td>
+</tr>
+</tbody></table>
+<h2 id="包命名"><a href="#包命名" class="headerlink" title="包命名"></a>包命名</h2><p><strong>包名</strong>统一使用<strong>小写</strong>，<strong>点分隔符</strong>之间有且仅有一个自然语义的英文单词或者多个单词自然连接到一块（如 springframework，deepspace 不需要使用任何分割）。包名统一使用单数形式，如果类命有复数含义，则可以使用复数形式。</p>
+<p>包名的构成可以分为以下几四部分<strong>【前缀】 【发起者名】【项目名】【模块名】</strong>。常见的前缀可以分为以下几种：</p>
+<table>
+<thead>
+<tr>
+<th align="left">前缀名</th>
+<th align="left">例</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">indi（或onem ）</td>
+<td align="left">indi.发起者名.项目名.模块名.……</td>
+<td align="left">个体项目，指个人发起，但非自己独自完成的项目，可公开或私有项目，copyright主要属于发起者。</td>
+</tr>
+<tr>
+<td align="left">pers</td>
+<td align="left">pers.个人名.项目名.模块名.……</td>
+<td align="left">个人项目，指个人发起，独自完成，可分享的项目，copyright主要属于个人</td>
+</tr>
+<tr>
+<td align="left">priv</td>
+<td align="left">priv.个人名.项目名.模块名.……</td>
+<td align="left">私有项目，指个人发起，独自完成，非公开的私人使用的项目，copyright属于个人。</td>
+</tr>
+<tr>
+<td align="left">team</td>
+<td align="left">team.团队名.项目名.模块名.……</td>
+<td align="left">团队项目，指由团队发起，并由该团队开发的项目，copyright属于该团队所有</td>
+</tr>
+<tr>
+<td align="left">顶级域名</td>
+<td align="left">com.公司名.项目名.模块名.……</td>
+<td align="left">公司项目，copyright由项目发起的公司所有</td>
+</tr>
+</tbody></table>
+<h2 id="类命名"><a href="#类命名" class="headerlink" title="类命名"></a>类命名</h2><p><strong>类名使用大驼峰命名形式</strong>，类命通常时<strong>名词或名词短语</strong>，接口名除了用名词和名词短语以外，还可以使用<strong>形容词或形容词短语</strong>，如 Cloneable，Callable 等，<strong>表示实现该接口的类有某种功能或能力</strong>。对于<strong>测试类则以它要测试的类开头，以 Test 结尾</strong>，如 HashMapTest。</p>
+<p>对于一些特殊<strong>特有名词缩写也可以使用全大写</strong>命名，比如XMLHttpRequest，不过笔者认为缩写三个字母以内都大写，超过三个字母则按照要给单词算。这个没有标准如阿里巴巴中fastjson用JSONObject作为类命，而google则使用JsonObjectRequest 命名，对于这种特殊的缩写，原则是统一就好。</p>
+<table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">约束</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">抽象类</td>
+<td align="left">Abstract 或者 Base 开头</td>
+<td align="left">BaseUserService</td>
+</tr>
+<tr>
+<td align="left">枚举类</td>
+<td align="left">Enum 作为后缀</td>
+<td align="left">GenderEnum</td>
+</tr>
+<tr>
+<td align="left">工具类</td>
+<td align="left">Utils 作为后缀</td>
+<td align="left">StringUtils</td>
+</tr>
+<tr>
+<td align="left">异常类</td>
+<td align="left">Exception 结尾</td>
+<td align="left">RuntimeException</td>
+</tr>
+<tr>
+<td align="left">接口实现类</td>
+<td align="left">接口名 + Impl</td>
+<td align="left">UserServiceImpl</td>
+</tr>
+<tr>
+<td align="left">领域模型相关</td>
+<td align="left">/DO/DTO/VO/DAO</td>
+<td align="left">正例：UserDAO 反例： UserDo， UserDao</td>
+</tr>
+<tr>
+<td align="left">设计模式相关类</td>
+<td align="left">Builder，Factory等</td>
+<td align="left">当使用到设计模式时，需要使用对应的设计模式作为后缀，如ThreadFactory</td>
+</tr>
+<tr>
+<td align="left">处理特定功能的</td>
+<td align="left">Handler，Predicate，Validator</td>
+<td align="left">表示处理器，校验器，断言，这些类工厂还有配套的方法名如handle，predicate，validate</td>
+</tr>
+<tr>
+<td align="left">测试类</td>
+<td align="left">Test 结尾</td>
+<td align="left">UserServiceTest， 表示用来测试UserService类的</td>
+</tr>
+<tr>
+<td align="left">MVC分层</td>
+<td align="left">Controller，Service，ServiceImpl，DAO后缀</td>
+<td align="left">UserManageController，UserManageDAO</td>
+</tr>
+</tbody></table>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p><strong>方法命名采用小驼峰的形式</strong>，首字小写，往后的每个单词首字母都要大写。 和类名不同的是，方法命名一般为<strong>动词或动词短语</strong>，与参数或参数名共同组成动宾短语，即<strong>动词 + 名词</strong>。一个好的函数名一般能通过名字直接获知该函数实现什么样的功能。</p>
+<h3 id="返回真伪值的方法"><a href="#返回真伪值的方法" class="headerlink" title="返回真伪值的方法"></a>返回真伪值的方法</h3><p>注：Prefix-前缀，Suffix-后缀，Alone-单独使用</p>
+<table>
+<thead>
+<tr>
+<th align="left">位置</th>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Prefix</td>
+<td align="left">is</td>
+<td align="left">对象是否符合期待的状态</td>
+<td align="left">isValid</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">can</td>
+<td align="left">对象能否执行所期待的动作</td>
+<td align="left">canRemove</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">should</td>
+<td align="left">调用方执行某个命令或方法是好还是不好，应不应该，或者说推荐还是不推荐</td>
+<td align="left">shouldMigrate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">has</td>
+<td align="left">对象是否持有所期待的数据和属性</td>
+<td align="left">hasObservers</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">needs</td>
+<td align="left">调用方是否需要执行某个命令或方法</td>
+<td align="left">needsMigrate</td>
+</tr>
+</tbody></table>
+<h3 id="用来检查的方法"><a href="#用来检查的方法" class="headerlink" title="用来检查的方法"></a>用来检查的方法</h3><table>
+<thead>
+<tr>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">ensure</td>
+<td align="left">检查是否为期待的状态，不是则抛出异常或返回error code</td>
+<td align="left">ensureCapacity</td>
+</tr>
+<tr>
+<td align="left">validate</td>
+<td align="left">检查是否为正确的状态，不是则抛出异常或返回error code</td>
+<td align="left">validateInputs</td>
+</tr>
+</tbody></table>
+<h3 id="按需求才执行的方法"><a href="#按需求才执行的方法" class="headerlink" title="按需求才执行的方法"></a>按需求才执行的方法</h3><table>
+<thead>
+<tr>
+<th align="left">位置</th>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Suffix</td>
+<td align="left">IfNeeded</td>
+<td align="left">需要的时候执行，不需要的时候什么都不做</td>
+<td align="left">drawIfNeeded</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">might</td>
+<td align="left">同上</td>
+<td align="left">mightCreate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">try</td>
+<td align="left">尝试执行，失败时抛出异常或是返回errorcode</td>
+<td align="left">tryCreate</td>
+</tr>
+<tr>
+<td align="left">Suffix</td>
+<td align="left">OrDefault</td>
+<td align="left">尝试执行，失败时返回默认值</td>
+<td align="left">getOrDefault</td>
+</tr>
+<tr>
+<td align="left">Suffix</td>
+<td align="left">OrElse</td>
+<td align="left">尝试执行、失败时返回实际参数中指定的值</td>
+<td align="left">getOrElse</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">force</td>
+<td align="left">强制尝试执行，error抛出异常或是返回值</td>
+<td align="left">forceCreate, forceStop</td>
+</tr>
+</tbody></table>
+<h3 id="异步相关方法"><a href="#异步相关方法" class="headerlink" title="异步相关方法"></a>异步相关方法</h3><table>
+<thead>
+<tr>
+<th align="left">位置</th>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Prefix</td>
+<td align="left">blocking</td>
+<td align="left">线程阻塞方法</td>
+<td align="left">blockingGetUser</td>
+</tr>
+<tr>
+<td align="left">Suffix</td>
+<td align="left">InBackground</td>
+<td align="left">执行在后台的线程</td>
+<td align="left">doInBackground</td>
+</tr>
+<tr>
+<td align="left">Suffix</td>
+<td align="left">Async</td>
+<td align="left">异步方法</td>
+<td align="left">sendAsync</td>
+</tr>
+<tr>
+<td align="left">Suffix</td>
+<td align="left">Sync</td>
+<td align="left">对应已有异步方法的同步方法</td>
+<td align="left">sendSync</td>
+</tr>
+<tr>
+<td align="left">Prefix or Alone</td>
+<td align="left">schedule</td>
+<td align="left">Job和Task放入队列</td>
+<td align="left">schedule, scheduleJob</td>
+</tr>
+<tr>
+<td align="left">Prefix or Alone</td>
+<td align="left">post</td>
+<td align="left">同上</td>
+<td align="left">postJob</td>
+</tr>
+<tr>
+<td align="left">Prefix or Alone</td>
+<td align="left">execute</td>
+<td align="left">执行异步方法（注：我一般拿这个做同步方法名）</td>
+<td align="left">execute, executeTask</td>
+</tr>
+<tr>
+<td align="left">Prefix or Alone</td>
+<td align="left">start</td>
+<td align="left">同上</td>
+<td align="left">start, startJob</td>
+</tr>
+<tr>
+<td align="left">Prefix or Alone</td>
+<td align="left">cancel</td>
+<td align="left">停止异步方法</td>
+<td align="left">cancel, cancelJob</td>
+</tr>
+<tr>
+<td align="left">Prefix or Alone</td>
+<td align="left">stop</td>
+<td align="left">同上</td>
+<td align="left">stop, stopJob</td>
+</tr>
+</tbody></table>
+<h3 id="回调方法"><a href="#回调方法" class="headerlink" title="回调方法"></a>回调方法</h3><table>
+<thead>
+<tr>
+<th align="left">位置</th>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Prefix</td>
+<td align="left">on</td>
+<td align="left">事件发生时执行</td>
+<td align="left">onCompleted</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">before</td>
+<td align="left">事件发生前执行</td>
+<td align="left">beforeUpdate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">pre</td>
+<td align="left">同上</td>
+<td align="left">preUpdate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">will</td>
+<td align="left">同上</td>
+<td align="left">willUpdate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">after</td>
+<td align="left">事件发生后执行</td>
+<td align="left">afterUpdate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">post</td>
+<td align="left">同上</td>
+<td align="left">postUpdate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">did</td>
+<td align="left">同上</td>
+<td align="left">didUpdate</td>
+</tr>
+<tr>
+<td align="left">Prefix</td>
+<td align="left">should</td>
+<td align="left">确认事件是否可以发生时执行</td>
+<td align="left">shouldUpdate</td>
+</tr>
+</tbody></table>
+<h3 id="操作对象生命周期的方法"><a href="#操作对象生命周期的方法" class="headerlink" title="操作对象生命周期的方法"></a>操作对象生命周期的方法</h3><table>
+<thead>
+<tr>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">initialize</td>
+<td align="left">初始化。也可作为延迟初始化使用</td>
+<td align="left">initialize</td>
+</tr>
+<tr>
+<td align="left">pause</td>
+<td align="left">暂停</td>
+<td align="left">onPause ，pause</td>
+</tr>
+<tr>
+<td align="left">stop</td>
+<td align="left">停止</td>
+<td align="left">onStop，stop</td>
+</tr>
+<tr>
+<td align="left">abandon</td>
+<td align="left">销毁的替代</td>
+<td align="left">abandon</td>
+</tr>
+<tr>
+<td align="left">destroy</td>
+<td align="left">同上</td>
+<td align="left">destroy</td>
+</tr>
+<tr>
+<td align="left">dispose</td>
+<td align="left">同上</td>
+<td align="left">dispose</td>
+</tr>
+</tbody></table>
+<h3 id="与集合操作相关的方法"><a href="#与集合操作相关的方法" class="headerlink" title="与集合操作相关的方法"></a>与集合操作相关的方法</h3><table>
+<thead>
+<tr>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">contains</td>
+<td align="left">是否持有与指定对象相同的对象</td>
+<td align="left">contains</td>
+</tr>
+<tr>
+<td align="left">add</td>
+<td align="left">添加</td>
+<td align="left">addJob</td>
+</tr>
+<tr>
+<td align="left">append</td>
+<td align="left">添加</td>
+<td align="left">appendJob</td>
+</tr>
+<tr>
+<td align="left">insert</td>
+<td align="left">插入到下标 n 的位置</td>
+<td align="left">insertJob</td>
+</tr>
+<tr>
+<td align="left">put</td>
+<td align="left">添加与key对应的元素</td>
+<td align="left">putJob</td>
+</tr>
+<tr>
+<td align="left">remove</td>
+<td align="left">移除元素</td>
+<td align="left">removeJob</td>
+</tr>
+<tr>
+<td align="left">enqueue</td>
+<td align="left">添加到队列的最末位</td>
+<td align="left">enqueueJob</td>
+</tr>
+<tr>
+<td align="left">dequeue</td>
+<td align="left">从队列中头部取出并移除</td>
+<td align="left">dequeueJob</td>
+</tr>
+<tr>
+<td align="left">push</td>
+<td align="left">添加到栈头</td>
+<td align="left">pushJob</td>
+</tr>
+<tr>
+<td align="left">pop</td>
+<td align="left">从栈头取出并移除</td>
+<td align="left">popJob</td>
+</tr>
+<tr>
+<td align="left">peek</td>
+<td align="left">从栈头取出但不移除</td>
+<td align="left">peekJob</td>
+</tr>
+<tr>
+<td align="left">find</td>
+<td align="left">寻找符合条件的某物</td>
+<td align="left">findById</td>
+</tr>
+</tbody></table>
+<h3 id="与数据相关的方法"><a href="#与数据相关的方法" class="headerlink" title="与数据相关的方法"></a>与数据相关的方法</h3><table>
+<thead>
+<tr>
+<th align="left">单词</th>
+<th align="left">意义</th>
+<th align="left">例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">create</td>
+<td align="left">新创建</td>
+<td align="left">createAccount</td>
+</tr>
+<tr>
+<td align="left">new</td>
+<td align="left">新创建</td>
+<td align="left">newAccount</td>
+</tr>
+<tr>
+<td align="left">from</td>
+<td align="left">从既有的某物新建，或是从其他的数据新建</td>
+<td align="left">fromConfig</td>
+</tr>
+<tr>
+<td align="left">to</td>
+<td align="left">转换</td>
+<td align="left">toString</td>
+</tr>
+<tr>
+<td align="left">update</td>
+<td align="left">更新既有某物</td>
+<td align="left">updateAccount</td>
+</tr>
+<tr>
+<td align="left">load</td>
+<td align="left">读取</td>
+<td align="left">loadAccount</td>
+</tr>
+<tr>
+<td align="left">fetch</td>
+<td align="left">远程读取</td>
+<td align="left">fetchAccount</td>
+</tr>
+<tr>
+<td align="left">delete</td>
+<td align="left">删除</td>
+<td align="left">deleteAccount</td>
+</tr>
+<tr>
+<td align="left">remove</td>
+<td align="left">删除</td>
+<td align="left">removeAccount</td>
+</tr>
+<tr>
+<td align="left">save</td>
+<td align="left">保存</td>
+<td align="left">saveAccount</td>
+</tr>
+<tr>
+<td align="left">store</td>
+<td align="left">保存</td>
+<td align="left">storeAccount</td>
+</tr>
+<tr>
+<td align="left">commit</td>
+<td align="left">保存</td>
+<td align="left">commitChange</td>
+</tr>
+<tr>
+<td align="left">apply</td>
+<td align="left">保存或应用</td>
+<td align="left">applyChange</td>
+</tr>
+<tr>
+<td align="left">clear</td>
+<td align="left">清除数据或是恢复到初始状态</td>
+<td align="left">clearAll</td>
+</tr>
+<tr>
+<td align="left">reset</td>
+<td align="left">清除数据或是恢复到初始状态</td>
+<td align="left">resetAll</td>
+</tr>
+</tbody></table>
+<h3 id="成对出现的动词"><a href="#成对出现的动词" class="headerlink" title="成对出现的动词"></a>成对出现的动词</h3><table>
+<thead>
+<tr>
+<th align="left">单词</th>
+<th align="left">意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">get 获取</td>
+<td align="left">set 设置</td>
+</tr>
+<tr>
+<td align="left">add 增加</td>
+<td align="left">remove 删除</td>
+</tr>
+<tr>
+<td align="left">create 创建</td>
+<td align="left">destory 移除</td>
+</tr>
+<tr>
+<td align="left">start 启动</td>
+<td align="left">stop 停止</td>
+</tr>
+<tr>
+<td align="left">open 打开</td>
+<td align="left">close 关闭</td>
+</tr>
+<tr>
+<td align="left">read 读取</td>
+<td align="left">write 写入</td>
+</tr>
+<tr>
+<td align="left">load 载入</td>
+<td align="left">save 保存</td>
+</tr>
+<tr>
+<td align="left">create 创建</td>
+<td align="left">destroy 销毁</td>
+</tr>
+<tr>
+<td align="left">begin 开始</td>
+<td align="left">end 结束</td>
+</tr>
+<tr>
+<td align="left">backup 备份</td>
+<td align="left">restore 恢复</td>
+</tr>
+<tr>
+<td align="left">import 导入</td>
+<td align="left">export 导出</td>
+</tr>
+<tr>
+<td align="left">split 分割</td>
+<td align="left">merge 合并</td>
+</tr>
+<tr>
+<td align="left">inject 注入</td>
+<td align="left">extract 提取</td>
+</tr>
+<tr>
+<td align="left">attach 附着</td>
+<td align="left">detach 脱离</td>
+</tr>
+<tr>
+<td align="left">bind 绑定</td>
+<td align="left">separate 分离</td>
+</tr>
+<tr>
+<td align="left">view 查看</td>
+<td align="left">browse 浏览</td>
+</tr>
+<tr>
+<td align="left">edit 编辑</td>
+<td align="left">modify 修改</td>
+</tr>
+<tr>
+<td align="left">select 选取</td>
+<td align="left">mark 标记</td>
+</tr>
+<tr>
+<td align="left">copy 复制</td>
+<td align="left">paste 粘贴</td>
+</tr>
+<tr>
+<td align="left">undo 撤销</td>
+<td align="left">redo 重做</td>
+</tr>
+<tr>
+<td align="left">insert 插入</td>
+<td align="left">delete 移除</td>
+</tr>
+<tr>
+<td align="left">add 加入</td>
+<td align="left">append 添加</td>
+</tr>
+<tr>
+<td align="left">clean 清理</td>
+<td align="left">clear 清除</td>
+</tr>
+<tr>
+<td align="left">index 索引</td>
+<td align="left">sort 排序</td>
+</tr>
+<tr>
+<td align="left">find 查找</td>
+<td align="left">search 搜索</td>
+</tr>
+<tr>
+<td align="left">increase 增加</td>
+<td align="left">decrease 减少</td>
+</tr>
+<tr>
+<td align="left">play 播放</td>
+<td align="left">pause 暂停</td>
+</tr>
+<tr>
+<td align="left">launch 启动</td>
+<td align="left">run 运行</td>
+</tr>
+<tr>
+<td align="left">compile 编译</td>
+<td align="left">execute 执行</td>
+</tr>
+<tr>
+<td align="left">debug 调试</td>
+<td align="left">trace 跟踪</td>
+</tr>
+<tr>
+<td align="left">observe 观察</td>
+<td align="left">listen 监听</td>
+</tr>
+<tr>
+<td align="left">build 构建</td>
+<td align="left">publish 发布</td>
+</tr>
+<tr>
+<td align="left">input 输入</td>
+<td align="left">output 输出</td>
+</tr>
+<tr>
+<td align="left">encode 编码</td>
+<td align="left">decode 解码</td>
+</tr>
+<tr>
+<td align="left">encrypt 加密</td>
+<td align="left">decrypt 解密</td>
+</tr>
+<tr>
+<td align="left">compress 压缩</td>
+<td align="left">decompress 解压缩</td>
+</tr>
+<tr>
+<td align="left">pack 打包</td>
+<td align="left">unpack 解包</td>
+</tr>
+<tr>
+<td align="left">parse 解析</td>
+<td align="left">emit 生成</td>
+</tr>
+<tr>
+<td align="left">connect 连接</td>
+<td align="left">disconnect 断开</td>
+</tr>
+<tr>
+<td align="left">send 发送</td>
+<td align="left">receive 接收</td>
+</tr>
+<tr>
+<td align="left">download 下载</td>
+<td align="left">upload 上传</td>
+</tr>
+<tr>
+<td align="left">refresh 刷新</td>
+<td align="left">synchronize 同步</td>
+</tr>
+<tr>
+<td align="left">update 更新</td>
+<td align="left">revert 复原</td>
+</tr>
+<tr>
+<td align="left">lock 锁定</td>
+<td align="left">unlock 解锁</td>
+</tr>
+<tr>
+<td align="left">check out 签出</td>
+<td align="left">check in 签入</td>
+</tr>
+<tr>
+<td align="left">submit 提交</td>
+<td align="left">commit 交付</td>
+</tr>
+<tr>
+<td align="left">push 推</td>
+<td align="left">pull 拉</td>
+</tr>
+<tr>
+<td align="left">expand 展开</td>
+<td align="left">collapse 折叠</td>
+</tr>
+<tr>
+<td align="left">begin 起始</td>
+<td align="left">end 结束</td>
+</tr>
+<tr>
+<td align="left">start 开始</td>
+<td align="left">finish 完成</td>
+</tr>
+<tr>
+<td align="left">enter 进入</td>
+<td align="left">exit 退出</td>
+</tr>
+<tr>
+<td align="left">abort 放弃</td>
+<td align="left">quit 离开</td>
+</tr>
+<tr>
+<td align="left">obsolete 废弃</td>
+<td align="left">depreciate 废旧</td>
+</tr>
+<tr>
+<td align="left">collect 收集</td>
+<td align="left">aggregate 聚集</td>
+</tr>
+</tbody></table>
+<h2 id="变量-amp-常量命名"><a href="#变量-amp-常量命名" class="headerlink" title="变量&amp;常量命名"></a>变量&amp;常量命名</h2><h3 id="变量命名"><a href="#变量命名" class="headerlink" title="变量命名"></a>变量命名</h3><p>变量是指在程序运行中可以改变其值的量，包括<strong>成员变量</strong>和<strong>局部变量</strong>。变量名由多单词组成时，第一个单词的首字母小写，其后单词的首字母大写，俗称<strong>骆驼式命名法（也称驼峰命名法）</strong>，如 computedValues，index、变量命名时，<strong>尽量简短且能清楚的表达变量的作用</strong>，命名体现具体的业务含义即可。</p>
+<p><strong>变量名不应以下划线或美元符号开头</strong>，尽管这在语法上是允许的。变量名应<strong>简短且富于描述</strong>。变量名的选用应该易于记忆，即，能够指出其用途。<strong>尽量避免单个字符的变量名，除非是一次性的临时变量</strong>。pojo中的布尔变量，都不要加is（数据库中的布尔字段全都要加 is_ 前缀）。</p>
+<h3 id="常量命名"><a href="#常量命名" class="headerlink" title="常量命名"></a>常量命名</h3><p>常量命名CONSTANT_CASE，一般采用<strong>全部大写（作为方法参数时除外）</strong>，<strong>单词间用下划线分割</strong>。那么什么是常量呢？</p>
+<p>常量是在作用域内保持不变的值，一般使用final进行修饰。一般分为三种，<strong>全局常量（public static final修饰）</strong>，<strong>类内常量（private static final 修饰）</strong>以及<strong>局部常量（方法内，或者参数中的常量）</strong>，<strong>局部常量比较特殊，通常采用小驼峰命名即可</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 局部常量(正例)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> USER_MESSAGE_CACHE_EXPIRE_TIME = <span class="number">3600</span>;</span><br><span class="line">    </span><br><span class="line">      <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 局部常量(反例，命名不清晰）</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> MESSAGE_CACHE_TIME = <span class="number">3600</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 全局常量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String ERROR_MESSAGE = <span class="string">&quot; error message&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 成员变量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> currentUserId;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 控制台打印 &#123;<span class="doctag">@code</span> message&#125; 信息</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> message 消息体，局部常量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(<span class="keyword">final</span> String message)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Hello world!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>常量一般都有自己的业务含义，<strong>不要害怕长度过长而进行省略或者缩写</strong>。如：用户消息缓存过期时间的表示，哪种方式更佳清晰，交给你来评判。</p>
+<h2 id="通用命名规则"><a href="#通用命名规则" class="headerlink" title="通用命名规则"></a>通用命名规则</h2><ol>
+<li>尽量不要使用拼音；杜绝拼音和英文混用。对于一些通用的表示或者难以用英文描述的可以采用拼音，一旦采用拼音就坚决不能和英文混用。 正例： BeiJing， HangZhou 反例： validateCanShu</li>
+<li>命名过程中尽量不要出现特殊的字符，常量除外。</li>
+<li>尽量不要和 jdk或者框架中已存在的类重名，也不能使用 java中的关键字命名。</li>
+<li>妙用介词，如for(可以用同音的4代替), to(可用同音的2代替), from, with，of等。 如类名采用User4RedisDO，方法名getUserInfoFromRedis，convertJson2Map等。</li>
+</ol>
+<h2 id="代码注解"><a href="#代码注解" class="headerlink" title="代码注解"></a>代码注解</h2><h3 id="注解的原则"><a href="#注解的原则" class="headerlink" title="注解的原则"></a>注解的原则</h3><p>好的命名增加代码阅读性，代码的命名往往有严格的限制。而注解不同，程序员往往可以自由发挥，单并不意味着可以为所欲为之胡作非为。优雅的注解通常要满足三要素。</p>
+<ol>
+<li><p><strong>Nothing is strange</strong> 没有注解的代码对于阅读者非常不友好，哪怕代码写的再清楚，阅读者至少从心理上会有抵触，更何况代码中往往有许多复杂的逻辑，所以一定要写注解，不仅要记录代码的逻辑，还要说清楚修改的逻辑。</p>
+</li>
+<li><p><strong>Less is more</strong> 从代码维护角度来讲，代码中的注解一定是精华中的精华。合理清晰的命名能让代码易于理解，对于逻辑简单且命名规范，能够清楚表达代码功能的代码不需要注解。滥用注解会增加额外的负担，更何况大部分都是废话。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 根据id获取信息【废话注解】</span></span><br><span class="line">getMessageById(id)</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>Advance with the time</strong> 注解应该随着代码的变动而改变，注解表达的信息要与代码中完全一致。通常情况下修改代码后一定要修改注解。</p>
+</li>
+</ol>
+<h3 id="注解格式"><a href="#注解格式" class="headerlink" title="注解格式"></a>注解格式</h3><p>注解大体上可以分为两种，一种是javadoc注解，另一种是简单注解。javadoc注解可以生成 JavaAPI为外部用户提供有效的支持 javadoc注解通常在使用IDEA，或者Eclipse等开发工具时都可以自动生成，也支持自定义的注解模板，仅需要对对应的字段进行解释。参与同一项目开发的同学，尽量设置成相同的注解模板。</p>
+<h4 id="包注解"><a href="#包注解" class="headerlink" title="包注解"></a>包注解</h4><p>包注解在工作中往往比较特殊，通过包注解可以快速知悉当前包下代码是用来实现哪些功能，强烈建议工作中加上，尤其是对于一些比较复杂的包，包注解一般在包的根目录下，名称统一为package-info.java。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 落地也质量检测</span></span><br><span class="line"><span class="comment"> * 1. 用来解决什么问题</span></span><br><span class="line"><span class="comment"> * 对广告主投放的广告落地页进行性能检测，模拟不同的系统，如Android，IOS等; 模拟不同的网络：2G，3G，4G，wifi等</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 2. 如何实现</span></span><br><span class="line"><span class="comment"> * 基于chrome浏览器，用chromedriver驱动浏览器，设置对应的网络，OS参数，获取到浏览器返回结果。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 注意： 网络环境配置信息&#123;<span class="doctag">@link</span> cn.mycookies.landingpagecheck.meta.NetWorkSpeedEnum&#125;目前使用是常规速度，可以根据实际情况进行调整</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> author</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@time</span> 2019/12/7 20:3 下午</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">package</span> cn.mycookies.landingpagecheck;</span><br></pre></td></tr></table></figure>
+
+<h4 id="类注接"><a href="#类注接" class="headerlink" title="类注接"></a>类注接</h4><p>javadoc注解中，每个类都必须有注解。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Copyright (C), 2019-2020, Jann  balabala...</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* 类的介绍：这是一个用来做什么事情的类，有哪些功能，用到的技术.....</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@author</span>   类创建者姓名 保持对齐</span></span><br><span class="line"><span class="comment">* <span class="doctag">@date</span>     创建日期 保持对齐</span></span><br><span class="line"><span class="comment">* <span class="doctag">@version</span>  版本号 保持对齐</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="属性注解"><a href="#属性注解" class="headerlink" title="属性注解"></a>属性注解</h4><p>在每个属性前面必须加上属性注释，通常有一下两种形式，至于怎么选择，你高兴就好，不过一个项目中要保持统一。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/** 提示信息 */</span></span><br><span class="line"><span class="keyword">private</span> String userName;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 密码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> String password;</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法注释"><a href="#方法注释" class="headerlink" title="方法注释"></a>方法注释</h4><p>在每个方法前面必须加上方法注释，对于方法中的每个参数，以及返回值都要有说明。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 方法的详细说明，能干嘛，怎么实现的，注意事项...</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> xxx   参数1的使用说明， 能否为null</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@return</span> 返回结果的说明， 不同情况下会返回怎样的结果</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@throws</span> 异常类型   注明从此类方法中抛出异常的说明</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="构造方法注释"><a href="#构造方法注释" class="headerlink" title="构造方法注释"></a>构造方法注释</h4><p>在每个构造方法前面必须加上注释，注释模板如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 构造方法的详细说明</span></span><br><span class="line"><span class="comment">  *</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> xxx   参数1的使用说明， 能否为null</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@throws</span> 异常类型   注明从此类方法中抛出异常的说明</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
+
+<p>而简单注解往往是需要工程师自己定义，在使用注解时应该注意一下几点：</p>
+<ol>
+<li><strong>枚举类的各个属性值都要使用注解</strong>，枚举可以理解为是常量，通常不会发生改变，通常会被在多个地方引用，对枚举的修改和添加属性通常会带来很大的影响。</li>
+<li><strong>保持排版整洁，不要使用行尾注释</strong>；<strong>双斜杠和星号之后要用1个空格分隔</strong>。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> id = <span class="number">1</span>;<span class="comment">// 反例：不要使用行尾注释</span></span><br><span class="line"><span class="comment">//反例：换行符与注释之间没有缩进</span></span><br><span class="line"><span class="keyword">int</span> age = <span class="number">18</span>;</span><br><span class="line"><span class="comment">// 正例：姓名</span></span><br><span class="line">String name;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 1. 多行注释</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * 2. 对于不同的逻辑说明，可以用空行分隔</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>文章来源：<a href="https://www.cnblogs.com/liqiangchn/p/12000361.html">告别编码5分钟，命名2小时！史上最全的Java命名规范参考！</a></p>
+]]></content>
+      <categories>
+        <category>项目</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>开发规范</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Spring IOC</title>
     <url>/post/eff096d5/</url>
     <content><![CDATA[<h2 id="Spring-IOC是什么？"><a href="#Spring-IOC是什么？" class="headerlink" title="Spring IOC是什么？"></a>Spring IOC是什么？</h2><p><strong>Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。</strong>在Java开发中，<strong>Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。</strong>如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
@@ -49,9 +900,38 @@
         <category>开发框架</category>
       </categories>
       <tags>
-        <tag>后端</tag>
         <tag>Java</tag>
+        <tag>后端</tag>
         <tag>Spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
@@ -92,6 +972,81 @@
       </categories>
       <tags>
         <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+<span id="more"></span>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>字符集</tag>
       </tags>
   </entry>
   <entry>
@@ -248,110 +1203,6 @@
       </tags>
   </entry>
   <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>模拟</title>
     <url>/post/d1f7904c/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
@@ -394,6 +1245,54 @@
       </categories>
       <tags>
         <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记忆化搜索</title>
+    <url>/post/cb5e0eb8/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
+<span id="more"></span>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+</ul>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<blockquote>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>记忆化搜索</tag>
       </tags>
   </entry>
   <entry>
@@ -461,54 +1360,6 @@
       <categories>
         <category>面试</category>
       </categories>
-  </entry>
-  <entry>
-    <title>记忆化搜索</title>
-    <url>/post/cb5e0eb8/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
-<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
-<span id="more"></span>
-
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>函数有返回值</li>
-<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
-<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
-</ul>
-<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
-<blockquote>
-<p>本质上是自顶向下的动态规划加备忘录。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
-<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>记忆化搜索</tag>
-      </tags>
   </entry>
   <entry>
     <title>Lambda 表达式</title>
