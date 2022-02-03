@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126174546502.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127180434891.png">
 <meta property="article:published_time" content="2022-01-27T11:34:07.000Z">
-<meta property="article:modified_time" content="2022-01-29T00:39:05.191Z">
+<meta property="article:modified_time" content="2022-02-03T13:26:49.946Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -247,7 +247,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-01-29 08:39:05" itemprop="dateModified" datetime="2022-01-29T08:39:05+08:00">2022-01-29</time>
+                <time title="Modified: 2022-02-03 21:26:49" itemprop="dateModified" datetime="2022-02-03T21:26:49+08:00">2022-02-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -694,8 +694,8 @@
 </ol>
 <p><strong>epoll对文件描述符的操作有两种模式：<code>LT（level trigger）和ET（edge trigger）</code>。LT模式是默认模式，LT模式与ET模式的区别如下：</strong></p>
 <ul>
-<li>LT模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。</li>
-<li>ET模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。</li>
+<li>LT模式（水平触发）：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。</li>
+<li>ET模式（边缘触发）：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。在ET模式下，read一个fd的时候一定要把它的buffer读完，即读到read返回值小于请求值或遇到 <code>EAGAIN</code> 错误。</li>
 </ul>
 <p><strong>LT模式</strong></p>
 <p>LT（level triggered）是<strong>缺省工作方式</strong>，并且同时支持block和no-block socket。在这种做法中，内核告诉你一个文件描述符是否就绪了，然后你可以对这个就绪的fd进行IO操作。如果你不作任何操作，内核还是会继续通知你的。</p>

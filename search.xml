@@ -1032,6 +1032,566 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux IO</title>
+    <url>/post/57ec66b6/</url>
+    <content><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><h3 id="用户空间与内核空间"><a href="#用户空间与内核空间" class="headerlink" title="用户空间与内核空间"></a>用户空间与内核空间</h3><p>现在操作系统都是采用<strong>虚拟存储器</strong>，那么对32位操作系统而言，它的寻址空间（虚拟存储空间）为4G（2的32次方）。操作系统的核心是内核，独立于普通的应用程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。为了保证用户进程不能直接操作内核（kernel），保证内核的安全，操作系统将虚拟空间划分为两部分，一部分为内核空间，一部分为用户空间。</p>
+<blockquote>
+<p>针对linux操作系统而言，将最高的1G字节（从虚拟地址0xC0000000到0xFFFFFFFF），供内核使用，称为内核空间，而将较低的3G字节（从虚拟地址0x00000000到0xBFFFFFFF），供各个进程使用，称为用户空间。</p>
+</blockquote>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127193145761.png" style="zoom:67%;" />
+
+<h3 id="进程切换"><a href="#进程切换" class="headerlink" title="进程切换"></a>进程切换</h3><p>为了控制进程的执行，内核必须有能力挂起正在CPU上运行的进程，并恢复以前挂起的某个进程的执行。这种行为被称为进程切换。因此可以说，任何进程都是在操作系统内核的支持下运行的，是与内核紧密相关的。</p>
+<p>从一个进程的运行转到另一个进程上运行，这个过程中经过下面这些变化：</p>
+<ol>
+<li>保存处理机上下文，包括程序计数器和其他寄存器。</li>
+<li>更新PCB信息。</li>
+<li>把进程的PCB移入相应的队列，如就绪、在某事件阻塞等队列。</li>
+<li>选择另一个进程执行，并更新其PCB。</li>
+<li>更新内存管理的数据结构。</li>
+<li>恢复处理机上下文。</li>
+</ol>
+<blockquote>
+<p>进程切换需要消耗一定的资源。</p>
+</blockquote>
+<h3 id="进程的阻塞"><a href="#进程的阻塞" class="headerlink" title="进程的阻塞"></a>进程的阻塞</h3><p>正在执行的进程，由于期待的某些事件未发生，如请求系统资源失败、等待某种操作的完成、新数据尚未到达或无新工作做等，则由系统自动执行<strong>阻塞原语(Block)<strong>，使自己由运行状态变为阻塞状态。可见，进程的阻塞是进程自身的一种主动行为，也因此只有处于运行态的进程（获得CPU），才可能将其转为阻塞状态。</strong>当进程进入阻塞状态，是不占用CPU资源的</strong>。</p>
+<h3 id="文件描述符fd"><a href="#文件描述符fd" class="headerlink" title="文件描述符fd"></a>文件描述符fd</h3><p>文件描述符（File descriptor）是计算机科学中的一个术语，是一个<strong>用于表述指向文件的引用的抽象化概念</strong>。</p>
+<p>文件描述符在形式上是一个非负整数。实际上，它是一个索引值，指向内核为每一个进程所维护的该进程打开文件的记录表。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。在程序设计中，一些涉及底层的程序编写往往会围绕着文件描述符展开。但是文件描述符这一概念往往只适用于UNIX、Linux这样的操作系统。</p>
+<p>更多内容详见：<a href="https://feyl.github.io/post/1e8930fb/">理解linux中的file descriptor(文件描述符)</a></p>
+<h3 id="缓存-IO"><a href="#缓存-IO" class="headerlink" title="缓存 IO"></a>缓存 IO</h3><p>缓存 IO 又被称作<strong>标准 IO</strong>，大多数文件系统的默认 IO 操作都是缓存 IO。在 Linux 的缓存 IO 机制中，<strong>操作系统会将 IO 的数据缓存在文件系统的页缓存（page cache）中，也就是说，数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间</strong>。</p>
+<p><strong>缓存 IO 的缺点：</strong>数据在传输过程中需要在应用程序地址空间和内核进行多次数据拷贝操作，这些数据拷贝操作所带来的 CPU 以及内存开销是非常大的。</p>
+<h3 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h3><p>Socket 中文翻译为套接字，是计算机网络中进程间进行<strong>双向通信的端点的抽象</strong>。一个 Socket 代表了网络通信的一端，是由操作系统提供的进程间通信机制。</p>
+<ul>
+<li>在操作系统中，通常会为应用程序提供一组应用程序接口，称为 Socket 接口（Socket API）。应用程序可以通过 Socket 接口，来使用网络 Socket，以进行数据的传输。</li>
+<li>一个 Socket 由IP地址和端口组成，即：Socket 地址 = IP地址 : 端口号。</li>
+<li>在同一台计算机上，TCP 协议与 UDP 协议可以同时使用相同的端口（Port），而互不干扰。</li>
+<li>要想实现网络通信，至少需要一对 Socket，其中一个运行在客户端，称之为 Client Socket；另一个运行在服务器端，称之为 Server Socket。</li>
+<li>Socket 之间的连接过程可以分为三个步骤：（1）服务器监听；（2）客户端连接；（3）连接确认。</li>
+</ul>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127181515932.png" style="zoom:80%;" />
+
+<h4 id="Socket-缓冲区"><a href="#Socket-缓冲区" class="headerlink" title="Socket 缓冲区"></a>Socket 缓冲区</h4><p>每个 Socket 被创建后，都会在内核中分配两个缓冲区：输入缓冲区和输出缓冲区。</p>
+<ul>
+<li>通过 Socket 发送数据并不会立即向网络中传输数据，而是先将数据写入到输出缓冲区中，再由 TCP 协议将数据从输出缓冲区发送到目标主机。</li>
+<li>通过 Socket 接收数据也是如此，也是从输入缓冲区中读取数据，而不是直接从网络中读取。</li>
+</ul>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127181657439.png" style="zoom:80%;" />
+
+
+
+
+
+<h2 id="操作系统的内核"><a href="#操作系统的内核" class="headerlink" title="操作系统的内核"></a>操作系统的内核</h2><p>操作系统的内核是操作系统的核心部分。 它负责<strong>系统的内存，硬件设备，文件系统以及应用程序的管理</strong>。</p>
+<h3 id="操作系统的用户态与内核态"><a href="#操作系统的用户态与内核态" class="headerlink" title="操作系统的用户态与内核态"></a>操作系统的用户态与内核态</h3><p>unix与linux的体系架构：分为用户态与内核态。 用户态与内核态与内核态是操作系统对<strong>执行权限进行分级</strong>后的不同的<strong>运行模式</strong>。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126105736357.png"></p>
+<h3 id="为什么要有用户态与内核态？"><a href="#为什么要有用户态与内核态？" class="headerlink" title="为什么要有用户态与内核态？"></a>为什么要有用户态与内核态？</h3><p>在cpu的所有指令中，有些指令是非常危险的，如果使用不当，将会造成系统崩溃等后果。 为了避免这种情况发生，cpu将指令划分为<strong>特权级（内核态）指令</strong>和<strong>非特权级（用户态）指令。</strong></p>
+<p><strong>对于那些危险的指令只允许内核及其相关模块调用，对于那些不会造成危险的指令，就允许用户应用程序调用。</strong></p>
+<ul>
+<li>内核态（核心态，特权态）：<strong>内核态是操作系统内核运行的模式。</strong> 内核态控制计算机的硬件资源，如硬件设备，文件系统等等，并为上层应用程序提供执行环境。</li>
+<li>用户态：<strong>用户态是用户应用程序运行的状态。</strong>应用程序必须依托于内核态运行，因此用户态的操作权限比内核态是要低的，如磁盘，文件等，访问操作都是受限的。</li>
+<li>系统调用：系统调用是操作系统为应用程序提供能够访问到内核态的资源的接口。</li>
+</ul>
+<h3 id="用户态切换到内核态的几种方式"><a href="#用户态切换到内核态的几种方式" class="headerlink" title="用户态切换到内核态的几种方式"></a>用户态切换到内核态的几种方式</h3><ul>
+<li>系统调用：系统调用是用户态主动要求切换到内核态的一种方式，用户应用程序通过操作系统调用内核为上层应用程序开放的接口来执行程序。</li>
+<li>异常：当cpu在执行用户态的应用程序时，发生了某些不可知的异常。 于是当前用户态的应用进程切换到处理此异常的内核的程序中去。</li>
+<li>硬件设备的中断：当硬件设备完成用户请求后，会向cpu发出相应的中断信号， 这时cpu会暂停执行下一条即将要执行的指令，转而去执行与中断信号对应的应用程序， 如果先前执行的指令是用户态下程序的指令，那么这个转换过程也是用户态到内核态的转换。</li>
+</ul>
+<h3 id="同步与异步"><a href="#同步与异步" class="headerlink" title="同步与异步"></a>同步与异步</h3><p>首先来解释同步和异步的概念，这两个概念与消息的通知机制有关。也就是同步与异步主要是从<strong>消息通知机制</strong>角度来说的。</p>
+<h4 id="概念描述"><a href="#概念描述" class="headerlink" title="概念描述"></a>概念描述</h4><p><strong>同步</strong>就是一个任务的完成需要依赖另外一个任务时，只有等待被依赖的任务完成后，依赖的任务才能算完成，这是一种可靠的任务序列。要么成功都成功，失败都失败，两个任务的状态可以保持一致。</p>
+<blockquote>
+<p>例如：一个线程调用一个方法计算 1 - 100 的和，如果方法没有计算完，就不返回。</p>
+</blockquote>
+<p><strong>异步</strong>是不需要等待被依赖的任务完成，只是通知被依赖的任务要完成什么工作，依赖的任务也立即执行，只要自己完成了整个任务就算完成了。至于被依赖的任务最终是否真正完成，依赖它的任务无法确定，所以它是不可靠的任务序列。</p>
+<blockquote>
+<p>例如：一个线程调用一个方法计算 1 - 100 的和，该方法立刻返回，但是由于方法没有返回结果，所以就需要被调用的这个方法来通知调用线程 1 - 100的结果，或者线程在调用方法的时候指定一个回调函数来告诉被调用的方法执行完后就执行回调函数。</p>
+</blockquote>
+<h4 id="消息通知"><a href="#消息通知" class="headerlink" title="消息通知"></a>消息通知</h4><p>异步的概念和同步相对。当一个同步调用发出后，调用者要一直等待返回消息（结果）通知后，才能进行后续的执行；当一个异步过程调用发出后，调用者不能立刻得到返回消息（结果）。实际处理这个调用的部件在完成后，通过状态、通知和回调来通知调用者。</p>
+<p>这里提到执行部件和调用者通过三种途径返回结果：<strong>状态、通知和回调</strong>。使用哪一种通知机制，依赖于执行部件的实现，除非执行部件提供多种选择，否则不受调用者控制。</p>
+<ol>
+<li>如果执行部件用状态来通知，那么调用者就需要每隔一定时间检查一次，效率就很低（有些初学多线程编程的人，总喜欢用一个循环去检查某个变量的值，这其实是一种很严重的错误）；</li>
+<li>如果是使用通知的方式，效率则很高，因为执行部件几乎不需要做额外的操作。至于回调函数，其实和通知没太多区别。</li>
+</ol>
+<h4 id="场景比喻"><a href="#场景比喻" class="headerlink" title="场景比喻"></a>场景比喻</h4><p>举个例子，比如我去银行办理业务，可能会有两种方式：</p>
+<ol>
+<li>选择排队等候；</li>
+<li>另种选择取一个小纸条上面有我的号码，等到排到我这一号时由柜台的人通知我轮到我去办理业务了；</li>
+</ol>
+<p>第一种：前者（排队等候）就是同步等待消息通知，也就是我要一直在等待银行办理业务情况；</p>
+<p>第二种：后者（等待别人通知）就是异步等待消息通知。在异步消息处理中，等待消息通知者（在这个例子中就是等待办理业务的人）往往注册一个回调机制，在所等待的事件被触发时由触发机制（在这里是柜台的人）通过某种机制（在这里是写在小纸条上的号码，喊号）找到等待该事件的人。</p>
+<h3 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h3><p>阻塞和非阻塞这两个概念与程序（线程）<strong>等待消息通知（无所谓同步或者异步）时的状态</strong>有关。也就是说阻塞与非阻塞主要是程序（线程）等待消息通知时的状态角度来说的。</p>
+<h4 id="概念描述-1"><a href="#概念描述-1" class="headerlink" title="概念描述"></a>概念描述</h4><p>阻塞调用是指调用结果返回之前，当前线程会被挂起，一直处于等待消息通知，不能够执行其他业务。函数只有在得到结果之后才会返回。</p>
+<blockquote>
+<p>例如：一个线程调用一个方法计算 1 - 100 的和，如果该方法没有返回结果， 那么调用方法的线程就一直等待直到该方法执行完毕。</p>
+</blockquote>
+<p><strong>有人也许会把阻塞调用和同步调用等同起来，实际上它们是不同的。</strong></p>
+<p>对于同步调用来说，很多时候当前线程可能还是激活的，只是从逻辑上当前函数没有返回而已，此时，这个线程可能也会处理其他的消息。还有一点，在这里先扩展下：</p>
+<ol>
+<li>如果这个线程在等待当前函数返回时，仍在执行其他消息处理，那这种情况就叫做<strong>同步非阻塞</strong>；</li>
+<li>如果这个线程在等待当前函数返回时，没有执行其他消息处理，而是处于挂起等待状态，那这种情况就叫做<strong>同步阻塞</strong>；</li>
+</ol>
+<p><strong>所以同步的实现方式会有两种：同步阻塞、同步非阻塞；同理，异步也会有两种实现：异步阻塞、异步非阻塞；</strong></p>
+<p>对于阻塞调用来说，则当前线程就会被挂起等待当前函数返回；</p>
+<p>非阻塞和阻塞的概念相对应，指在不能立刻得到结果之前，该函数不会阻塞当前线程，而会立刻返回。</p>
+<blockquote>
+<p>例如：一个线程调用一个方法计算 1 - 100的和，该方法立刻返回，如果方法有返回结果，调用者线程也无需一直等待该方法的结果，可以执行其他任务，但是在方法返回结果之前，<strong>线程仍然需要轮询的检查方法是否已经有结果。</strong></p>
+</blockquote>
+<p>虽然表面上看非阻塞的方式可以明显的提高CPU的利用率，但是也带了另外一种后果就是系统的线程切换增加。增加的CPU执行时间能不能补偿系统的切换成本需要好好评估。</p>
+<h4 id="场景比喻-1"><a href="#场景比喻-1" class="headerlink" title="场景比喻"></a>场景比喻</h4><p>继续上面的那个例子，不论是排队还是使用号码等待通知，如果在这个等待的过程中，等待者除了等待消息通知之外不能做其它的事情，那么该机制就是阻塞的，表现在程序中,也就是该程序一直阻塞在该函数调用处不能继续往下执行。</p>
+<p>相反，有的人喜欢在银行办理这些业务的时候一边打打电话发发短信一边等待，这样的状态就是非阻塞的，因为他（等待者）没有阻塞在这个消息通知上，而是一边做自己的事情一边等待。</p>
+<p>但是需要注意了，<strong>同步非阻塞形式实际上是效率低下的</strong>，想象一下你一边打着电话一边还需要抬头看到底队伍排到你了没有。如果把打电话和观察排队的位置看成是程序的两个操作的话，这个程序需要在这两种不同的行为之间来回的切换，效率可想而知是低下的；而<strong>异步非阻塞形式却没有这样的问题</strong>，因为打电话是你（等待者）的事情，而通知你则是柜台（消息触发机制）的事情，程序没有在两种不同的操作中来回切换。</p>
+<p><strong>结论：同步和异步、阻塞与非阻塞针均是对调用者的立场而言的。</strong></p>
+<h3 id="同步-异步与阻塞-非阻塞"><a href="#同步-异步与阻塞-非阻塞" class="headerlink" title="同步/异步与阻塞/非阻塞"></a>同步/异步与阻塞/非阻塞</h3><ol>
+<li><p><strong>同步阻塞形式</strong></p>
+<p><strong>效率是最低的</strong>，拿上面的例子来说，就是你专心排队，什么别的事都不做。</p>
+<p><strong>实际程序中：</strong>就是未对fd 设置O_NONBLOCK标志位的read/write 操作；</p>
+</li>
+<li><p><strong>异步阻塞形式</strong></p>
+<p>如果在银行等待办理业务的人采用的是异步的方式去等待消息被触发（通知），也就是领了一张小纸条，假如在这段时间里他不能离开银行做其它的事情，那么很显然，这个人被阻塞在了这个等待的操作上面；</p>
+<p><strong>异步操作是可以被阻塞住的，只不过它不是在处理消息时阻塞，而是在等待消息通知时被阻塞。</strong></p>
+<p>比如<strong>select 函数</strong>，假如传入的最后一个timeout参数为NULL，那么如果所关注的事件没有一个被触发，程序就会一直阻塞在这个select 调用处。</p>
+</li>
+<li><p><strong>同步非阻塞形式</strong></p>
+<p>实际上是效率低下的，想象一下你一边打着电话一边还需要抬头看到底队伍排到你了没有，如果把打电话和观察排队的位置看成是程序的两个操作的话，这个程序需要在这两种不同的行为之间来回的切换，效率可想而知是低下的。</p>
+<p>很多人会写<strong>阻塞的read/write 操作</strong>，但是别忘了可以<strong>对fd设置O_NONBLOCK 标志位</strong>，这样就可以将同步操作变成非阻塞的了。</p>
+</li>
+<li><p><strong>异步非阻塞形式</strong></p>
+<p>效率更高，因为打电话是你（等待者）的事情，而通知你则是柜台（消息触发机制）的事情，<strong>程序没有在两种不同的操作中来回切换</strong>。</p>
+<p>比如说，这个人突然发觉自己烟瘾犯了，需要出去抽根烟，于是他告诉大堂经理说，排到我这个号码的时候麻烦到外面通知我一下（注册一个回调函数），那么他就没有被阻塞在这个等待的操作上面，自然这个就是异步非阻塞的方式了。</p>
+<p>如果使用异步非阻塞的情况，比如<code>aio_*</code>组的操作，当发起一个<code>aio_read</code>操作时，函数会马上返回不会被阻塞，当所关注的事件被触发时会调用之前注册的回调函数进行处理。</p>
+<p>很多人会把同步和阻塞混淆，我想是因为<strong>很多时候同步操作会以阻塞的形式表现出来</strong>，比如很多人会写阻塞的read/write操作，但是别忘了可以对fd设置<code>O_NONBLOCK</code>标志位，这样就可以将同步操作变成非阻塞的了。但最根本是因为没有区分这两个概念，比如阻塞的read/write操作中，其实是把消息通知机制和等待消息通知的状态结合在了一起，在这里所关注的消息就是fd是否可读/写，而等待消息通知的状态则是对fd可读/写等待过程中程序（线程）的状态。当我们将这个fd设置为非阻塞的时候，read/write操作就不会在等待消息通知这里阻塞，如果fd不可读/写则操作立即返回。</p>
+<p>同样的，很多人也会把异步和非阻塞混淆，因为<strong>异步操作一般都不会在真正的IO操作处被阻塞</strong>，比如如果用select函数，当select返回可读时再去read一般都不会被阻塞，而是在select函数调用处阻塞。</p>
+</li>
+</ol>
+<h4 id="小明的故事"><a href="#小明的故事" class="headerlink" title="小明的故事"></a>小明的故事</h4><p>对上面所讲的概念再次进行一个场景梳理，上面已经明确说明，<strong>同步/异步关注的是消息通知的机制，而阻塞/非阻塞关注的是程序（线程）等待消息通知时的状态</strong>。以小明下载文件打个比方，从这两个关注点来再次说明这两组概念，希望能够更好的促进大家的理解。</p>
+<ol>
+<li><strong>同步阻塞：小明一直盯着下载进度条，到 100% 的时候就完成。</strong></li>
+</ol>
+<blockquote>
+<p>同步体现在：等待下载完成通知；<br>阻塞体现在：等待下载完成通知过程中，不能做其他任务处理；</p>
+</blockquote>
+<ol>
+<li><strong>同步非阻塞：小明提交下载任务后就去干别的，每过一段时间就去瞄一眼进度条，看到 100% 就完成。</strong></li>
+</ol>
+<blockquote>
+<p>同步体现在：等待下载完成通知；<br>非阻塞体现在：等待下载完成通知过程中，去干别的任务了，只是时不时会瞄一眼进度条；【小明必须要在两个任务间切换，关注下载进度】</p>
+</blockquote>
+<ol>
+<li><strong>异步阻塞：小明换了个有下载完成通知功能的软件，下载完成就“叮”一声。不过小明仍然一直等待“叮”的声音（看起来很傻，不是吗）。</strong></li>
+</ol>
+<blockquote>
+<p>异步体现在：下载完成“叮”一声通知；<br>阻塞体现在：等待下载完成“叮”一声通知过程中，不能做其他任务处理；</p>
+</blockquote>
+<ol>
+<li><strong>异步非阻塞：仍然是那个会“叮”一声的下载软件，小明提交下载任务后就去干别的，听到“叮”的一声就知道完成了。</strong></li>
+</ol>
+<blockquote>
+<p>异步体现在：下载完成“叮”一声通知；<br>非阻塞体现在：等待下载完成“叮”一声通知过程中，去干别的任务了，只需要接收“叮”声通知即可；【软件处理下载任务，小明处理其他任务，不需关注进度，只需接收软件“叮”声通知，即可】</p>
+</blockquote>
+<p>也就是说，<strong>同步/异步是“下载完成消息”通知的方式（机制），而阻塞/非阻塞则是在等待“下载完成消息”通知过程中的状态（能不能干其他任务）</strong>，在不同的场景下，同步/异步、阻塞/非阻塞的四种组合都有应用。</p>
+<p>所以，综上所述，<strong>同步和异步仅仅是关注的消息如何通知的机制，而阻塞与非阻塞关注的是等待消息通知时的状态</strong>。也就是说，<strong>同步的情况下，是由处理消息者自己去等待消息是否被触发，而异步的情况下是由触发机制来通知处理消息者</strong>，所以在异步机制中，处理消息者和触发机制之间就需要一个连接的桥梁：</p>
+<blockquote>
+<p>在银行的例子中，这个桥梁就是小纸条上面的号码。<br>在小明的例子中，这个桥梁就是软件“叮”的声音。</p>
+</blockquote>
+<p><strong>最后，请大家注意理解“消息通知机制”和“等待消息通知时的状态”这两个概念，这是理解四个概念的关键所在。</strong></p>
+<h2 id="Linux-IO模型"><a href="#Linux-IO模型" class="headerlink" title="Linux IO模型"></a>Linux IO模型</h2><p>网络IO的本质是socket的读取，<strong>socket在linux系统被抽象为流</strong>，IO可以理解为对流的操作。刚才说了，对于一次IO访问（以read举例），数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间。</p>
+<p>第一阶段：等待数据准备 (Waiting for the data to be ready)。</p>
+<p>第二阶段：将数据从内核拷贝到进程中 (Copying the data from the kernel to the process)。</p>
+<p>对于socket流而言：</p>
+<p>第一步：通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。</p>
+<p>第二步：把数据从内核缓冲区复制到应用进程缓冲区。</p>
+<blockquote>
+<p>网络应用需要处理的无非就是两大类问题，<strong>网络IO</strong>，<strong>数据计算</strong>。相对于后者，网络IO的延迟，给应用带来的性能瓶颈大于后者。</p>
+</blockquote>
+<h3 id="一次I-O操作经历了什么"><a href="#一次I-O操作经历了什么" class="headerlink" title="一次I/O操作经历了什么"></a>一次I/O操作经历了什么</h3><p>在正式开始之前，先对I/O流程有一个感性的认识。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">  <span class="comment">//fd已经在构造FileInputStream创建</span></span><br><span class="line">  FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/file1.txt&quot;</span>); </span><br><span class="line">  FileOutputStream out = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;/tmp/file2.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[in.available()];</span><br><span class="line">  in.read(buf);</span><br><span class="line">  out.write(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码是Java中典型的BIO，读取一个文件的内容，输出到另一个文件中。那么这个过程会发生那些事呢?请看下图</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126195327555.png" style="zoom: 67%;" />
+
+<p>发生了什么呢？</p>
+<ul>
+<li><code>in.read(buf)</code>执行时，JVM向kernel发起system call <code>read()</code></li>
+<li>操作系统发生上下文切换，由用户态(User mode)切换到内核态(Kernel mode)，把数据读取到Kernel space buffer</li>
+<li>Kernel把数据从Kernel space复制到User space，同时由内核态转为用户态。</li>
+<li>JVM继续执行<code>out.write(buf)</code>这行代码</li>
+<li>再次发生上下文切换，把数据复制到Kernel space buffer中。kernel把数据写入文件。</li>
+</ul>
+<p>从上面可以看出一个I/O操作，<strong>通常</strong>而言会发生下面的事</p>
+<ol>
+<li>两次上下文切换(User mode 和 Kernel mode之间转换)</li>
+<li>数据在Kernel space 和 User space之间复制</li>
+</ol>
+<h3 id="I-O模型种类"><a href="#I-O模型种类" class="headerlink" title="I/O模型种类"></a>I/O模型种类</h3><p>Linux下共有5种IO模型：</p>
+<ol>
+<li>阻塞IO（Blocking I/O）</li>
+<li>非阻塞IO（Non-Blocking I/O）</li>
+<li>IO多路复用（I/O Multiplexing (<code>select</code> 、<code>poll</code>、 <code>epoll</code>)）</li>
+<li>信号驱动IO（Signal driven I/O (<code>SIGIO</code>)）</li>
+<li>异步IO（Asynchronous I/O）</li>
+</ol>
+<h3 id="阻塞IO"><a href="#阻塞IO" class="headerlink" title="阻塞IO"></a>阻塞IO</h3><p>阻塞IO是很常见的一种IO模型。 在这种模型中，<strong>用户态的应用程序会执行一个操作系统的调用， 检查内核的数据是否准备好。如果内核的数据已经准备好， 就把数据复制到用户应用进程。如果内核没有准备好数据， 那么用户应用进程（线程）就阻塞，直到内核准备好数据并把数据从 内核复制到用户应用进程，</strong> 最后应用程序再处理数据，在等待数据到处理数据的两个阶段，整个进程都被阻塞。不能处理别的网络IO。调用应用程序处于一种不再消费 CPU 而只是简单等待响应的状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126115842261.png"></p>
+<p><strong>流程描述：</strong></p>
+<p>当用户进程调用了<code>recv()/recvfrom()</code>这个系统调用，kernel就开始了IO的第一个阶段：准备数据（对于网络IO来说，很多时候数据在一开始还没有到达。比如，还没有收到一个完整的UDP包。这个时候kernel就要等待足够的数据到来）。这个过程需要等待，也就是说数据被拷贝到操作系统内核的缓冲区中是需要一个过程的。而在用户进程这边，整个进程会被阻塞（当然，是进程自己选择的阻塞）。第二个阶段：当kernel一直等到数据准备好了，它就会将数据从kernel中拷贝到用户内存，然后kernel返回结果，用户进程才解除block的状态，重新运行起来。</p>
+<blockquote>
+<p>Process –&gt; system call –&gt; kernel –&gt; hardware(hard disk)</p>
+<p>上图是blocking I/O发起system call <code>recvfrom()</code>时，进程将一直阻塞等待另一端Socket的数据到来。在这种I/O模型下，我们不得不为每一个Socket都分配一个线程，这会造成很大的资源浪费。</p>
+</blockquote>
+<p><strong>阻塞IO是同步阻塞的：</strong></p>
+<ol>
+<li>阻塞IO的同步体现在：<strong>内核只有准备好数据并把数据复制到用户应用进程才会返回。</strong></li>
+<li>阻塞IO的阻塞体现在：<strong>用户应用进程等待内核准备数据和把数据从用户态拷贝到内核态的这整个过程，用户应用进程都必须一直等待。</strong> 当然，如果是本地磁盘IO，内核准备数据的时间可能会很短。 但网络IO就不一样了，因为服务端不知道客户端何时发送数据，内核就仍需要等待socket数据，时间就可能会很长。</li>
+</ol>
+<p><strong>优缺点：</strong></p>
+<p><strong>阻塞IO的优点是对于数据是能够保证无延时的，因为应用程序进程会一直阻塞直到IO完成。</strong> 但应用程序的阻塞就意味着应用程序进程无法执行其他任务， 这会大大降低程序性能。一个不太可行的办法是为每个客户端 socket 都分配一个线程， 这样就会提升server处理请求的能力。不过操作系统的线程资源是有限的， 如果请求过多，可能造成线程资源耗尽，系统卡死等后果。</p>
+<h3 id="非阻塞IO（网络IO模型）"><a href="#非阻塞IO（网络IO模型）" class="headerlink" title="非阻塞IO（网络IO模型）"></a>非阻塞IO（网络IO模型）</h3><p>在非阻塞IO模型中，用户态的应用程序也会执行一个操作系统的调用， 检查内核的数据是否准备完成。<strong>如果内核没有准备好数据, 内核会立刻返回结果，用户应用进程不用一直阻塞等待内核准备数据， 而是可以执行其他任务，但仍需要不断的向内核发起系统调用，检测数据是否准备好， 这个过程就叫轮询。</strong>轮询直到内核准备好数据，然后内核把数据拷贝到用户应用进程， 再进行数据处理。<strong>需要注意，拷贝数据整个过程，进程仍然是属于阻塞的状态</strong>。</p>
+<p>在网络IO时候，非阻塞IO也会进行recvform系统调用，检查数据是否准备好，与阻塞IO不一样，”非阻塞将大的整片时间的阻塞分成N多的小的阻塞, 所以进程不断地有机会 ’被‘ CPU光顾”。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126120717900.png"></p>
+<p><strong>流程描述：</strong></p>
+<p>当用户进程发出read操作时，如果kernel中的数据还没有准备好，那么它并不会block用户进程，而是立刻返回一个error。从用户进程角度讲，它发起一个read操作后，并不需要等待，而是马上就得到了一个结果。用户进程判断结果是一个error时，它就知道数据还没有准备好，于是它可以再次发送read操作。一旦kernel中的数据准备好了，并且又再次收到了用户进程的system call，那么它马上就将数据拷贝到了用户内存，然后返回。</p>
+<blockquote>
+<p>nonblocking IO的特点是用户进程需要不断的主动询问kernel数据好了没有。</p>
+</blockquote>
+<p>同样发起system call <code>recvfrom</code>，凭什么在blocking I/O会阻塞，而在这里kernel的数据还没就绪就直接返回<code>EWOULDBLOCK</code>呢？我们看看<code>recvfrom</code>函数定义：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">recvfrom</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  <span class="keyword">int</span> sockfd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> len, <span class="keyword">int</span> flags,</span></span></span><br><span class="line"><span class="params"><span class="function">  struct sockaddr *src_addr, <span class="keyword">socklen_t</span> *addrlen</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>在这里能看到<code>recvfrom</code>有个参数叫flags，默认情况下阻塞。可以设置flag为非阻塞让kernel在数据未就绪时直接返回。详细见<a href="https://linux.die.net/man/2/recvfrom">recvfrom</a>。</p>
+<p>非阻塞IO的非阻塞体现在：<strong>用户应用进程发起I/O操作时，不会因为数据还没就绪而阻塞（即不用阻塞在对内核的系统调用上）</strong></p>
+<p><strong>优缺点：</strong></p>
+<p>非阻塞IO的优点在于用户应用进程在轮询阶段可以执行其它任务。 但这也是它的缺点，轮询就代表着用户应用进程不是时刻都会发起系统调用。 <strong>可能数据准备好了，而用户应用进程可能等待其它任务执行完毕才会发起系统调用， 这就意味着数据可能会被延时获取，导致整体数据吞吐量的降低。</strong></p>
+<h3 id="IO多路复用（网络IO模型）"><a href="#IO多路复用（网络IO模型）" class="headerlink" title="IO多路复用（网络IO模型）"></a>IO多路复用（网络IO模型）</h3><p>由于同步非阻塞方式需要<strong>不断主动轮询</strong>，轮询占据了很大一部分过程，轮询会消耗大量的CPU时间，而 “后台” 可能有多个任务在同时进行，人们就想到了循环查询多个任务的完成状态，只要有任何一个任务完成，就去处理它。如果<strong>轮询不是进程的用户态</strong>，而是有人帮忙就好了。这就是所谓的 “<strong>IO 多路复用</strong>”。</p>
+<p>上面介绍的I/O模型都是<strong>直接发起I/O操作</strong>，而I/O Multiplexing首先向kernel发起system call，传入file descriptor和感兴趣的事件（readable、writable等）<strong>让kernel监测</strong>，当其中一个或多个fd数据就绪，就会返回结果。程序再发起真正的I/O操作<code>recvfrom</code>读取数据。</p>
+<p>在linux中，有3种system call可以让内核监测file descriptors，分别是select、poll、epoll。</p>
+<p>select调用是<strong>内核级别</strong>的，select轮询相对非阻塞的轮询的区别在于前者可以等待多个socket，能实现同时对多个IO端口进行监听，当其中任何一个socket的数据准好了，就能返回进行可读，然后进程再进行<code>recvform</code>系统调用，将数据由内核拷贝到用户进程，当然这个过程是阻塞的。select或poll调用之后，会阻塞进程，与blocking IO阻塞不同在于，此时的<strong>select不是等到socket数据全部到达再处理, 而是有了一部分数据就会调用用户进程来处理</strong>。如何知道有一部分数据到达了呢？监视的事情交给了内核，<strong>内核负责数据到达的处理</strong>。也可以理解为”非阻塞”吧。</p>
+<p>I/O复用模型会用到select、poll、epoll函数，这几个函数也会使进程阻塞，但是和阻<strong>塞I/O所不同的的，这两个函数可以同时阻塞多个I/O操作</strong>。而且可以<strong>同时对多个读操作，多个写操作的I/O函数进行检测，直到有数据可读或可写时</strong>（注意不是全部数据可读或可写），才真正调用I/O操作函数。</p>
+<p>对于多路复用，也就是轮询多个socket。多路复用既然可以处理多个IO，也就带来了新的问题，<strong>多个IO之间的顺序变得不确定了</strong>，当然也可以针对不同的编号。</p>
+<p>在IO多路复用模型中，<strong>用户应用进程会调用操作系统的select/poll/epoll函数，它会使内核同步的轮询指定的socket（在NIO中，socket就是注册到Selector上的SocketChannel，可以允许多个）直至监听的socket有数据可读或可写，select/poll/epoll函数才会返回，用户应用进程也会阻塞的等待 select/poll/epoll函数返回。</strong> 当 select/poll/epoll函数返回后，即某个socket有事件发生了，用户应用进程就会发起系统调用，处理事件，将socket数据复制到用户进程内，然后进行数据处理。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126122722800.png"></p>
+<blockquote>
+<p>上面的图和blocking IO的图其实并没有太大的不同，事实上，还更差一些。因为这里需要使用两个system call（select 和 recvfrom），而blocking IO只调用了一个system call（recvfrom）。但是，<strong>用select的优势在于它可以同时处理多个connection</strong>。</p>
+</blockquote>
+<p><strong>流程描述：</strong></p>
+<p>IO multiplexing就是我们说的select，poll，epoll，有些地方也称这种IO方式为event driven IO。<strong>select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO</strong>。它的基本原理就是select，poll，epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。<strong>当用户进程调用了select，那么整个进程会被block</strong>，而同时，kernel会“监视”所有select负责的socket，当任何一个socket中的数据准备好了，select就会返回。这个时候用户进程再调用read操作，将数据从kernel拷贝到用户进程。</p>
+<p>如果处理的连接数不是很高的话，使用select/epoll的web server不一定比使用multi-threading + blocking IO的web server性能更好，可能延迟还更大。（select/epoll的优势并不是对于单个连接能处理得更快，而是在于能处理更多的连接。）</p>
+<p>在IO multiplexing Model中，实际中，对于每一个socket，一般都设置成为<code>non-blocking</code>，但是，如上图所示，整个用户的process其实是一直被block的。只不过<strong>process是被select这个函数block，而不是被socket IO给block</strong>。所以<strong>IO多路复用是阻塞在select，epoll这样的系统调用之上，而没有阻塞在真正的I/O系统调用如recvfrom之上。</strong></p>
+<p><strong>IO多路复用模型是同步阻塞的：</strong></p>
+<ol>
+<li>IO多路复用模型的同步体现在：<strong>select函数只有监听到某个socket有事件才会返回</strong>。</li>
+<li>IO多路复用模型的阻塞体现在：<strong>用户应用进程会阻塞在对select函数上的调用上</strong>。</li>
+</ol>
+<blockquote>
+<p>同步是需要主动等待消息通知，而异步则是被动接收消息通知，通过回调、通知、状态等方式来被动获取消息。IO多路复用在阻塞到select阶段时，<strong>用户进程是主动等待并调用select函数获取数据就绪状态消息，并且其进程状态为阻塞</strong>。所以，把IO多路复用归为同步阻塞模式。</p>
+</blockquote>
+<p><strong>IO多路复用的优点在于内核可以处理多个socket， 相当于一个用户进程（线程）就可以处理多个socket连接。</strong> 这样不仅降低了系统的开销，并且对于需要高并发的应用是非常有利的。 而非阻塞IO和阻塞IO的一个用户应用进程只能处理一个socket， 要想处理多socket，只能新开进程或线程，但这样很消耗系统资源。</p>
+<p><strong>PS：在IO多路复用模型中, socket一般应该为非阻塞的， 这就是Java中NIO被称为非阻塞IO的原因。 但实际上NIO属于IO多路复用，它是同步阻塞的IO。 具体原因见 <a href="https://www.zhihu.com/question/37271342">知乎讨论</a></strong></p>
+<p>目前支持I/O多路复用的系统调用有 <code>select</code>，<code>pselect</code>，<code>poll</code>，<code>epoll</code>，I/O多路复用就是<strong>通过一种机制，一个进程可以监视多个描述符，一旦某个描述符就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作</strong>。但<code>select</code>，<code>pselect</code>，<code>poll</code>，<code>epoll</code>本质上都是<strong>同步I/O</strong>，因为他们都需要在<strong>读写事件就绪后自己负责进行读写</strong>，也就是说这个<strong>读写过程是阻塞的</strong>，而<strong>异步I/O则无需自己负责进行读写，异步I/O的实现会负责把数据从内核拷贝到用户空间</strong>。</p>
+<h4 id="select"><a href="#select" class="headerlink" title="select"></a>select</h4><p><strong>基本原理：</strong></p>
+<p>select 函数监视的文件描述符分3类，分别是<code>writefds</code>、<code>readfds</code>、和<code>exceptfds</code>。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。</p>
+<p><strong>函数定义：</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  <span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></span><br><span class="line"><span class="params"><span class="function">  fd_set *exceptfds, struct timeval *timeout</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>select函数可以传入3个fd_set，分别对应了不同事件的file descriptor。返回值是一个int值，代表了就绪的fd数量，这个数量是3个fd_set就绪fd数量总和。</p>
+<p>当程序发起system call select时流程如下</p>
+<ol>
+<li>程序阻塞等待kernel返回</li>
+<li>kernel发现有fd就绪，返回数量</li>
+<li>程序轮询3个fd_set寻找就绪的fd</li>
+<li>发起真正的I/O操作(read、recvfrom等)</li>
+</ol>
+<p><strong>优点:</strong></p>
+<ol>
+<li>select目前几乎在所有的平台上支持（良好跨平台支持）</li>
+<li>一次让kernel监测多个fd</li>
+</ol>
+<p><strong>缺点:</strong></p>
+<ol>
+<li><p>最大的缺陷就是单个进程所打开的FD是有一定限制的，它由FD_SETSIZE设置，默认值是1024，可以通过修改宏定义甚至重新编译内核的方式提升这一限制，但是这样也会造成效率的降低。</p>
+<blockquote>
+<p>一般来说这个数目和系统内存关系很大，具体数目可以<code>cat/proc/sys/fs/file-max</code>察看。32位机默认是1024个。64位机默认是2048。</p>
+</blockquote>
+</li>
+<li><p>kernel返回后，对socket进行扫描时是线性扫描，需要轮询所有fd找出就绪的fd，随着fd数量增加，性能会逐渐下降</p>
+<blockquote>
+<p>当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度，不管哪个Socket是活跃的，都遍历一遍。这会浪费很多CPU时间。<strong>如果能给套接字注册某个回调函数，当他们活跃时，自动完成相关操作，那就避免了轮询</strong>，这正是epoll与kqueue做的。</p>
+</blockquote>
+</li>
+<li><p>需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</p>
+</li>
+</ol>
+<p>更多的介绍请点击<a href="http://www.masterraghu.com/subjects/np/introduction/unix_network_programming_v1.3/ch06lev1sec3.html">select函数</a>查看。</p>
+<h4 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h4><p><strong>基本原理：</strong></p>
+<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。</p>
+<p><strong>函数定义：</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">poll</span><span class="params">(struct pollfd *fds, <span class="keyword">nfds_t</span> nfds, <span class="keyword">int</span> timeout)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//pollfd结构体如下</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">  <span class="keyword">short</span> events;     <span class="comment">/* requested events */</span></span><br><span class="line">  <span class="keyword">short</span> revents;    <span class="comment">/* returned events */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数fds是一个结构体数组（基于链表来存储），因此poll<strong>不受限FD_SETSIZE的值</strong>（没有最大连接数的限制）。</p>
+<p>缺点：</p>
+<ol>
+<li>大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。</li>
+<li>poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。</li>
+<li>只有linux支持poll。</li>
+</ol>
+<p><strong>注意：</strong></p>
+<p>从上面看，select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。</p>
+<h4 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h4><p>select和poll都是等待内核返回后轮询集合寻找就绪的fd，有没有一种机制，当某个fd就绪，kernel直接返回就绪的fd呢？这就是epoll。</p>
+<p>epoll是在2.6内核中提出的，是之前的select和poll的增强版本。相对于select和poll来说，epoll更加灵活，<strong>没有描述符限制</strong>。epoll使用一个文件描述符管理多个描述符，将用户关系的文件描述符的事件存放到内核的一个<strong>事件表</strong>中，这样在用户空间和内核空间的copy只需一次。</p>
+<p><strong>基本原理：</strong></p>
+<p>epoll支持<strong>水平触发</strong>和<strong>边缘触发</strong>，最大的特点在于边缘触发，它只告诉进程哪些fd刚刚变为就绪态，并且只会通知一次。还有一个特点是，epoll使用“事件”的就绪通知方式，通过epoll_ctl注册fd，一旦该fd就绪，内核就会采用类似callback的回调机制来激活该fd，epoll_wait便可以收到通知。</p>
+<blockquote>
+<p>epoll是一种<strong>I/O事件通知机制</strong>，linux kernel 2.5.44开始提供这个功能，用于取代select和poll。</p>
+</blockquote>
+<p>epoll内部结构用<strong>红黑树</strong>实现，用于监听程序注册的fd。和epoll相关的函数共有3个，分别如下</p>
+<ul>
+<li><code>epoll_create1</code>：创建一个epoll实例并返回它的fd</li>
+<li><code>epoll_ctl</code>：操作epoll实例，可往里面新增、删除fd</li>
+<li><code>epoll_wait</code>：等待epoll实例中有fd就绪，且返回就绪的fd</li>
+</ul>
+<h5 id="epoll-create1"><a href="#epoll-create1" class="headerlink" title="epoll_create1"></a>epoll_create1</h5><p>创建一个epoll实例并返回它的file descriptor</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create1</span><span class="params">(<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<h5 id="epoll-ctl"><a href="#epoll-ctl" class="headerlink" title="epoll_ctl"></a>epoll_ctl</h5><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd, struct epoll_event *event)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> <span class="title">epoll_data</span> &#123;</span></span><br><span class="line">  <span class="keyword">void</span>        *ptr;</span><br><span class="line">  <span class="keyword">int</span>          fd;</span><br><span class="line">  <span class="keyword">uint32_t</span>     u32;</span><br><span class="line">  <span class="keyword">uint64_t</span>     u64;</span><br><span class="line">&#125; <span class="keyword">epoll_data_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> &#123;</span></span><br><span class="line">  <span class="keyword">uint32_t</span>     events;      <span class="comment">/* Epoll events */</span></span><br><span class="line">  <span class="keyword">epoll_data_t</span> data;        <span class="comment">/* User data variable */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>epoll_ctl</code>用来操作epoll实例监听的fd，可以往epoll实例中新增、删除。参数解释如下：</p>
+<ul>
+<li><code>epdf</code>：即<code>epoll_create1</code>返回的fd</li>
+<li>op是operation的缩写，可为EPOLL_CTL_ADD、EPOLL_CTL_MOD、EPOLL_CTL_DEL</li>
+<li>fd即要监控的fd</li>
+<li>event即要注册的事件集合（可读、可写之类的）</li>
+</ul>
+<h5 id="epoll-wait"><a href="#epoll-wait" class="headerlink" title="epoll_wait"></a>epoll_wait</h5><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event *events,<span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用epoll_wait函数会阻塞，直到epoll实例监控的fd中有一个或多个fd就绪，或timeout。就绪的fd会被kernel添加到events数组中。</p>
+<ul>
+<li><code>epfd</code>：即<code>epoll_create1</code>返回的fd</li>
+<li><code>events</code>：<code>events</code>数组，就绪的fd将会放在这里</li>
+<li>最大的事件数量</li>
+<li>超时时间</li>
+</ul>
+<p>epoll是一种性能很高的同步I/O方案。现在linux中的高性能网络框架（tomcat、netty等）都有epoll的实现。缺点是只有linux支持epoll，BSD内核的kqueue类似于epoll。</p>
+<p>在select/poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行扫描，而epoll事先通过epoll_ctl()来注册一个文件描述符，一旦基于某个文件描述符就绪时，内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait()时便得到通知。(此处去掉了遍历文件描述符，而是通过监听回调的的机制。这正是epoll的魅力所在。)</p>
+<p><strong>注意：</strong></p>
+<p>如果没有大量的<code>idle-connection</code>或者<code>dead-connection</code>，epoll的效率并不会比select/poll高很多，但是当遇到大量的<code>idle-connection</code>，就会发现epoll的效率大大高于select/poll。</p>
+<h4 id="select、poll、epoll区别"><a href="#select、poll、epoll区别" class="headerlink" title="select、poll、epoll区别"></a>select、poll、epoll区别</h4><table>
+<thead>
+<tr>
+<th>函数</th>
+<th>支持一个进程所能打开的最大连接数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select</td>
+<td>单个进程所能打开的最大连接数有 FD_ SETSIZE宏定义，其大小是32个整数的大小（在32位的机器上，大小就是32* 32，同理64位机器上 FD_ SETSIZE为32*64），当然我们可以对进行修改，然后重新编译内核，但是性能可能会受到影响，这需要进一步的测试。</td>
+</tr>
+<tr>
+<td>poll</td>
+<td>poll本质上和select没有区别，但是它没有最大连接数的限制，原因是它是基于链表来存储的</td>
+</tr>
+<tr>
+<td>epoll</td>
+<td>虽然连接数有上限，但是很大，1G内存的机器上可以打开10万左右的连接，2G内存的机器可以打开20万左右的连接</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>FD剧增后带来的IO效率问题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select</td>
+<td>因为每次调用时都会对连接进行线性遍历，所以随着FD的增加会造成遍历速度慢的“线性下降性能问题”。</td>
+</tr>
+<tr>
+<td>poll</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>epoll</td>
+<td>因为每次调用时都会对连接进行线性遍历，所以随着FD的增加会造成遍历速度慢的“线性下降性能问题”。因为epoll内核中实现是根据每个fd上的callback函数来实现的，只有活跃的socket才会主动调用callback，所以在活跃socket较少的情况下，使用epoll没有前面两者的线性下降的性能问题，但是所有socket都很活跃的情况下，可能会有性能问题。</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th><strong>消息传递方式</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>select</td>
+<td>内核需要将消息传递到用户空间，都需要内核拷贝动作</td>
+</tr>
+<tr>
+<td>poll</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>epoll</td>
+<td>epoll通过内核和用户空间共享一块内存来实现的。</td>
+</tr>
+</tbody></table>
+<p><strong>综上，在选择select，poll，epoll时要根据具体的使用场合以及这三种方式的自身特点：</strong></p>
+<ol>
+<li>表面上看epoll的性能最好，但是在连接数少并且连接都十分活跃的情况下，select和poll的性能可能比epoll好，毕竟epoll的通知机制需要很多函数回调。</li>
+<li>select低效是因为每次它都需要轮询。但低效也是相对的，视情况而定，也可通过良好的设计改善。</li>
+</ol>
+<p><strong>epoll的优点：</strong></p>
+<ol>
+<li>没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）。</li>
+<li>效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数；即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。</li>
+<li>内存拷贝，利用<code>mmap()</code>文件映射内存加速与内核空间的消息传递；即epoll使用<code>mmap</code>减少复制开销。</li>
+</ol>
+<p><strong>epoll对文件描述符的操作有两种模式：<code>LT（level trigger）和ET（edge trigger）</code>。LT模式是默认模式，LT模式与ET模式的区别如下：</strong></p>
+<ul>
+<li>LT模式（水平触发）：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。</li>
+<li>ET模式（边缘触发）：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。在ET模式下，read一个fd的时候一定要把它的buffer读完，即读到read返回值小于请求值或遇到 <code>EAGAIN</code> 错误。</li>
+</ul>
+<p><strong>LT模式</strong></p>
+<p>LT（level triggered）是<strong>缺省工作方式</strong>，并且同时支持block和no-block socket。在这种做法中，内核告诉你一个文件描述符是否就绪了，然后你可以对这个就绪的fd进行IO操作。如果你不作任何操作，内核还是会继续通知你的。</p>
+<p><strong>ET模式</strong></p>
+<p>ET（edge-triggered）是<strong>高速工作方式</strong>，只支持no-block socket。在这种模式下，当描述符从未就绪变为就绪时，内核通过epoll告诉你。然后它会假设你知道文件描述符已经就绪，并且不会再为那个文件描述符发送更多的就绪通知，直到你做了某些操作导致那个文件描述符不再为就绪状态了（比如，你在发送，接收或者接收请求，或者发送接收的数据少于一定量时导致了一个EWOULDBLOCK 错误）。但是请注意，如果一直不对这个fd作IO操作（从而导致它再次变成未就绪），内核不会发送更多的通知（only once）。</p>
+<p>ET模式在很大程度上减少了epoll事件被重复触发的次数，因此效率要比LT模式高。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
+<h4 id="多路复用的适用场景"><a href="#多路复用的适用场景" class="headerlink" title="多路复用的适用场景"></a>多路复用的适用场景</h4><p>在I/O编程过程中，<strong>当需要同时处理多个客户端接入请求时</strong>，可以利用多线程或者I/O多路复用技术进行处理。I/O多路复用技术通过把多个I/O的阻塞复用到同一个select的阻塞上，从而使得系统在单线程的情况下可以同时处理多个客户端请求。与传统的多线程/多进程模型比，I/O多路复用的最大优势是<strong>系统开销小</strong>，系统<strong>不需要创建新的额外进程或者线程</strong>，也<strong>不需要维护</strong>这些进程和线程的运行，降低了系统的维护工作量，节省了系统资源，I/O多路复用的主要应用场景如下：</p>
+<ul>
+<li><p>当客户处理多个描述符时（一般是交互式输入和网络套接口），必须使用I/O复用。</p>
+</li>
+<li><p>当一个客户同时处理多个套接口时，而这种情况是可能的，但很少出现。</p>
+</li>
+<li><p>服务器需要同时处理多个处于监听状态或者多个连接状态的套接字。</p>
+<blockquote>
+<p>一个TCP服务器既要处理监听套接口，又要处理已连接套接口，一般也要用到I/O复用。</p>
+</blockquote>
+</li>
+<li><p>服务器需要同时处理多种网络协议的套接字。</p>
+<blockquote>
+<p>例如：一个服务器即要处理TCP，又要处理UDP，一般要使用I/O复用。</p>
+</blockquote>
+</li>
+<li><p>如果一个服务器要处理多个服务或多个协议，一般要使用I/O复用。</p>
+</li>
+</ul>
+<p>了解了前面三种IO模式，在用户进程进行系统调用的时候，<strong>他们在等待数据到来的时候，处理的方式不一样，直接等待，轮询，select或poll轮询</strong>，两个阶段过程：</p>
+<blockquote>
+<p>第一个阶段有的阻塞，有的不阻塞，有的可以阻塞又可以不阻塞。</p>
+<p>第二个阶段都是阻塞的。</p>
+</blockquote>
+<p><strong>从整个IO过程来看，他们都是顺序执行的，因此可以归为同步模型(synchronous)。都是进程主动等待且向内核检查状态。</strong></p>
+<p><strong>高并发的程序一般使用同步非阻塞方式而非多线程 + 同步阻塞方式</strong>。要理解这一点，首先要扯到并发和并行的区别。比如去某部门办事需要依次去几个窗口，办事大厅里的人数就是并发数，而窗口个数就是并行度。也就是说并发数是指同时进行的任务数（如同时服务的 HTTP 请求），而并行数是可以同时工作的物理资源数量（如 CPU 核数）。通过合理调度任务的不同阶段，并发数可以远远大于并行度，这就是区区几个 CPU 可以支持上万个用户并发请求的奥秘。在这种<strong>高并发的情况下，为每个任务（用户请求）创建一个进程或线程的开销非常大。而同步非阻塞方式可以把多个 IO 请求丢到后台去，这就可以在一个进程里服务大量的并发 IO 请求。</strong></p>
+<h3 id="信号驱动IO（网络IO模型）"><a href="#信号驱动IO（网络IO模型）" class="headerlink" title="信号驱动IO（网络IO模型）"></a>信号驱动IO（网络IO模型）</h3><p>在信号驱动IO模型中，<strong>用户应用进程发起sigaction系统调用，内核收到并立即返回。 用户应用进程可以继续执行其他任务，不会阻塞。当内核准备好数据后向用户应用进程 发送SIGIO信号，应用进程收到信号后，发起系统调用，将数据从内核拷贝到用户进程，</strong> 然后进行数据处理。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126174228791.png"></p>
+<p>个人感觉在内核收到系统调用就立刻返回这一点很像异步IO的方式了，不过与异步IO仍有很大差别。</p>
+<p>Singal-Driven I/O模型有点复杂，且存在一些限制。有兴趣请点击<a href="http://www.masterraghu.com/subjects/np/introduction/unix_network_programming_v1.3/ch25lev1sec2.html#ch25lev1sec2">Signal-Driven I/O for Sockets</a>查看。</p>
+<h3 id="异步IO"><a href="#异步IO" class="headerlink" title="异步IO"></a>异步IO</h3><p>在异步IO模型中，<strong>用户进程发起aio_read系统调用，无论内核的数据是否准备好，都会立即返回。用户应用进程不会阻塞，可以继续执行其他任务。当内核准备好socket数据，会直接把数据复制到用户应用进程。最后内核会通知用户应用进程IO完成。IO两个阶段，进程都是非阻塞的</strong></p>
+<blockquote>
+<p>Linux提供了AIO库函数实现异步，但是用的很少。目前有很多开源的异步IO库，例如libevent、libev、libuv。</p>
+</blockquote>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126174546502.png"></p>
+<blockquote>
+<p>请留意图片细节，程序不需要再次发起读取数据的system call，因为kernel会把数据复制到user space再通知进程处理，整个过程不存在任何阻塞。</p>
+</blockquote>
+<p>流程描述：</p>
+<p>用户进程发起<code>aio_read</code>操作之后，立刻就可以开始去做其它的事。而另一方面，从kernel的角度，当它收到一个<code>asynchronous read</code>之后，首先它会立刻返回，所以不会对用户进程产生任何<code>block</code>。然后，kernel会等待数据准备完成，然后将数据拷贝到用户内存，当这一切都完成之后，kernel会给用户进程发送一个signal或执行一个基于线程的回调函数来完成这次 IO 处理过程，告诉它read操作完成了。</p>
+<p><strong>异步IO的异步体现在：内核不用等待数据准备好就立刻返回， 所以内核肯定需要在IO完成后通知用户应用进程。</strong></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">aio_read</span><span class="params">(struct aiocb *aiocbp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//aiocb</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">aiocb</span> &#123;</span></span><br><span class="line">  <span class="comment">/* The order of these fields is implementation-dependent */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span>             aio_fildes;     <span class="comment">/* File descriptor */</span></span><br><span class="line">  <span class="keyword">off_t</span>           aio_offset;     <span class="comment">/* File offset */</span></span><br><span class="line">  <span class="keyword">volatile</span> <span class="keyword">void</span>  *aio_buf;        <span class="comment">/* Location of buffer */</span></span><br><span class="line">  <span class="keyword">size_t</span>          aio_nbytes;     <span class="comment">/* Length of transfer */</span></span><br><span class="line">  <span class="keyword">int</span>             aio_reqprio;    <span class="comment">/* Request priority */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sigevent</span> <span class="title">aio_sigevent</span>;</span>   <span class="comment">/* Notification method */</span></span><br><span class="line">  <span class="keyword">int</span>             aio_lio_opcode; <span class="comment">/* Operation to be performed;</span></span><br><span class="line"><span class="comment">                                       lio_listio() only */</span></span><br><span class="line">  <span class="comment">/* Various implementation-internal fields not shown */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>在 Linux 中，通知的方式是 “信号”：</strong></p>
+<p><strong>如果这个进程正在用户态忙着做别的事（例如在计算两个矩阵的乘积），那就强行打断之，调用事先注册的信号处理函数，这个函数可以决定何时以及如何处理这个异步任务</strong>。由于信号处理函数是突然闯进来的，因此跟中断处理程序一样，有很多事情是不能做的，因此保险起见，<strong>一般是把事件 “登记” 一下放进队列，然后返回该进程原来在做的事</strong>。</p>
+<p>如果这个进程正在内核态忙着做别的事，例如以同步阻塞方式读写磁盘，那就只好把这个通知挂起来了，等到内核态的事情忙完了，快要回到用户态的时候，再触发信号通知。</p>
+<p>如果这个进程现在被挂起了，例如无事可做 sleep 了，那就把这个进程唤醒，下次有 CPU 空闲的时候，就会调度到这个进程，触发信号通知。</p>
+<p>异步 API 说来轻巧，做来难，这主要是对 API 的实现者而言的。Linux 的异步 IO（AIO）支持是 2.6.22 才引入的，还有很多系统调用不支持异步 IO。Linux 的异步 IO 最初是为数据库设计的，因此<strong>通过异步 IO 的读写操作不会被缓存或缓冲，这就无法利用操作系统的缓存与缓冲机制</strong>。</p>
+<p><strong>很多人把 Linux 的 O_NONBLOCK 认为是异步方式，但事实上这是前面讲的同步非阻塞方式。</strong>需要指出的是，虽然 Linux 上的 IO API 略显粗糙，但每种编程框架都有封装好的异步 IO 实现。操作系统少做事，把更多的自由留给用户，正是 UNIX 的设计哲学，也是 Linux 上编程框架百花齐放的一个原因。</p>
+<p>从前面 IO 模型的分类中，我们可以看出 AIO 的动机：</p>
+<ul>
+<li>同步阻塞模型需要在 IO 操作开始时阻塞应用程序。这意味着不可能同时重叠进行处理和 IO 操作。</li>
+<li>同步非阻塞模型允许处理和 IO 操作重叠进行，但是这需要应用程序根据重现的规则来检查 IO 操作的状态。</li>
+<li>这样就剩下异步非阻塞 IO 了，它允许处理和 IO 操作重叠进行，包括 IO 操作完成的通知。</li>
+</ul>
+<p>IO多路复用除了需要阻塞之外，select 函数所提供的功能（异步阻塞 IO）与 AIO 类似。不过，它是对通知事件进行阻塞，而不是对 IO 调用进行阻塞。</p>
+<h3 id="疑难解答"><a href="#疑难解答" class="headerlink" title="疑难解答"></a>疑难解答</h3><h4 id="blocking和non-blocking区别"><a href="#blocking和non-blocking区别" class="headerlink" title="blocking和non-blocking区别"></a>blocking和non-blocking区别</h4><p>阻塞I/O发起真正的 I/O操作时（如read、recvfrom等）将会阻塞等待kernel数据就绪。非阻塞I/O在kernel还准备数据的情况下会立刻返回并且会不断发起system call，直到kernel数据就绪。</p>
+<h4 id="synchronous-IO和asynchronous-IO区别"><a href="#synchronous-IO和asynchronous-IO区别" class="headerlink" title="synchronous IO和asynchronous IO区别"></a>synchronous IO和asynchronous IO区别</h4><p>POSIX对这两个术语定义如下：</p>
+<ul>
+<li>同步I/O操作将会造成请求进程阻塞，直到I/O操作完成</li>
+<li>异步I/O操作不会造成进程阻塞</li>
+</ul>
+<p>根据上面的定义我们可以看出，前面4种I/O模型都是同步I/O，因为它们的I/O操作(<code>recvfrom</code>)都会造成进程阻塞。只有最后一个I/O模型匹配异步I/O的定义。</p>
+<blockquote>
+<p>POSIX defines these two terms as follows:</p>
+<ul>
+<li>A synchronous I/O operation causes the requesting process to be blocked until that I/O operation completes.</li>
+<li>An asynchronous I/O operation does not cause the requesting process to be blocked.</li>
+</ul>
+<p>Using these definitions, the first four I/O models—blocking, nonblocking, I/O multiplexing, and signal-driven I/O—are all synchronous because the actual I/O operation (recvfrom) blocks the process. Only the asynchronous I/O model matches the asynchronous I/O definition.</p>
+</blockquote>
+<p>两者的区别就在于synchronous IO做”IO operation”的时候会将process阻塞。按照这个定义，之前所述的blocking IO，non-blocking IO，IO multiplexing都属于synchronous IO。</p>
+<p>有人会说，non-blocking IO并没有被block啊。这里有个非常“狡猾”的地方，定义中所指的”IO operation”是指真实的IO操作，就是例子中的recvfrom这个system call。non-blocking IO在执行recvfrom这个system call的时候，如果kernel的数据没有准备好，这时候不会block进程。但是，当kernel中数据准备好的时候，recvfrom会将数据从kernel拷贝到用户内存中，这个时候进程是被block了，在这段时间内，进程是被block的。</p>
+<p>而asynchronous IO则不一样，当进程发起IO 操作之后，就直接返回再也不理睬了，直到kernel发送一个信号，告诉进程说IO完成。在这整个过程中，进程完全没有被block。</p>
+<h4 id="I-O-Multiplexing是非阻塞I-O吗？"><a href="#I-O-Multiplexing是非阻塞I-O吗？" class="headerlink" title="I/O Multiplexing是非阻塞I/O吗？"></a>I/O Multiplexing是非阻塞I/O吗？</h4><p>很多人会混淆两者的关系，很显然，不是！</p>
+<p>不管是select、poll、epoll都会导致进程阻塞。发起真正的IO操作时(比如recvfrom)，进程也会阻塞。</p>
+<p>I/O Multiplexing优点在于一次性可以监控大量的file descriptors。</p>
+<p><strong>特别注意：select、poll、epoll并不是I/O操作，read、recvfrom这些才是。</strong></p>
+<h4 id="5种IO模型的比较"><a href="#5种IO模型的比较" class="headerlink" title="5种IO模型的比较"></a>5种IO模型的比较</h4><p>从上述五种 IO 模型可以看出，应用进程对内核发起 IO 系统调用后，内核会经过两个阶段来完成数据的传输：</p>
+<ul>
+<li>第一阶段：等待数据。即应用进程发起 IO 系统调用后，会一直等待数据；当有数据传入服务器，会将数据放入内核空间，此时数据准备好。</li>
+<li>第二阶段：将数据从内核空间复制到用户空间，并返回给应用程序成功标识。</li>
+</ul>
+<p><strong>各个IO Model的比较如图所示：</strong></p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127180434891.png" style="zoom: 80%;" />
+
+<blockquote>
+<p>前四种模型的第二阶段是相同的，都是处于阻塞状态，其主要区别在第一阶段。而异步 IO 模型则不同，应用进程在这两个阶段是完全不阻塞的。</p>
+</blockquote>
+<p>通过上面的图片，可以发现<code>non-blocking IO</code>和<code>asynchronous IO</code>的区别还是很明显的。在<code>non-blocking IO</code>中，虽然进程大部分时间都不会被block，但是它仍然要求进程去主动的check，并且当数据准备完成以后，也需要进程主动的再次调用<code>recvfrom</code>来将数据拷贝到用户内存。而<code>asynchronous IO</code>则完全不同。它就像是用户进程将整个IO操作交给了它人（kernel）完成，然后他人做完后发信号通知。在此期间，用户进程不需要去检查IO操作的状态，也不需要主动的去拷贝数据。</p>
+<table>
+<thead>
+<tr>
+<th>IO 模型</th>
+<th>第一阶段</th>
+<th>第二阶段</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>阻塞式IO</td>
+<td>阻塞</td>
+<td>阻塞</td>
+</tr>
+<tr>
+<td>非阻塞式IO</td>
+<td>非阻塞</td>
+<td>阻塞</td>
+</tr>
+<tr>
+<td>IO多路程复用</td>
+<td>阻塞（Select）</td>
+<td>阻塞</td>
+</tr>
+<tr>
+<td>信号驱动式IO</td>
+<td>异步</td>
+<td>阻塞</td>
+</tr>
+<tr>
+<td>异步IO</td>
+<td>异步</td>
+<td>异步</td>
+</tr>
+</tbody></table>
+<p>文章总结来源：</p>
+<p><a href="https://qsjzwithguang19forever.gitee.io/framework-learning/gitbook_doc/jdk-jvm-juc/Linux_IO.html">framework-learning-Linux IO</a></p>
+<p><a href="https://wiyi.org/linux-io-model.html">带你彻底理解Linux五种I/O模型 </a></p>
+<p><a href="https://segmentfault.com/a/1190000039898780">浅聊Linux的五种IO模型</a></p>
+<p><a href="https://www.jianshu.com/p/486b0965c296">聊聊Linux 五种IO模型</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/371508875">聊聊同步、异步、阻塞与非阻塞</a></p>
+<p><a href="https://www.jianshu.com/p/dfd940e7fca2">聊聊IO多路复用之select、poll、epoll详解</a></p>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>字符串反转</title>
     <url>/post/8de7ec78/</url>
     <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
@@ -1058,6 +1618,81 @@
       </categories>
       <tags>
         <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+<span id="more"></span>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>字符集</tag>
       </tags>
   </entry>
   <entry>
@@ -1098,6 +1733,159 @@
       </categories>
       <tags>
         <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据库基础知识</title>
+    <url>/post/1ad06ab1/</url>
+    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
+<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
+<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
+<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
+<span id="more"></span>
+<p>数据库系统基本构成如下图所示：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
+<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
+<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
+<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
+<blockquote>
+<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
+</blockquote>
+<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
+<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
+<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
+<blockquote>
+<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
+</blockquote>
+<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
+<blockquote>
+<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
+</blockquote>
+<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
+<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
+<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
+</ul>
+<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
+<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
+<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
+<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
+<ol>
+<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
+<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
+<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
+<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
+<li>……</li>
+</ol>
+<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
+<ol>
+<li>保证了数据库数据的一致性和完整性；</li>
+<li>级联操作方便，减轻了程序代码量；</li>
+<li>……</li>
+</ol>
+<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
+<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
+<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
+<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
+<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
+<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
+<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
+<blockquote>
+<p>表：学号、课程号、姓名、学分</p>
+</blockquote>
+<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
+<p><strong>可能会存在问题：</strong></p>
+<ul>
+<li>数据冗余：每条记录都含有相同信息；</li>
+<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
+<li>插入异常：学生未选课，无法记录进数据库；</li>
+<li>更新异常：调整课程学分，所有行都调整。</li>
+</ul>
+<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
+<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
+<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
+<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
+</blockquote>
+<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
+</blockquote>
+<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
+<blockquote>
+<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
+</blockquote>
+<p><strong>3NF(第三范式)</strong></p>
+<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
+<p><strong>总结</strong></p>
+<ul>
+<li>1NF：属性不可再分。</li>
+<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
+<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
+</ul>
+<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
+<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
+<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
+<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以尽量的减少数据冗余</li>
+<li>数据表更新快体积小</li>
+<li>范式化的更新操作比反范式化更快</li>
+<li>范式化的表通常比反范式化更小</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对于查询需要对多个表进行关联导致性能降低</li>
+<li>更难进行索引优化</li>
+</ul>
+<p><strong>反范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以减少表的关联</li>
+<li>可以更好的进行索引优化</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>存在数据冗余及数据维护异常</li>
+<li>对数据的修改需要更多的成本</li>
+</ul>
+<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
+<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
+<blockquote>
+<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
+<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
+</blockquote>
+<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
+<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
+<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
+<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
+<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
+<p><strong>DML 语句和 DDL 语句区别：</strong></p>
+<ul>
+<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
+<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
+</ul>
+<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
+<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
+<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
+<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
+<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
+<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
+<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
+<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
+</ol>
+<p>文章总结来源：</p>
+<p><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></p>
+<p><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>基础知识</tag>
       </tags>
   </entry>
   <entry>
@@ -1644,81 +2432,6 @@
       </categories>
   </entry>
   <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>模拟</title>
     <url>/post/d1f7904c/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
@@ -1764,52 +2477,70 @@
       </tags>
   </entry>
   <entry>
-    <title>记忆化搜索</title>
-    <url>/post/cb5e0eb8/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
-<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
-<span id="more"></span>
-
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>函数有返回值</li>
-<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
-<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+    <title>面试规则</title>
+    <url>/post/d13fc60c/</url>
+    <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
+<ul>
+<li>知识密集型岗位（需要共鸣）</li>
 </ul>
-<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<p><strong>规则二：问题之间是可以转化的</strong></p>
 <blockquote>
-<p>本质上是自顶向下的动态规划加备忘录。</p>
+<p>可以将面试官问的问题转化为对应的具体的知识点，例如：</p>
+<p>有没有高并发经验？ -&gt; 分库分表、缓冲区的使用、高并发网络IO如何处理</p>
 </blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
-<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
-</tr>
-</tbody></table>
+<span id="more"></span>
+<p><strong>规则三：问题是可以被拆解的</strong></p>
+<blockquote>
+<p>有没有做过大项目？</p>
+<p>拆解：什么样的大项目？</p>
+<p>项目大在哪里？</p>
+<ul>
+<li>需求特别多？排期特别长？</li>
+<li>沟通复杂？团队多？</li>
+<li>技术特别难？</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>类似的问题：</p>
+<ul>
+<li>Java做过几年？</li>
+<li>有没有大项目经验？</li>
+<li>有没有高并发经验？</li>
+<li>有没有XXX方向的经验？</li>
+</ul>
+<p>应对方法：学会拆解问题，避虛就实，用硬核知识突破面试</p>
+</blockquote>
+<p><strong>规则四：永远不要被面试官牵着鼻子走</strong></p>
+<blockquote>
+<p>应对方法：“引导”面试官提问自己熟悉的知识，从而展示自己学习能力和对知识的学习深度（是否透彻）。</p>
+</blockquote>
+<p><strong>规则五：给面试官有思想深度的回答</strong></p>
+<blockquote>
+<p>如何说？<br>正着说、反着说、折中说、避免「背诵」</p>
+<p>例如：</p>
+<p>面试官：给我解释下高并发?</p>
+<ul>
+<li>高并发的核心是开发成本和硬件成本之间找到一个折中可行的方案</li>
+<li>简单点说解决高并发是在延迟和丢包率可控的情况下，追求吞吐量</li>
+<li>解决高并发要关注线程和I/O模型、数据库选型、缓存优化、缓冲区设计、解耦和消息队列、分布式服务设计等等方面的设计</li>
+</ul>
+<p>应对方法：只有自己<strong>对知识理解透彻</strong>的情况下，才能用自己的语言正确的表述出来。</p>
+</blockquote>
+<blockquote>
+<p><strong>非官方、简短而本质的回答</strong></p>
+<ul>
+<li>LinkedHashMap是一个元素间用链表相连的哈希表</li>
+<li>HashMap就是哈希表实现的Map，TreeMap是用树实现的Map，Map是一种映射关系</li>
+<li>AQS解决Java语言没有实现同步元语底层框架的问题</li>
+<li>B+树是一棵支持区间查找的B树</li>
+<li>DNS是一个经典的分布式设计、BigTable是另一个</li>
+<li>元编程是程序改写程序</li>
+</ul>
+</blockquote>
 ]]></content>
       <categories>
-        <category>算法</category>
+        <category>面试</category>
       </categories>
-      <tags>
-        <tag>记忆化搜索</tag>
-      </tags>
   </entry>
   <entry>
     <title>理解linux中的file descriptor(文件描述符)</title>
@@ -1936,782 +2667,51 @@
       </tags>
   </entry>
   <entry>
-    <title>数据库基础知识</title>
-    <url>/post/1ad06ab1/</url>
-    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
-<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
-<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
-<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
+    <title>记忆化搜索</title>
+    <url>/post/cb5e0eb8/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
 <span id="more"></span>
-<p>数据库系统基本构成如下图所示：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
-<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
-<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
-<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
-<blockquote>
-<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
-</blockquote>
-<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
-<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
-<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
-<blockquote>
-<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
-</blockquote>
-<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
-<blockquote>
-<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
-</blockquote>
-<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
-<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
-<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
 </ul>
-<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
-<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
-<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
-<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
-<ol>
-<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
-<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
-<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
-<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
-<li>……</li>
-</ol>
-<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
-<ol>
-<li>保证了数据库数据的一致性和完整性；</li>
-<li>级联操作方便，减轻了程序代码量；</li>
-<li>……</li>
-</ol>
-<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
-<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
-<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
-<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
-<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
-<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
-<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
 <blockquote>
-<p>表：学号、课程号、姓名、学分</p>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
 </blockquote>
-<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
-<p><strong>可能会存在问题：</strong></p>
-<ul>
-<li>数据冗余：每条记录都含有相同信息；</li>
-<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
-<li>插入异常：学生未选课，无法记录进数据库；</li>
-<li>更新异常：调整课程学分，所有行都调整。</li>
-</ul>
-<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
-<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
-<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
-<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
-</blockquote>
-<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
-</blockquote>
-<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
-<blockquote>
-<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
-</blockquote>
-<p><strong>3NF(第三范式)</strong></p>
-<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
-<p><strong>总结</strong></p>
-<ul>
-<li>1NF：属性不可再分。</li>
-<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
-<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
-</ul>
-<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
-<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
-<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
-<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以尽量的减少数据冗余</li>
-<li>数据表更新快体积小</li>
-<li>范式化的更新操作比反范式化更快</li>
-<li>范式化的表通常比反范式化更小</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>对于查询需要对多个表进行关联导致性能降低</li>
-<li>更难进行索引优化</li>
-</ul>
-<p><strong>反范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以减少表的关联</li>
-<li>可以更好的进行索引优化</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>存在数据冗余及数据维护异常</li>
-<li>对数据的修改需要更多的成本</li>
-</ul>
-<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
-<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
-<blockquote>
-<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
-<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
-</blockquote>
-<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
-<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
-<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
-<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
-<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
-<p><strong>DML 语句和 DDL 语句区别：</strong></p>
-<ul>
-<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
-<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
-</ul>
-<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
-<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
-<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
-<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
-<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
-<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
-<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
-<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
-</ol>
-<p>文章总结来源：</p>
-<p><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></p>
-<p><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
-        <category>数据库</category>
+        <category>算法</category>
       </categories>
       <tags>
-        <tag>基础知识</tag>
+        <tag>记忆化搜索</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Linux IO</title>
-    <url>/post/57ec66b6/</url>
-    <content><![CDATA[<h2 id="概念说明"><a href="#概念说明" class="headerlink" title="概念说明"></a>概念说明</h2><h3 id="用户空间与内核空间"><a href="#用户空间与内核空间" class="headerlink" title="用户空间与内核空间"></a>用户空间与内核空间</h3><p>现在操作系统都是采用<strong>虚拟存储器</strong>，那么对32位操作系统而言，它的寻址空间（虚拟存储空间）为4G（2的32次方）。操作系统的核心是内核，独立于普通的应用程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。为了保证用户进程不能直接操作内核（kernel），保证内核的安全，操作系统将虚拟空间划分为两部分，一部分为内核空间，一部分为用户空间。</p>
-<blockquote>
-<p>针对linux操作系统而言，将最高的1G字节（从虚拟地址0xC0000000到0xFFFFFFFF），供内核使用，称为内核空间，而将较低的3G字节（从虚拟地址0x00000000到0xBFFFFFFF），供各个进程使用，称为用户空间。</p>
-</blockquote>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127193145761.png" style="zoom:67%;" />
-
-<h3 id="进程切换"><a href="#进程切换" class="headerlink" title="进程切换"></a>进程切换</h3><p>为了控制进程的执行，内核必须有能力挂起正在CPU上运行的进程，并恢复以前挂起的某个进程的执行。这种行为被称为进程切换。因此可以说，任何进程都是在操作系统内核的支持下运行的，是与内核紧密相关的。</p>
-<p>从一个进程的运行转到另一个进程上运行，这个过程中经过下面这些变化：</p>
-<ol>
-<li>保存处理机上下文，包括程序计数器和其他寄存器。</li>
-<li>更新PCB信息。</li>
-<li>把进程的PCB移入相应的队列，如就绪、在某事件阻塞等队列。</li>
-<li>选择另一个进程执行，并更新其PCB。</li>
-<li>更新内存管理的数据结构。</li>
-<li>恢复处理机上下文。</li>
-</ol>
-<blockquote>
-<p>进程切换需要消耗一定的资源。</p>
-</blockquote>
-<h3 id="进程的阻塞"><a href="#进程的阻塞" class="headerlink" title="进程的阻塞"></a>进程的阻塞</h3><p>正在执行的进程，由于期待的某些事件未发生，如请求系统资源失败、等待某种操作的完成、新数据尚未到达或无新工作做等，则由系统自动执行<strong>阻塞原语(Block)<strong>，使自己由运行状态变为阻塞状态。可见，进程的阻塞是进程自身的一种主动行为，也因此只有处于运行态的进程（获得CPU），才可能将其转为阻塞状态。</strong>当进程进入阻塞状态，是不占用CPU资源的</strong>。</p>
-<h3 id="文件描述符fd"><a href="#文件描述符fd" class="headerlink" title="文件描述符fd"></a>文件描述符fd</h3><p>文件描述符（File descriptor）是计算机科学中的一个术语，是一个<strong>用于表述指向文件的引用的抽象化概念</strong>。</p>
-<p>文件描述符在形式上是一个非负整数。实际上，它是一个索引值，指向内核为每一个进程所维护的该进程打开文件的记录表。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。在程序设计中，一些涉及底层的程序编写往往会围绕着文件描述符展开。但是文件描述符这一概念往往只适用于UNIX、Linux这样的操作系统。</p>
-<p>更多内容详见：<a href="https://feyl.github.io/post/1e8930fb/">理解linux中的file descriptor(文件描述符)</a></p>
-<h3 id="缓存-IO"><a href="#缓存-IO" class="headerlink" title="缓存 IO"></a>缓存 IO</h3><p>缓存 IO 又被称作<strong>标准 IO</strong>，大多数文件系统的默认 IO 操作都是缓存 IO。在 Linux 的缓存 IO 机制中，<strong>操作系统会将 IO 的数据缓存在文件系统的页缓存（page cache）中，也就是说，数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间</strong>。</p>
-<p><strong>缓存 IO 的缺点：</strong>数据在传输过程中需要在应用程序地址空间和内核进行多次数据拷贝操作，这些数据拷贝操作所带来的 CPU 以及内存开销是非常大的。</p>
-<h3 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h3><p>Socket 中文翻译为套接字，是计算机网络中进程间进行<strong>双向通信的端点的抽象</strong>。一个 Socket 代表了网络通信的一端，是由操作系统提供的进程间通信机制。</p>
-<ul>
-<li>在操作系统中，通常会为应用程序提供一组应用程序接口，称为 Socket 接口（Socket API）。应用程序可以通过 Socket 接口，来使用网络 Socket，以进行数据的传输。</li>
-<li>一个 Socket 由IP地址和端口组成，即：Socket 地址 = IP地址 : 端口号。</li>
-<li>在同一台计算机上，TCP 协议与 UDP 协议可以同时使用相同的端口（Port），而互不干扰。</li>
-<li>要想实现网络通信，至少需要一对 Socket，其中一个运行在客户端，称之为 Client Socket；另一个运行在服务器端，称之为 Server Socket。</li>
-<li>Socket 之间的连接过程可以分为三个步骤：（1）服务器监听；（2）客户端连接；（3）连接确认。</li>
-</ul>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127181515932.png" style="zoom:80%;" />
-
-<h4 id="Socket-缓冲区"><a href="#Socket-缓冲区" class="headerlink" title="Socket 缓冲区"></a>Socket 缓冲区</h4><p>每个 Socket 被创建后，都会在内核中分配两个缓冲区：输入缓冲区和输出缓冲区。</p>
-<ul>
-<li>通过 Socket 发送数据并不会立即向网络中传输数据，而是先将数据写入到输出缓冲区中，再由 TCP 协议将数据从输出缓冲区发送到目标主机。</li>
-<li>通过 Socket 接收数据也是如此，也是从输入缓冲区中读取数据，而不是直接从网络中读取。</li>
-</ul>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127181657439.png" style="zoom:80%;" />
-
-
-
-
-
-<h2 id="操作系统的内核"><a href="#操作系统的内核" class="headerlink" title="操作系统的内核"></a>操作系统的内核</h2><p>操作系统的内核是操作系统的核心部分。 它负责<strong>系统的内存，硬件设备，文件系统以及应用程序的管理</strong>。</p>
-<h3 id="操作系统的用户态与内核态"><a href="#操作系统的用户态与内核态" class="headerlink" title="操作系统的用户态与内核态"></a>操作系统的用户态与内核态</h3><p>unix与linux的体系架构：分为用户态与内核态。 用户态与内核态与内核态是操作系统对<strong>执行权限进行分级</strong>后的不同的<strong>运行模式</strong>。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126105736357.png"></p>
-<h3 id="为什么要有用户态与内核态？"><a href="#为什么要有用户态与内核态？" class="headerlink" title="为什么要有用户态与内核态？"></a>为什么要有用户态与内核态？</h3><p>在cpu的所有指令中，有些指令是非常危险的，如果使用不当，将会造成系统崩溃等后果。 为了避免这种情况发生，cpu将指令划分为<strong>特权级（内核态）指令</strong>和<strong>非特权级（用户态）指令。</strong></p>
-<p><strong>对于那些危险的指令只允许内核及其相关模块调用，对于那些不会造成危险的指令，就允许用户应用程序调用。</strong></p>
-<ul>
-<li>内核态（核心态，特权态）：<strong>内核态是操作系统内核运行的模式。</strong> 内核态控制计算机的硬件资源，如硬件设备，文件系统等等，并为上层应用程序提供执行环境。</li>
-<li>用户态：<strong>用户态是用户应用程序运行的状态。</strong>应用程序必须依托于内核态运行，因此用户态的操作权限比内核态是要低的，如磁盘，文件等，访问操作都是受限的。</li>
-<li>系统调用：系统调用是操作系统为应用程序提供能够访问到内核态的资源的接口。</li>
-</ul>
-<h3 id="用户态切换到内核态的几种方式"><a href="#用户态切换到内核态的几种方式" class="headerlink" title="用户态切换到内核态的几种方式"></a>用户态切换到内核态的几种方式</h3><ul>
-<li>系统调用：系统调用是用户态主动要求切换到内核态的一种方式，用户应用程序通过操作系统调用内核为上层应用程序开放的接口来执行程序。</li>
-<li>异常：当cpu在执行用户态的应用程序时，发生了某些不可知的异常。 于是当前用户态的应用进程切换到处理此异常的内核的程序中去。</li>
-<li>硬件设备的中断：当硬件设备完成用户请求后，会向cpu发出相应的中断信号， 这时cpu会暂停执行下一条即将要执行的指令，转而去执行与中断信号对应的应用程序， 如果先前执行的指令是用户态下程序的指令，那么这个转换过程也是用户态到内核态的转换。</li>
-</ul>
-<h3 id="同步与异步"><a href="#同步与异步" class="headerlink" title="同步与异步"></a>同步与异步</h3><p>首先来解释同步和异步的概念，这两个概念与消息的通知机制有关。也就是同步与异步主要是从<strong>消息通知机制</strong>角度来说的。</p>
-<h4 id="概念描述"><a href="#概念描述" class="headerlink" title="概念描述"></a>概念描述</h4><p><strong>同步</strong>就是一个任务的完成需要依赖另外一个任务时，只有等待被依赖的任务完成后，依赖的任务才能算完成，这是一种可靠的任务序列。要么成功都成功，失败都失败，两个任务的状态可以保持一致。</p>
-<blockquote>
-<p>例如：一个线程调用一个方法计算 1 - 100 的和，如果方法没有计算完，就不返回。</p>
-</blockquote>
-<p><strong>异步</strong>是不需要等待被依赖的任务完成，只是通知被依赖的任务要完成什么工作，依赖的任务也立即执行，只要自己完成了整个任务就算完成了。至于被依赖的任务最终是否真正完成，依赖它的任务无法确定，所以它是不可靠的任务序列。</p>
-<blockquote>
-<p>例如：一个线程调用一个方法计算 1 - 100 的和，该方法立刻返回，但是由于方法没有返回结果，所以就需要被调用的这个方法来通知调用线程 1 - 100的结果，或者线程在调用方法的时候指定一个回调函数来告诉被调用的方法执行完后就执行回调函数。</p>
-</blockquote>
-<h4 id="消息通知"><a href="#消息通知" class="headerlink" title="消息通知"></a>消息通知</h4><p>异步的概念和同步相对。当一个同步调用发出后，调用者要一直等待返回消息（结果）通知后，才能进行后续的执行；当一个异步过程调用发出后，调用者不能立刻得到返回消息（结果）。实际处理这个调用的部件在完成后，通过状态、通知和回调来通知调用者。</p>
-<p>这里提到执行部件和调用者通过三种途径返回结果：<strong>状态、通知和回调</strong>。使用哪一种通知机制，依赖于执行部件的实现，除非执行部件提供多种选择，否则不受调用者控制。</p>
-<ol>
-<li>如果执行部件用状态来通知，那么调用者就需要每隔一定时间检查一次，效率就很低（有些初学多线程编程的人，总喜欢用一个循环去检查某个变量的值，这其实是一种很严重的错误）；</li>
-<li>如果是使用通知的方式，效率则很高，因为执行部件几乎不需要做额外的操作。至于回调函数，其实和通知没太多区别。</li>
-</ol>
-<h4 id="场景比喻"><a href="#场景比喻" class="headerlink" title="场景比喻"></a>场景比喻</h4><p>举个例子，比如我去银行办理业务，可能会有两种方式：</p>
-<ol>
-<li>选择排队等候；</li>
-<li>另种选择取一个小纸条上面有我的号码，等到排到我这一号时由柜台的人通知我轮到我去办理业务了；</li>
-</ol>
-<p>第一种：前者（排队等候）就是同步等待消息通知，也就是我要一直在等待银行办理业务情况；</p>
-<p>第二种：后者（等待别人通知）就是异步等待消息通知。在异步消息处理中，等待消息通知者（在这个例子中就是等待办理业务的人）往往注册一个回调机制，在所等待的事件被触发时由触发机制（在这里是柜台的人）通过某种机制（在这里是写在小纸条上的号码，喊号）找到等待该事件的人。</p>
-<h3 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h3><p>阻塞和非阻塞这两个概念与程序（线程）<strong>等待消息通知（无所谓同步或者异步）时的状态</strong>有关。也就是说阻塞与非阻塞主要是程序（线程）等待消息通知时的状态角度来说的。</p>
-<h4 id="概念描述-1"><a href="#概念描述-1" class="headerlink" title="概念描述"></a>概念描述</h4><p>阻塞调用是指调用结果返回之前，当前线程会被挂起，一直处于等待消息通知，不能够执行其他业务。函数只有在得到结果之后才会返回。</p>
-<blockquote>
-<p>例如：一个线程调用一个方法计算 1 - 100 的和，如果该方法没有返回结果， 那么调用方法的线程就一直等待直到该方法执行完毕。</p>
-</blockquote>
-<p><strong>有人也许会把阻塞调用和同步调用等同起来，实际上它们是不同的。</strong></p>
-<p>对于同步调用来说，很多时候当前线程可能还是激活的，只是从逻辑上当前函数没有返回而已，此时，这个线程可能也会处理其他的消息。还有一点，在这里先扩展下：</p>
-<ol>
-<li>如果这个线程在等待当前函数返回时，仍在执行其他消息处理，那这种情况就叫做<strong>同步非阻塞</strong>；</li>
-<li>如果这个线程在等待当前函数返回时，没有执行其他消息处理，而是处于挂起等待状态，那这种情况就叫做<strong>同步阻塞</strong>；</li>
-</ol>
-<p><strong>所以同步的实现方式会有两种：同步阻塞、同步非阻塞；同理，异步也会有两种实现：异步阻塞、异步非阻塞；</strong></p>
-<p>对于阻塞调用来说，则当前线程就会被挂起等待当前函数返回；</p>
-<p>非阻塞和阻塞的概念相对应，指在不能立刻得到结果之前，该函数不会阻塞当前线程，而会立刻返回。</p>
-<blockquote>
-<p>例如：一个线程调用一个方法计算 1 - 100的和，该方法立刻返回，如果方法有返回结果，调用者线程也无需一直等待该方法的结果，可以执行其他任务，但是在方法返回结果之前，<strong>线程仍然需要轮询的检查方法是否已经有结果。</strong></p>
-</blockquote>
-<p>虽然表面上看非阻塞的方式可以明显的提高CPU的利用率，但是也带了另外一种后果就是系统的线程切换增加。增加的CPU执行时间能不能补偿系统的切换成本需要好好评估。</p>
-<h4 id="场景比喻-1"><a href="#场景比喻-1" class="headerlink" title="场景比喻"></a>场景比喻</h4><p>继续上面的那个例子，不论是排队还是使用号码等待通知，如果在这个等待的过程中，等待者除了等待消息通知之外不能做其它的事情，那么该机制就是阻塞的，表现在程序中,也就是该程序一直阻塞在该函数调用处不能继续往下执行。</p>
-<p>相反，有的人喜欢在银行办理这些业务的时候一边打打电话发发短信一边等待，这样的状态就是非阻塞的，因为他（等待者）没有阻塞在这个消息通知上，而是一边做自己的事情一边等待。</p>
-<p>但是需要注意了，<strong>同步非阻塞形式实际上是效率低下的</strong>，想象一下你一边打着电话一边还需要抬头看到底队伍排到你了没有。如果把打电话和观察排队的位置看成是程序的两个操作的话，这个程序需要在这两种不同的行为之间来回的切换，效率可想而知是低下的；而<strong>异步非阻塞形式却没有这样的问题</strong>，因为打电话是你（等待者）的事情，而通知你则是柜台（消息触发机制）的事情，程序没有在两种不同的操作中来回切换。</p>
-<p><strong>结论：同步和异步、阻塞与非阻塞针均是对调用者的立场而言的。</strong></p>
-<h3 id="同步-异步与阻塞-非阻塞"><a href="#同步-异步与阻塞-非阻塞" class="headerlink" title="同步/异步与阻塞/非阻塞"></a>同步/异步与阻塞/非阻塞</h3><ol>
-<li><p><strong>同步阻塞形式</strong></p>
-<p><strong>效率是最低的</strong>，拿上面的例子来说，就是你专心排队，什么别的事都不做。</p>
-<p><strong>实际程序中：</strong>就是未对fd 设置O_NONBLOCK标志位的read/write 操作；</p>
-</li>
-<li><p><strong>异步阻塞形式</strong></p>
-<p>如果在银行等待办理业务的人采用的是异步的方式去等待消息被触发（通知），也就是领了一张小纸条，假如在这段时间里他不能离开银行做其它的事情，那么很显然，这个人被阻塞在了这个等待的操作上面；</p>
-<p><strong>异步操作是可以被阻塞住的，只不过它不是在处理消息时阻塞，而是在等待消息通知时被阻塞。</strong></p>
-<p>比如<strong>select 函数</strong>，假如传入的最后一个timeout参数为NULL，那么如果所关注的事件没有一个被触发，程序就会一直阻塞在这个select 调用处。</p>
-</li>
-<li><p><strong>同步非阻塞形式</strong></p>
-<p>实际上是效率低下的，想象一下你一边打着电话一边还需要抬头看到底队伍排到你了没有，如果把打电话和观察排队的位置看成是程序的两个操作的话，这个程序需要在这两种不同的行为之间来回的切换，效率可想而知是低下的。</p>
-<p>很多人会写<strong>阻塞的read/write 操作</strong>，但是别忘了可以<strong>对fd设置O_NONBLOCK 标志位</strong>，这样就可以将同步操作变成非阻塞的了。</p>
-</li>
-<li><p><strong>异步非阻塞形式</strong></p>
-<p>效率更高，因为打电话是你（等待者）的事情，而通知你则是柜台（消息触发机制）的事情，<strong>程序没有在两种不同的操作中来回切换</strong>。</p>
-<p>比如说，这个人突然发觉自己烟瘾犯了，需要出去抽根烟，于是他告诉大堂经理说，排到我这个号码的时候麻烦到外面通知我一下（注册一个回调函数），那么他就没有被阻塞在这个等待的操作上面，自然这个就是异步非阻塞的方式了。</p>
-<p>如果使用异步非阻塞的情况，比如<code>aio_*</code>组的操作，当发起一个<code>aio_read</code>操作时，函数会马上返回不会被阻塞，当所关注的事件被触发时会调用之前注册的回调函数进行处理。</p>
-<p>很多人会把同步和阻塞混淆，我想是因为<strong>很多时候同步操作会以阻塞的形式表现出来</strong>，比如很多人会写阻塞的read/write操作，但是别忘了可以对fd设置<code>O_NONBLOCK</code>标志位，这样就可以将同步操作变成非阻塞的了。但最根本是因为没有区分这两个概念，比如阻塞的read/write操作中，其实是把消息通知机制和等待消息通知的状态结合在了一起，在这里所关注的消息就是fd是否可读/写，而等待消息通知的状态则是对fd可读/写等待过程中程序（线程）的状态。当我们将这个fd设置为非阻塞的时候，read/write操作就不会在等待消息通知这里阻塞，如果fd不可读/写则操作立即返回。</p>
-<p>同样的，很多人也会把异步和非阻塞混淆，因为<strong>异步操作一般都不会在真正的IO操作处被阻塞</strong>，比如如果用select函数，当select返回可读时再去read一般都不会被阻塞，而是在select函数调用处阻塞。</p>
-</li>
-</ol>
-<h4 id="小明的故事"><a href="#小明的故事" class="headerlink" title="小明的故事"></a>小明的故事</h4><p>对上面所讲的概念再次进行一个场景梳理，上面已经明确说明，<strong>同步/异步关注的是消息通知的机制，而阻塞/非阻塞关注的是程序（线程）等待消息通知时的状态</strong>。以小明下载文件打个比方，从这两个关注点来再次说明这两组概念，希望能够更好的促进大家的理解。</p>
-<ol>
-<li><strong>同步阻塞：小明一直盯着下载进度条，到 100% 的时候就完成。</strong></li>
-</ol>
-<blockquote>
-<p>同步体现在：等待下载完成通知；<br>阻塞体现在：等待下载完成通知过程中，不能做其他任务处理；</p>
-</blockquote>
-<ol>
-<li><strong>同步非阻塞：小明提交下载任务后就去干别的，每过一段时间就去瞄一眼进度条，看到 100% 就完成。</strong></li>
-</ol>
-<blockquote>
-<p>同步体现在：等待下载完成通知；<br>非阻塞体现在：等待下载完成通知过程中，去干别的任务了，只是时不时会瞄一眼进度条；【小明必须要在两个任务间切换，关注下载进度】</p>
-</blockquote>
-<ol>
-<li><strong>异步阻塞：小明换了个有下载完成通知功能的软件，下载完成就“叮”一声。不过小明仍然一直等待“叮”的声音（看起来很傻，不是吗）。</strong></li>
-</ol>
-<blockquote>
-<p>异步体现在：下载完成“叮”一声通知；<br>阻塞体现在：等待下载完成“叮”一声通知过程中，不能做其他任务处理；</p>
-</blockquote>
-<ol>
-<li><strong>异步非阻塞：仍然是那个会“叮”一声的下载软件，小明提交下载任务后就去干别的，听到“叮”的一声就知道完成了。</strong></li>
-</ol>
-<blockquote>
-<p>异步体现在：下载完成“叮”一声通知；<br>非阻塞体现在：等待下载完成“叮”一声通知过程中，去干别的任务了，只需要接收“叮”声通知即可；【软件处理下载任务，小明处理其他任务，不需关注进度，只需接收软件“叮”声通知，即可】</p>
-</blockquote>
-<p>也就是说，<strong>同步/异步是“下载完成消息”通知的方式（机制），而阻塞/非阻塞则是在等待“下载完成消息”通知过程中的状态（能不能干其他任务）</strong>，在不同的场景下，同步/异步、阻塞/非阻塞的四种组合都有应用。</p>
-<p>所以，综上所述，<strong>同步和异步仅仅是关注的消息如何通知的机制，而阻塞与非阻塞关注的是等待消息通知时的状态</strong>。也就是说，<strong>同步的情况下，是由处理消息者自己去等待消息是否被触发，而异步的情况下是由触发机制来通知处理消息者</strong>，所以在异步机制中，处理消息者和触发机制之间就需要一个连接的桥梁：</p>
-<blockquote>
-<p>在银行的例子中，这个桥梁就是小纸条上面的号码。<br>在小明的例子中，这个桥梁就是软件“叮”的声音。</p>
-</blockquote>
-<p><strong>最后，请大家注意理解“消息通知机制”和“等待消息通知时的状态”这两个概念，这是理解四个概念的关键所在。</strong></p>
-<h2 id="Linux-IO模型"><a href="#Linux-IO模型" class="headerlink" title="Linux IO模型"></a>Linux IO模型</h2><p>网络IO的本质是socket的读取，<strong>socket在linux系统被抽象为流</strong>，IO可以理解为对流的操作。刚才说了，对于一次IO访问（以read举例），数据会先被拷贝到操作系统内核的缓冲区中，然后才会从操作系统内核的缓冲区拷贝到应用程序的地址空间。</p>
-<p>第一阶段：等待数据准备 (Waiting for the data to be ready)。</p>
-<p>第二阶段：将数据从内核拷贝到进程中 (Copying the data from the kernel to the process)。</p>
-<p>对于socket流而言：</p>
-<p>第一步：通常涉及等待网络上的数据分组到达，然后被复制到内核的某个缓冲区。</p>
-<p>第二步：把数据从内核缓冲区复制到应用进程缓冲区。</p>
-<blockquote>
-<p>网络应用需要处理的无非就是两大类问题，<strong>网络IO</strong>，<strong>数据计算</strong>。相对于后者，网络IO的延迟，给应用带来的性能瓶颈大于后者。</p>
-</blockquote>
-<h3 id="一次I-O操作经历了什么"><a href="#一次I-O操作经历了什么" class="headerlink" title="一次I/O操作经历了什么"></a>一次I/O操作经历了什么</h3><p>在正式开始之前，先对I/O流程有一个感性的认识。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">  <span class="comment">//fd已经在构造FileInputStream创建</span></span><br><span class="line">  FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/file1.txt&quot;</span>); </span><br><span class="line">  FileOutputStream out = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;/tmp/file2.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[in.available()];</span><br><span class="line">  in.read(buf);</span><br><span class="line">  out.write(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的代码是Java中典型的BIO，读取一个文件的内容，输出到另一个文件中。那么这个过程会发生那些事呢?请看下图</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126195327555.png" style="zoom: 67%;" />
-
-<p>发生了什么呢？</p>
-<ul>
-<li><code>in.read(buf)</code>执行时，JVM向kernel发起system call <code>read()</code></li>
-<li>操作系统发生上下文切换，由用户态(User mode)切换到内核态(Kernel mode)，把数据读取到Kernel space buffer</li>
-<li>Kernel把数据从Kernel space复制到User space，同时由内核态转为用户态。</li>
-<li>JVM继续执行<code>out.write(buf)</code>这行代码</li>
-<li>再次发生上下文切换，把数据复制到Kernel space buffer中。kernel把数据写入文件。</li>
-</ul>
-<p>从上面可以看出一个I/O操作，<strong>通常</strong>而言会发生下面的事</p>
-<ol>
-<li>两次上下文切换(User mode 和 Kernel mode之间转换)</li>
-<li>数据在Kernel space 和 User space之间复制</li>
-</ol>
-<h3 id="I-O模型种类"><a href="#I-O模型种类" class="headerlink" title="I/O模型种类"></a>I/O模型种类</h3><p>Linux下共有5种IO模型：</p>
-<ol>
-<li>阻塞IO（Blocking I/O）</li>
-<li>非阻塞IO（Non-Blocking I/O）</li>
-<li>IO多路复用（I/O Multiplexing (<code>select</code> 、<code>poll</code>、 <code>epoll</code>)）</li>
-<li>信号驱动IO（Signal driven I/O (<code>SIGIO</code>)）</li>
-<li>异步IO（Asynchronous I/O）</li>
-</ol>
-<h3 id="阻塞IO"><a href="#阻塞IO" class="headerlink" title="阻塞IO"></a>阻塞IO</h3><p>阻塞IO是很常见的一种IO模型。 在这种模型中，<strong>用户态的应用程序会执行一个操作系统的调用， 检查内核的数据是否准备好。如果内核的数据已经准备好， 就把数据复制到用户应用进程。如果内核没有准备好数据， 那么用户应用进程（线程）就阻塞，直到内核准备好数据并把数据从 内核复制到用户应用进程，</strong> 最后应用程序再处理数据，在等待数据到处理数据的两个阶段，整个进程都被阻塞。不能处理别的网络IO。调用应用程序处于一种不再消费 CPU 而只是简单等待响应的状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126115842261.png"></p>
-<p><strong>流程描述：</strong></p>
-<p>当用户进程调用了<code>recv()/recvfrom()</code>这个系统调用，kernel就开始了IO的第一个阶段：准备数据（对于网络IO来说，很多时候数据在一开始还没有到达。比如，还没有收到一个完整的UDP包。这个时候kernel就要等待足够的数据到来）。这个过程需要等待，也就是说数据被拷贝到操作系统内核的缓冲区中是需要一个过程的。而在用户进程这边，整个进程会被阻塞（当然，是进程自己选择的阻塞）。第二个阶段：当kernel一直等到数据准备好了，它就会将数据从kernel中拷贝到用户内存，然后kernel返回结果，用户进程才解除block的状态，重新运行起来。</p>
-<blockquote>
-<p>Process –&gt; system call –&gt; kernel –&gt; hardware(hard disk)</p>
-<p>上图是blocking I/O发起system call <code>recvfrom()</code>时，进程将一直阻塞等待另一端Socket的数据到来。在这种I/O模型下，我们不得不为每一个Socket都分配一个线程，这会造成很大的资源浪费。</p>
-</blockquote>
-<p><strong>阻塞IO是同步阻塞的：</strong></p>
-<ol>
-<li>阻塞IO的同步体现在：<strong>内核只有准备好数据并把数据复制到用户应用进程才会返回。</strong></li>
-<li>阻塞IO的阻塞体现在：<strong>用户应用进程等待内核准备数据和把数据从用户态拷贝到内核态的这整个过程，用户应用进程都必须一直等待。</strong> 当然，如果是本地磁盘IO，内核准备数据的时间可能会很短。 但网络IO就不一样了，因为服务端不知道客户端何时发送数据，内核就仍需要等待socket数据，时间就可能会很长。</li>
-</ol>
-<p><strong>优缺点：</strong></p>
-<p><strong>阻塞IO的优点是对于数据是能够保证无延时的，因为应用程序进程会一直阻塞直到IO完成。</strong> 但应用程序的阻塞就意味着应用程序进程无法执行其他任务， 这会大大降低程序性能。一个不太可行的办法是为每个客户端 socket 都分配一个线程， 这样就会提升server处理请求的能力。不过操作系统的线程资源是有限的， 如果请求过多，可能造成线程资源耗尽，系统卡死等后果。</p>
-<h3 id="非阻塞IO（网络IO模型）"><a href="#非阻塞IO（网络IO模型）" class="headerlink" title="非阻塞IO（网络IO模型）"></a>非阻塞IO（网络IO模型）</h3><p>在非阻塞IO模型中，用户态的应用程序也会执行一个操作系统的调用， 检查内核的数据是否准备完成。<strong>如果内核没有准备好数据, 内核会立刻返回结果，用户应用进程不用一直阻塞等待内核准备数据， 而是可以执行其他任务，但仍需要不断的向内核发起系统调用，检测数据是否准备好， 这个过程就叫轮询。</strong>轮询直到内核准备好数据，然后内核把数据拷贝到用户应用进程， 再进行数据处理。<strong>需要注意，拷贝数据整个过程，进程仍然是属于阻塞的状态</strong>。</p>
-<p>在网络IO时候，非阻塞IO也会进行recvform系统调用，检查数据是否准备好，与阻塞IO不一样，”非阻塞将大的整片时间的阻塞分成N多的小的阻塞, 所以进程不断地有机会 ’被‘ CPU光顾”。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126120717900.png"></p>
-<p><strong>流程描述：</strong></p>
-<p>当用户进程发出read操作时，如果kernel中的数据还没有准备好，那么它并不会block用户进程，而是立刻返回一个error。从用户进程角度讲，它发起一个read操作后，并不需要等待，而是马上就得到了一个结果。用户进程判断结果是一个error时，它就知道数据还没有准备好，于是它可以再次发送read操作。一旦kernel中的数据准备好了，并且又再次收到了用户进程的system call，那么它马上就将数据拷贝到了用户内存，然后返回。</p>
-<blockquote>
-<p>nonblocking IO的特点是用户进程需要不断的主动询问kernel数据好了没有。</p>
-</blockquote>
-<p>同样发起system call <code>recvfrom</code>，凭什么在blocking I/O会阻塞，而在这里kernel的数据还没就绪就直接返回<code>EWOULDBLOCK</code>呢？我们看看<code>recvfrom</code>函数定义：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">recvfrom</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  <span class="keyword">int</span> sockfd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> len, <span class="keyword">int</span> flags,</span></span></span><br><span class="line"><span class="params"><span class="function">  struct sockaddr *src_addr, <span class="keyword">socklen_t</span> *addrlen</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>在这里能看到<code>recvfrom</code>有个参数叫flags，默认情况下阻塞。可以设置flag为非阻塞让kernel在数据未就绪时直接返回。详细见<a href="https://linux.die.net/man/2/recvfrom">recvfrom</a>。</p>
-<p>非阻塞IO的非阻塞体现在：<strong>用户应用进程发起I/O操作时，不会因为数据还没就绪而阻塞（即不用阻塞在对内核的系统调用上）</strong></p>
-<p><strong>优缺点：</strong></p>
-<p>非阻塞IO的优点在于用户应用进程在轮询阶段可以执行其它任务。 但这也是它的缺点，轮询就代表着用户应用进程不是时刻都会发起系统调用。 <strong>可能数据准备好了，而用户应用进程可能等待其它任务执行完毕才会发起系统调用， 这就意味着数据可能会被延时获取，导致整体数据吞吐量的降低。</strong></p>
-<h3 id="IO多路复用（网络IO模型）"><a href="#IO多路复用（网络IO模型）" class="headerlink" title="IO多路复用（网络IO模型）"></a>IO多路复用（网络IO模型）</h3><p>由于同步非阻塞方式需要<strong>不断主动轮询</strong>，轮询占据了很大一部分过程，轮询会消耗大量的CPU时间，而 “后台” 可能有多个任务在同时进行，人们就想到了循环查询多个任务的完成状态，只要有任何一个任务完成，就去处理它。如果<strong>轮询不是进程的用户态</strong>，而是有人帮忙就好了。这就是所谓的 “<strong>IO 多路复用</strong>”。</p>
-<p>上面介绍的I/O模型都是<strong>直接发起I/O操作</strong>，而I/O Multiplexing首先向kernel发起system call，传入file descriptor和感兴趣的事件（readable、writable等）<strong>让kernel监测</strong>，当其中一个或多个fd数据就绪，就会返回结果。程序再发起真正的I/O操作<code>recvfrom</code>读取数据。</p>
-<p>在linux中，有3种system call可以让内核监测file descriptors，分别是select、poll、epoll。</p>
-<p>select调用是<strong>内核级别</strong>的，select轮询相对非阻塞的轮询的区别在于前者可以等待多个socket，能实现同时对多个IO端口进行监听，当其中任何一个socket的数据准好了，就能返回进行可读，然后进程再进行<code>recvform</code>系统调用，将数据由内核拷贝到用户进程，当然这个过程是阻塞的。select或poll调用之后，会阻塞进程，与blocking IO阻塞不同在于，此时的<strong>select不是等到socket数据全部到达再处理, 而是有了一部分数据就会调用用户进程来处理</strong>。如何知道有一部分数据到达了呢？监视的事情交给了内核，<strong>内核负责数据到达的处理</strong>。也可以理解为”非阻塞”吧。</p>
-<p>I/O复用模型会用到select、poll、epoll函数，这几个函数也会使进程阻塞，但是和阻<strong>塞I/O所不同的的，这两个函数可以同时阻塞多个I/O操作</strong>。而且可以<strong>同时对多个读操作，多个写操作的I/O函数进行检测，直到有数据可读或可写时</strong>（注意不是全部数据可读或可写），才真正调用I/O操作函数。</p>
-<p>对于多路复用，也就是轮询多个socket。多路复用既然可以处理多个IO，也就带来了新的问题，<strong>多个IO之间的顺序变得不确定了</strong>，当然也可以针对不同的编号。</p>
-<p>在IO多路复用模型中，<strong>用户应用进程会调用操作系统的select/poll/epoll函数，它会使内核同步的轮询指定的socket（在NIO中，socket就是注册到Selector上的SocketChannel，可以允许多个）直至监听的socket有数据可读或可写，select/poll/epoll函数才会返回，用户应用进程也会阻塞的等待 select/poll/epoll函数返回。</strong> 当 select/poll/epoll函数返回后，即某个socket有事件发生了，用户应用进程就会发起系统调用，处理事件，将socket数据复制到用户进程内，然后进行数据处理。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126122722800.png"></p>
-<blockquote>
-<p>上面的图和blocking IO的图其实并没有太大的不同，事实上，还更差一些。因为这里需要使用两个system call（select 和 recvfrom），而blocking IO只调用了一个system call（recvfrom）。但是，<strong>用select的优势在于它可以同时处理多个connection</strong>。</p>
-</blockquote>
-<p><strong>流程描述：</strong></p>
-<p>IO multiplexing就是我们说的select，poll，epoll，有些地方也称这种IO方式为event driven IO。<strong>select/epoll的好处就在于单个process就可以同时处理多个网络连接的IO</strong>。它的基本原理就是select，poll，epoll这个function会不断的轮询所负责的所有socket，当某个socket有数据到达了，就通知用户进程。<strong>当用户进程调用了select，那么整个进程会被block</strong>，而同时，kernel会“监视”所有select负责的socket，当任何一个socket中的数据准备好了，select就会返回。这个时候用户进程再调用read操作，将数据从kernel拷贝到用户进程。</p>
-<p>如果处理的连接数不是很高的话，使用select/epoll的web server不一定比使用multi-threading + blocking IO的web server性能更好，可能延迟还更大。（select/epoll的优势并不是对于单个连接能处理得更快，而是在于能处理更多的连接。）</p>
-<p>在IO multiplexing Model中，实际中，对于每一个socket，一般都设置成为<code>non-blocking</code>，但是，如上图所示，整个用户的process其实是一直被block的。只不过<strong>process是被select这个函数block，而不是被socket IO给block</strong>。所以<strong>IO多路复用是阻塞在select，epoll这样的系统调用之上，而没有阻塞在真正的I/O系统调用如recvfrom之上。</strong></p>
-<p><strong>IO多路复用模型是同步阻塞的：</strong></p>
-<ol>
-<li>IO多路复用模型的同步体现在：<strong>select函数只有监听到某个socket有事件才会返回</strong>。</li>
-<li>IO多路复用模型的阻塞体现在：<strong>用户应用进程会阻塞在对select函数上的调用上</strong>。</li>
-</ol>
-<blockquote>
-<p>同步是需要主动等待消息通知，而异步则是被动接收消息通知，通过回调、通知、状态等方式来被动获取消息。IO多路复用在阻塞到select阶段时，<strong>用户进程是主动等待并调用select函数获取数据就绪状态消息，并且其进程状态为阻塞</strong>。所以，把IO多路复用归为同步阻塞模式。</p>
-</blockquote>
-<p><strong>IO多路复用的优点在于内核可以处理多个socket， 相当于一个用户进程（线程）就可以处理多个socket连接。</strong> 这样不仅降低了系统的开销，并且对于需要高并发的应用是非常有利的。 而非阻塞IO和阻塞IO的一个用户应用进程只能处理一个socket， 要想处理多socket，只能新开进程或线程，但这样很消耗系统资源。</p>
-<p><strong>PS：在IO多路复用模型中, socket一般应该为非阻塞的， 这就是Java中NIO被称为非阻塞IO的原因。 但实际上NIO属于IO多路复用，它是同步阻塞的IO。 具体原因见 <a href="https://www.zhihu.com/question/37271342">知乎讨论</a></strong></p>
-<p>目前支持I/O多路复用的系统调用有 <code>select</code>，<code>pselect</code>，<code>poll</code>，<code>epoll</code>，I/O多路复用就是<strong>通过一种机制，一个进程可以监视多个描述符，一旦某个描述符就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作</strong>。但<code>select</code>，<code>pselect</code>，<code>poll</code>，<code>epoll</code>本质上都是<strong>同步I/O</strong>，因为他们都需要在<strong>读写事件就绪后自己负责进行读写</strong>，也就是说这个<strong>读写过程是阻塞的</strong>，而<strong>异步I/O则无需自己负责进行读写，异步I/O的实现会负责把数据从内核拷贝到用户空间</strong>。</p>
-<h4 id="select"><a href="#select" class="headerlink" title="select"></a>select</h4><p><strong>基本原理：</strong></p>
-<p>select 函数监视的文件描述符分3类，分别是<code>writefds</code>、<code>readfds</code>、和<code>exceptfds</code>。调用后select函数会阻塞，直到有描述符就绪（有数据 可读、可写、或者有except），或者超时（timeout指定等待时间，如果立即返回设为null即可），函数返回。当select函数返回后，可以通过遍历fdset，来找到就绪的描述符。</p>
-<p><strong>函数定义：</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">  <span class="keyword">int</span> nfds, fd_set *readfds, fd_set *writefds,</span></span></span><br><span class="line"><span class="params"><span class="function">  fd_set *exceptfds, struct timeval *timeout</span></span></span><br><span class="line"><span class="params"><span class="function">)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>select函数可以传入3个fd_set，分别对应了不同事件的file descriptor。返回值是一个int值，代表了就绪的fd数量，这个数量是3个fd_set就绪fd数量总和。</p>
-<p>当程序发起system call select时流程如下</p>
-<ol>
-<li>程序阻塞等待kernel返回</li>
-<li>kernel发现有fd就绪，返回数量</li>
-<li>程序轮询3个fd_set寻找就绪的fd</li>
-<li>发起真正的I/O操作(read、recvfrom等)</li>
-</ol>
-<p><strong>优点:</strong></p>
-<ol>
-<li>select目前几乎在所有的平台上支持（良好跨平台支持）</li>
-<li>一次让kernel监测多个fd</li>
-</ol>
-<p><strong>缺点:</strong></p>
-<ol>
-<li><p>最大的缺陷就是单个进程所打开的FD是有一定限制的，它由FD_SETSIZE设置，默认值是1024，可以通过修改宏定义甚至重新编译内核的方式提升这一限制，但是这样也会造成效率的降低。</p>
-<blockquote>
-<p>一般来说这个数目和系统内存关系很大，具体数目可以<code>cat/proc/sys/fs/file-max</code>察看。32位机默认是1024个。64位机默认是2048。</p>
-</blockquote>
-</li>
-<li><p>kernel返回后，对socket进行扫描时是线性扫描，需要轮询所有fd找出就绪的fd，随着fd数量增加，性能会逐渐下降</p>
-<blockquote>
-<p>当套接字比较多的时候，每次select()都要通过遍历FD_SETSIZE个Socket来完成调度，不管哪个Socket是活跃的，都遍历一遍。这会浪费很多CPU时间。<strong>如果能给套接字注册某个回调函数，当他们活跃时，自动完成相关操作，那就避免了轮询</strong>，这正是epoll与kqueue做的。</p>
-</blockquote>
-</li>
-<li><p>需要维护一个用来存放大量fd的数据结构，这样会使得用户空间和内核空间在传递该结构时复制开销大。</p>
-</li>
-</ol>
-<p>更多的介绍请点击<a href="http://www.masterraghu.com/subjects/np/introduction/unix_network_programming_v1.3/ch06lev1sec3.html">select函数</a>查看。</p>
-<h4 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h4><p><strong>基本原理：</strong></p>
-<p>poll本质上和select没有区别，它将用户传入的数组拷贝到内核空间，然后查询每个fd对应的设备状态，如果设备就绪则在设备等待队列中加入一项并继续遍历，如果遍历完所有fd后没有发现就绪设备，则挂起当前进程，直到设备就绪或者主动超时，被唤醒后它又要再次遍历fd。这个过程经历了多次无谓的遍历。</p>
-<p><strong>函数定义：</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">poll</span><span class="params">(struct pollfd *fds, <span class="keyword">nfds_t</span> nfds, <span class="keyword">int</span> timeout)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//pollfd结构体如下</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span>   fd;         <span class="comment">/* file descriptor */</span></span><br><span class="line">  <span class="keyword">short</span> events;     <span class="comment">/* requested events */</span></span><br><span class="line">  <span class="keyword">short</span> revents;    <span class="comment">/* returned events */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>第一个参数fds是一个结构体数组（基于链表来存储），因此poll<strong>不受限FD_SETSIZE的值</strong>（没有最大连接数的限制）。</p>
-<p>缺点：</p>
-<ol>
-<li>大量的fd的数组被整体复制于用户态和内核地址空间之间，而不管这样的复制是不是有意义。</li>
-<li>poll还有一个特点是“水平触发”，如果报告了fd后，没有被处理，那么下次poll时会再次报告该fd。</li>
-<li>只有linux支持poll。</li>
-</ol>
-<p><strong>注意：</strong></p>
-<p>从上面看，select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。</p>
-<h4 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h4><p>select和poll都是等待内核返回后轮询集合寻找就绪的fd，有没有一种机制，当某个fd就绪，kernel直接返回就绪的fd呢？这就是epoll。</p>
-<p>epoll是在2.6内核中提出的，是之前的select和poll的增强版本。相对于select和poll来说，epoll更加灵活，<strong>没有描述符限制</strong>。epoll使用一个文件描述符管理多个描述符，将用户关系的文件描述符的事件存放到内核的一个<strong>事件表</strong>中，这样在用户空间和内核空间的copy只需一次。</p>
-<p><strong>基本原理：</strong></p>
-<p>epoll支持<strong>水平触发</strong>和<strong>边缘触发</strong>，最大的特点在于边缘触发，它只告诉进程哪些fd刚刚变为就绪态，并且只会通知一次。还有一个特点是，epoll使用“事件”的就绪通知方式，通过epoll_ctl注册fd，一旦该fd就绪，内核就会采用类似callback的回调机制来激活该fd，epoll_wait便可以收到通知。</p>
-<blockquote>
-<p>epoll是一种<strong>I/O事件通知机制</strong>，linux kernel 2.5.44开始提供这个功能，用于取代select和poll。</p>
-</blockquote>
-<p>epoll内部结构用<strong>红黑树</strong>实现，用于监听程序注册的fd。和epoll相关的函数共有3个，分别如下</p>
-<ul>
-<li><code>epoll_create1</code>：创建一个epoll实例并返回它的fd</li>
-<li><code>epoll_ctl</code>：操作epoll实例，可往里面新增、删除fd</li>
-<li><code>epoll_wait</code>：等待epoll实例中有fd就绪，且返回就绪的fd</li>
-</ul>
-<h5 id="epoll-create1"><a href="#epoll-create1" class="headerlink" title="epoll_create1"></a>epoll_create1</h5><p>创建一个epoll实例并返回它的file descriptor</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create1</span><span class="params">(<span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<h5 id="epoll-ctl"><a href="#epoll-ctl" class="headerlink" title="epoll_ctl"></a>epoll_ctl</h5><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd, struct epoll_event *event)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> <span class="title">epoll_data</span> &#123;</span></span><br><span class="line">  <span class="keyword">void</span>        *ptr;</span><br><span class="line">  <span class="keyword">int</span>          fd;</span><br><span class="line">  <span class="keyword">uint32_t</span>     u32;</span><br><span class="line">  <span class="keyword">uint64_t</span>     u64;</span><br><span class="line">&#125; <span class="keyword">epoll_data_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> &#123;</span></span><br><span class="line">  <span class="keyword">uint32_t</span>     events;      <span class="comment">/* Epoll events */</span></span><br><span class="line">  <span class="keyword">epoll_data_t</span> data;        <span class="comment">/* User data variable */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><code>epoll_ctl</code>用来操作epoll实例监听的fd，可以往epoll实例中新增、删除。参数解释如下：</p>
-<ul>
-<li><code>epdf</code>：即<code>epoll_create1</code>返回的fd</li>
-<li>op是operation的缩写，可为EPOLL_CTL_ADD、EPOLL_CTL_MOD、EPOLL_CTL_DEL</li>
-<li>fd即要监控的fd</li>
-<li>event即要注册的事件集合（可读、可写之类的）</li>
-</ul>
-<h5 id="epoll-wait"><a href="#epoll-wait" class="headerlink" title="epoll_wait"></a>epoll_wait</h5><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event *events,<span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>调用epoll_wait函数会阻塞，直到epoll实例监控的fd中有一个或多个fd就绪，或timeout。就绪的fd会被kernel添加到events数组中。</p>
-<ul>
-<li><code>epfd</code>：即<code>epoll_create1</code>返回的fd</li>
-<li><code>events</code>：<code>events</code>数组，就绪的fd将会放在这里</li>
-<li>最大的事件数量</li>
-<li>超时时间</li>
-</ul>
-<p>epoll是一种性能很高的同步I/O方案。现在linux中的高性能网络框架（tomcat、netty等）都有epoll的实现。缺点是只有linux支持epoll，BSD内核的kqueue类似于epoll。</p>
-<p>在select/poll中，进程只有在调用一定的方法后，内核才对所有监视的文件描述符进行扫描，而epoll事先通过epoll_ctl()来注册一个文件描述符，一旦基于某个文件描述符就绪时，内核会采用类似callback的回调机制，迅速激活这个文件描述符，当进程调用epoll_wait()时便得到通知。(此处去掉了遍历文件描述符，而是通过监听回调的的机制。这正是epoll的魅力所在。)</p>
-<p><strong>注意：</strong></p>
-<p>如果没有大量的<code>idle-connection</code>或者<code>dead-connection</code>，epoll的效率并不会比select/poll高很多，但是当遇到大量的<code>idle-connection</code>，就会发现epoll的效率大大高于select/poll。</p>
-<h4 id="select、poll、epoll区别"><a href="#select、poll、epoll区别" class="headerlink" title="select、poll、epoll区别"></a>select、poll、epoll区别</h4><table>
-<thead>
-<tr>
-<th>函数</th>
-<th>支持一个进程所能打开的最大连接数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>select</td>
-<td>单个进程所能打开的最大连接数有 FD_ SETSIZE宏定义，其大小是32个整数的大小（在32位的机器上，大小就是32* 32，同理64位机器上 FD_ SETSIZE为32*64），当然我们可以对进行修改，然后重新编译内核，但是性能可能会受到影响，这需要进一步的测试。</td>
-</tr>
-<tr>
-<td>poll</td>
-<td>poll本质上和select没有区别，但是它没有最大连接数的限制，原因是它是基于链表来存储的</td>
-</tr>
-<tr>
-<td>epoll</td>
-<td>虽然连接数有上限，但是很大，1G内存的机器上可以打开10万左右的连接，2G内存的机器可以打开20万左右的连接</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th>函数</th>
-<th>FD剧增后带来的IO效率问题</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>select</td>
-<td>因为每次调用时都会对连接进行线性遍历，所以随着FD的增加会造成遍历速度慢的“线性下降性能问题”。</td>
-</tr>
-<tr>
-<td>poll</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>epoll</td>
-<td>因为每次调用时都会对连接进行线性遍历，所以随着FD的增加会造成遍历速度慢的“线性下降性能问题”。因为epoll内核中实现是根据每个fd上的callback函数来实现的，只有活跃的socket才会主动调用callback，所以在活跃socket较少的情况下，使用epoll没有前面两者的线性下降的性能问题，但是所有socket都很活跃的情况下，可能会有性能问题。</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th>函数</th>
-<th><strong>消息传递方式</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>select</td>
-<td>内核需要将消息传递到用户空间，都需要内核拷贝动作</td>
-</tr>
-<tr>
-<td>poll</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>epoll</td>
-<td>epoll通过内核和用户空间共享一块内存来实现的。</td>
-</tr>
-</tbody></table>
-<p><strong>综上，在选择select，poll，epoll时要根据具体的使用场合以及这三种方式的自身特点：</strong></p>
-<ol>
-<li>表面上看epoll的性能最好，但是在连接数少并且连接都十分活跃的情况下，select和poll的性能可能比epoll好，毕竟epoll的通知机制需要很多函数回调。</li>
-<li>select低效是因为每次它都需要轮询。但低效也是相对的，视情况而定，也可通过良好的设计改善。</li>
-</ol>
-<p><strong>epoll的优点：</strong></p>
-<ol>
-<li>没有最大并发连接的限制，能打开的FD的上限远大于1024（1G的内存上能监听约10万个端口）。</li>
-<li>效率提升，不是轮询的方式，不会随着FD数目的增加效率下降。只有活跃可用的FD才会调用callback函数；即Epoll最大的优点就在于它只管你“活跃”的连接，而跟连接总数无关，因此在实际的网络环境中，Epoll的效率就会远远高于select和poll。</li>
-<li>内存拷贝，利用<code>mmap()</code>文件映射内存加速与内核空间的消息传递；即epoll使用<code>mmap</code>减少复制开销。</li>
-</ol>
-<p><strong>epoll对文件描述符的操作有两种模式：<code>LT（level trigger）和ET（edge trigger）</code>。LT模式是默认模式，LT模式与ET模式的区别如下：</strong></p>
-<ul>
-<li>LT模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理该事件。下次调用epoll_wait时，会再次响应应用程序并通知此事件。</li>
-<li>ET模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。</li>
-</ul>
-<p><strong>LT模式</strong></p>
-<p>LT（level triggered）是<strong>缺省工作方式</strong>，并且同时支持block和no-block socket。在这种做法中，内核告诉你一个文件描述符是否就绪了，然后你可以对这个就绪的fd进行IO操作。如果你不作任何操作，内核还是会继续通知你的。</p>
-<p><strong>ET模式</strong></p>
-<p>ET（edge-triggered）是<strong>高速工作方式</strong>，只支持no-block socket。在这种模式下，当描述符从未就绪变为就绪时，内核通过epoll告诉你。然后它会假设你知道文件描述符已经就绪，并且不会再为那个文件描述符发送更多的就绪通知，直到你做了某些操作导致那个文件描述符不再为就绪状态了（比如，你在发送，接收或者接收请求，或者发送接收的数据少于一定量时导致了一个EWOULDBLOCK 错误）。但是请注意，如果一直不对这个fd作IO操作（从而导致它再次变成未就绪），内核不会发送更多的通知（only once）。</p>
-<p>ET模式在很大程度上减少了epoll事件被重复触发的次数，因此效率要比LT模式高。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。</p>
-<h4 id="多路复用的适用场景"><a href="#多路复用的适用场景" class="headerlink" title="多路复用的适用场景"></a>多路复用的适用场景</h4><p>在I/O编程过程中，<strong>当需要同时处理多个客户端接入请求时</strong>，可以利用多线程或者I/O多路复用技术进行处理。I/O多路复用技术通过把多个I/O的阻塞复用到同一个select的阻塞上，从而使得系统在单线程的情况下可以同时处理多个客户端请求。与传统的多线程/多进程模型比，I/O多路复用的最大优势是<strong>系统开销小</strong>，系统<strong>不需要创建新的额外进程或者线程</strong>，也<strong>不需要维护</strong>这些进程和线程的运行，降低了系统的维护工作量，节省了系统资源，I/O多路复用的主要应用场景如下：</p>
-<ul>
-<li><p>当客户处理多个描述符时（一般是交互式输入和网络套接口），必须使用I/O复用。</p>
-</li>
-<li><p>当一个客户同时处理多个套接口时，而这种情况是可能的，但很少出现。</p>
-</li>
-<li><p>服务器需要同时处理多个处于监听状态或者多个连接状态的套接字。</p>
-<blockquote>
-<p>一个TCP服务器既要处理监听套接口，又要处理已连接套接口，一般也要用到I/O复用。</p>
-</blockquote>
-</li>
-<li><p>服务器需要同时处理多种网络协议的套接字。</p>
-<blockquote>
-<p>例如：一个服务器即要处理TCP，又要处理UDP，一般要使用I/O复用。</p>
-</blockquote>
-</li>
-<li><p>如果一个服务器要处理多个服务或多个协议，一般要使用I/O复用。</p>
-</li>
-</ul>
-<p>了解了前面三种IO模式，在用户进程进行系统调用的时候，<strong>他们在等待数据到来的时候，处理的方式不一样，直接等待，轮询，select或poll轮询</strong>，两个阶段过程：</p>
-<blockquote>
-<p>第一个阶段有的阻塞，有的不阻塞，有的可以阻塞又可以不阻塞。</p>
-<p>第二个阶段都是阻塞的。</p>
-</blockquote>
-<p><strong>从整个IO过程来看，他们都是顺序执行的，因此可以归为同步模型(synchronous)。都是进程主动等待且向内核检查状态。</strong></p>
-<p><strong>高并发的程序一般使用同步非阻塞方式而非多线程 + 同步阻塞方式</strong>。要理解这一点，首先要扯到并发和并行的区别。比如去某部门办事需要依次去几个窗口，办事大厅里的人数就是并发数，而窗口个数就是并行度。也就是说并发数是指同时进行的任务数（如同时服务的 HTTP 请求），而并行数是可以同时工作的物理资源数量（如 CPU 核数）。通过合理调度任务的不同阶段，并发数可以远远大于并行度，这就是区区几个 CPU 可以支持上万个用户并发请求的奥秘。在这种<strong>高并发的情况下，为每个任务（用户请求）创建一个进程或线程的开销非常大。而同步非阻塞方式可以把多个 IO 请求丢到后台去，这就可以在一个进程里服务大量的并发 IO 请求。</strong></p>
-<h3 id="信号驱动IO（网络IO模型）"><a href="#信号驱动IO（网络IO模型）" class="headerlink" title="信号驱动IO（网络IO模型）"></a>信号驱动IO（网络IO模型）</h3><p>在信号驱动IO模型中，<strong>用户应用进程发起sigaction系统调用，内核收到并立即返回。 用户应用进程可以继续执行其他任务，不会阻塞。当内核准备好数据后向用户应用进程 发送SIGIO信号，应用进程收到信号后，发起系统调用，将数据从内核拷贝到用户进程，</strong> 然后进行数据处理。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126174228791.png"></p>
-<p>个人感觉在内核收到系统调用就立刻返回这一点很像异步IO的方式了，不过与异步IO仍有很大差别。</p>
-<p>Singal-Driven I/O模型有点复杂，且存在一些限制。有兴趣请点击<a href="http://www.masterraghu.com/subjects/np/introduction/unix_network_programming_v1.3/ch25lev1sec2.html#ch25lev1sec2">Signal-Driven I/O for Sockets</a>查看。</p>
-<h3 id="异步IO"><a href="#异步IO" class="headerlink" title="异步IO"></a>异步IO</h3><p>在异步IO模型中，<strong>用户进程发起aio_read系统调用，无论内核的数据是否准备好，都会立即返回。用户应用进程不会阻塞，可以继续执行其他任务。当内核准备好socket数据，会直接把数据复制到用户应用进程。最后内核会通知用户应用进程IO完成。IO两个阶段，进程都是非阻塞的</strong></p>
-<blockquote>
-<p>Linux提供了AIO库函数实现异步，但是用的很少。目前有很多开源的异步IO库，例如libevent、libev、libuv。</p>
-</blockquote>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126174546502.png"></p>
-<blockquote>
-<p>请留意图片细节，程序不需要再次发起读取数据的system call，因为kernel会把数据复制到user space再通知进程处理，整个过程不存在任何阻塞。</p>
-</blockquote>
-<p>流程描述：</p>
-<p>用户进程发起<code>aio_read</code>操作之后，立刻就可以开始去做其它的事。而另一方面，从kernel的角度，当它收到一个<code>asynchronous read</code>之后，首先它会立刻返回，所以不会对用户进程产生任何<code>block</code>。然后，kernel会等待数据准备完成，然后将数据拷贝到用户内存，当这一切都完成之后，kernel会给用户进程发送一个signal或执行一个基于线程的回调函数来完成这次 IO 处理过程，告诉它read操作完成了。</p>
-<p><strong>异步IO的异步体现在：内核不用等待数据准备好就立刻返回， 所以内核肯定需要在IO完成后通知用户应用进程。</strong></p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">aio_read</span><span class="params">(struct aiocb *aiocbp)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//aiocb</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">aiocb</span> &#123;</span></span><br><span class="line">  <span class="comment">/* The order of these fields is implementation-dependent */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span>             aio_fildes;     <span class="comment">/* File descriptor */</span></span><br><span class="line">  <span class="keyword">off_t</span>           aio_offset;     <span class="comment">/* File offset */</span></span><br><span class="line">  <span class="keyword">volatile</span> <span class="keyword">void</span>  *aio_buf;        <span class="comment">/* Location of buffer */</span></span><br><span class="line">  <span class="keyword">size_t</span>          aio_nbytes;     <span class="comment">/* Length of transfer */</span></span><br><span class="line">  <span class="keyword">int</span>             aio_reqprio;    <span class="comment">/* Request priority */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sigevent</span> <span class="title">aio_sigevent</span>;</span>   <span class="comment">/* Notification method */</span></span><br><span class="line">  <span class="keyword">int</span>             aio_lio_opcode; <span class="comment">/* Operation to be performed;</span></span><br><span class="line"><span class="comment">                                       lio_listio() only */</span></span><br><span class="line">  <span class="comment">/* Various implementation-internal fields not shown */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>在 Linux 中，通知的方式是 “信号”：</strong></p>
-<p><strong>如果这个进程正在用户态忙着做别的事（例如在计算两个矩阵的乘积），那就强行打断之，调用事先注册的信号处理函数，这个函数可以决定何时以及如何处理这个异步任务</strong>。由于信号处理函数是突然闯进来的，因此跟中断处理程序一样，有很多事情是不能做的，因此保险起见，<strong>一般是把事件 “登记” 一下放进队列，然后返回该进程原来在做的事</strong>。</p>
-<p>如果这个进程正在内核态忙着做别的事，例如以同步阻塞方式读写磁盘，那就只好把这个通知挂起来了，等到内核态的事情忙完了，快要回到用户态的时候，再触发信号通知。</p>
-<p>如果这个进程现在被挂起了，例如无事可做 sleep 了，那就把这个进程唤醒，下次有 CPU 空闲的时候，就会调度到这个进程，触发信号通知。</p>
-<p>异步 API 说来轻巧，做来难，这主要是对 API 的实现者而言的。Linux 的异步 IO（AIO）支持是 2.6.22 才引入的，还有很多系统调用不支持异步 IO。Linux 的异步 IO 最初是为数据库设计的，因此<strong>通过异步 IO 的读写操作不会被缓存或缓冲，这就无法利用操作系统的缓存与缓冲机制</strong>。</p>
-<p><strong>很多人把 Linux 的 O_NONBLOCK 认为是异步方式，但事实上这是前面讲的同步非阻塞方式。</strong>需要指出的是，虽然 Linux 上的 IO API 略显粗糙，但每种编程框架都有封装好的异步 IO 实现。操作系统少做事，把更多的自由留给用户，正是 UNIX 的设计哲学，也是 Linux 上编程框架百花齐放的一个原因。</p>
-<p>从前面 IO 模型的分类中，我们可以看出 AIO 的动机：</p>
-<ul>
-<li>同步阻塞模型需要在 IO 操作开始时阻塞应用程序。这意味着不可能同时重叠进行处理和 IO 操作。</li>
-<li>同步非阻塞模型允许处理和 IO 操作重叠进行，但是这需要应用程序根据重现的规则来检查 IO 操作的状态。</li>
-<li>这样就剩下异步非阻塞 IO 了，它允许处理和 IO 操作重叠进行，包括 IO 操作完成的通知。</li>
-</ul>
-<p>IO多路复用除了需要阻塞之外，select 函数所提供的功能（异步阻塞 IO）与 AIO 类似。不过，它是对通知事件进行阻塞，而不是对 IO 调用进行阻塞。</p>
-<h3 id="疑难解答"><a href="#疑难解答" class="headerlink" title="疑难解答"></a>疑难解答</h3><h4 id="blocking和non-blocking区别"><a href="#blocking和non-blocking区别" class="headerlink" title="blocking和non-blocking区别"></a>blocking和non-blocking区别</h4><p>阻塞I/O发起真正的 I/O操作时（如read、recvfrom等）将会阻塞等待kernel数据就绪。非阻塞I/O在kernel还准备数据的情况下会立刻返回并且会不断发起system call，直到kernel数据就绪。</p>
-<h4 id="synchronous-IO和asynchronous-IO区别"><a href="#synchronous-IO和asynchronous-IO区别" class="headerlink" title="synchronous IO和asynchronous IO区别"></a>synchronous IO和asynchronous IO区别</h4><p>POSIX对这两个术语定义如下：</p>
-<ul>
-<li>同步I/O操作将会造成请求进程阻塞，直到I/O操作完成</li>
-<li>异步I/O操作不会造成进程阻塞</li>
-</ul>
-<p>根据上面的定义我们可以看出，前面4种I/O模型都是同步I/O，因为它们的I/O操作(<code>recvfrom</code>)都会造成进程阻塞。只有最后一个I/O模型匹配异步I/O的定义。</p>
-<blockquote>
-<p>POSIX defines these two terms as follows:</p>
-<ul>
-<li>A synchronous I/O operation causes the requesting process to be blocked until that I/O operation completes.</li>
-<li>An asynchronous I/O operation does not cause the requesting process to be blocked.</li>
-</ul>
-<p>Using these definitions, the first four I/O models—blocking, nonblocking, I/O multiplexing, and signal-driven I/O—are all synchronous because the actual I/O operation (recvfrom) blocks the process. Only the asynchronous I/O model matches the asynchronous I/O definition.</p>
-</blockquote>
-<p>两者的区别就在于synchronous IO做”IO operation”的时候会将process阻塞。按照这个定义，之前所述的blocking IO，non-blocking IO，IO multiplexing都属于synchronous IO。</p>
-<p>有人会说，non-blocking IO并没有被block啊。这里有个非常“狡猾”的地方，定义中所指的”IO operation”是指真实的IO操作，就是例子中的recvfrom这个system call。non-blocking IO在执行recvfrom这个system call的时候，如果kernel的数据没有准备好，这时候不会block进程。但是，当kernel中数据准备好的时候，recvfrom会将数据从kernel拷贝到用户内存中，这个时候进程是被block了，在这段时间内，进程是被block的。</p>
-<p>而asynchronous IO则不一样，当进程发起IO 操作之后，就直接返回再也不理睬了，直到kernel发送一个信号，告诉进程说IO完成。在这整个过程中，进程完全没有被block。</p>
-<h4 id="I-O-Multiplexing是非阻塞I-O吗？"><a href="#I-O-Multiplexing是非阻塞I-O吗？" class="headerlink" title="I/O Multiplexing是非阻塞I/O吗？"></a>I/O Multiplexing是非阻塞I/O吗？</h4><p>很多人会混淆两者的关系，很显然，不是！</p>
-<p>不管是select、poll、epoll都会导致进程阻塞。发起真正的IO操作时(比如recvfrom)，进程也会阻塞。</p>
-<p>I/O Multiplexing优点在于一次性可以监控大量的file descriptors。</p>
-<p><strong>特别注意：select、poll、epoll并不是I/O操作，read、recvfrom这些才是。</strong></p>
-<h4 id="5种IO模型的比较"><a href="#5种IO模型的比较" class="headerlink" title="5种IO模型的比较"></a>5种IO模型的比较</h4><p>从上述五种 IO 模型可以看出，应用进程对内核发起 IO 系统调用后，内核会经过两个阶段来完成数据的传输：</p>
-<ul>
-<li>第一阶段：等待数据。即应用进程发起 IO 系统调用后，会一直等待数据；当有数据传入服务器，会将数据放入内核空间，此时数据准备好。</li>
-<li>第二阶段：将数据从内核空间复制到用户空间，并返回给应用程序成功标识。</li>
-</ul>
-<p><strong>各个IO Model的比较如图所示：</strong></p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127180434891.png" style="zoom: 80%;" />
-
-<blockquote>
-<p>前四种模型的第二阶段是相同的，都是处于阻塞状态，其主要区别在第一阶段。而异步 IO 模型则不同，应用进程在这两个阶段是完全不阻塞的。</p>
-</blockquote>
-<p>通过上面的图片，可以发现<code>non-blocking IO</code>和<code>asynchronous IO</code>的区别还是很明显的。在<code>non-blocking IO</code>中，虽然进程大部分时间都不会被block，但是它仍然要求进程去主动的check，并且当数据准备完成以后，也需要进程主动的再次调用<code>recvfrom</code>来将数据拷贝到用户内存。而<code>asynchronous IO</code>则完全不同。它就像是用户进程将整个IO操作交给了它人（kernel）完成，然后他人做完后发信号通知。在此期间，用户进程不需要去检查IO操作的状态，也不需要主动的去拷贝数据。</p>
-<table>
-<thead>
-<tr>
-<th>IO 模型</th>
-<th>第一阶段</th>
-<th>第二阶段</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>阻塞式IO</td>
-<td>阻塞</td>
-<td>阻塞</td>
-</tr>
-<tr>
-<td>非阻塞式IO</td>
-<td>非阻塞</td>
-<td>阻塞</td>
-</tr>
-<tr>
-<td>IO多路程复用</td>
-<td>阻塞（Select）</td>
-<td>阻塞</td>
-</tr>
-<tr>
-<td>信号驱动式IO</td>
-<td>异步</td>
-<td>阻塞</td>
-</tr>
-<tr>
-<td>异步IO</td>
-<td>异步</td>
-<td>异步</td>
-</tr>
-</tbody></table>
-<p>文章总结来源：</p>
-<p><a href="https://qsjzwithguang19forever.gitee.io/framework-learning/gitbook_doc/jdk-jvm-juc/Linux_IO.html">framework-learning-Linux IO</a></p>
-<p><a href="https://wiyi.org/linux-io-model.html">带你彻底理解Linux五种I/O模型 </a></p>
-<p><a href="https://segmentfault.com/a/1190000039898780">浅聊Linux的五种IO模型</a></p>
-<p><a href="https://www.jianshu.com/p/486b0965c296">聊聊Linux 五种IO模型</a></p>
-<p><a href="https://zhuanlan.zhihu.com/p/371508875">聊聊同步、异步、阻塞与非阻塞</a></p>
-<p><a href="https://www.jianshu.com/p/dfd940e7fca2">聊聊IO多路复用之select、poll、epoll详解</a></p>
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>面试规则</title>
-    <url>/post/d13fc60c/</url>
-    <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
-<ul>
-<li>知识密集型岗位（需要共鸣）</li>
-</ul>
-<p><strong>规则二：问题之间是可以转化的</strong></p>
-<blockquote>
-<p>可以将面试官问的问题转化为对应的具体的知识点，例如：</p>
-<p>有没有高并发经验？ -&gt; 分库分表、缓冲区的使用、高并发网络IO如何处理</p>
-</blockquote>
-<span id="more"></span>
-<p><strong>规则三：问题是可以被拆解的</strong></p>
-<blockquote>
-<p>有没有做过大项目？</p>
-<p>拆解：什么样的大项目？</p>
-<p>项目大在哪里？</p>
-<ul>
-<li>需求特别多？排期特别长？</li>
-<li>沟通复杂？团队多？</li>
-<li>技术特别难？</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>类似的问题：</p>
-<ul>
-<li>Java做过几年？</li>
-<li>有没有大项目经验？</li>
-<li>有没有高并发经验？</li>
-<li>有没有XXX方向的经验？</li>
-</ul>
-<p>应对方法：学会拆解问题，避虛就实，用硬核知识突破面试</p>
-</blockquote>
-<p><strong>规则四：永远不要被面试官牵着鼻子走</strong></p>
-<blockquote>
-<p>应对方法：“引导”面试官提问自己熟悉的知识，从而展示自己学习能力和对知识的学习深度（是否透彻）。</p>
-</blockquote>
-<p><strong>规则五：给面试官有思想深度的回答</strong></p>
-<blockquote>
-<p>如何说？<br>正着说、反着说、折中说、避免「背诵」</p>
-<p>例如：</p>
-<p>面试官：给我解释下高并发?</p>
-<ul>
-<li>高并发的核心是开发成本和硬件成本之间找到一个折中可行的方案</li>
-<li>简单点说解决高并发是在延迟和丢包率可控的情况下，追求吞吐量</li>
-<li>解决高并发要关注线程和I/O模型、数据库选型、缓存优化、缓冲区设计、解耦和消息队列、分布式服务设计等等方面的设计</li>
-</ul>
-<p>应对方法：只有自己<strong>对知识理解透彻</strong>的情况下，才能用自己的语言正确的表述出来。</p>
-</blockquote>
-<blockquote>
-<p><strong>非官方、简短而本质的回答</strong></p>
-<ul>
-<li>LinkedHashMap是一个元素间用链表相连的哈希表</li>
-<li>HashMap就是哈希表实现的Map，TreeMap是用树实现的Map，Map是一种映射关系</li>
-<li>AQS解决Java语言没有实现同步元语底层框架的问题</li>
-<li>B+树是一棵支持区间查找的B树</li>
-<li>DNS是一个经典的分布式设计、BigTable是另一个</li>
-<li>元编程是程序改写程序</li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>面试</category>
-      </categories>
   </entry>
 </search>
