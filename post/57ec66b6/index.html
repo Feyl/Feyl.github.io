@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126174546502.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220127180434891.png">
 <meta property="article:published_time" content="2022-01-27T11:34:07.000Z">
-<meta property="article:modified_time" content="2022-02-03T13:26:49.946Z">
+<meta property="article:modified_time" content="2022-02-03T13:32:25.106Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -247,7 +247,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-02-03 21:26:49" itemprop="dateModified" datetime="2022-02-03T21:26:49+08:00">2022-02-03</time>
+                <time title="Modified: 2022-02-03 21:32:25" itemprop="dateModified" datetime="2022-02-03T21:32:25+08:00">2022-02-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -455,7 +455,8 @@
 <h3 id="一次I-O操作经历了什么"><a href="#一次I-O操作经历了什么" class="headerlink" title="一次I/O操作经历了什么"></a>一次I/O操作经历了什么</h3><p>在正式开始之前，先对I/O流程有一个感性的认识。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">  <span class="comment">//fd已经在构造FileInputStream创建</span></span><br><span class="line">  FileInputStream in = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/file1.txt&quot;</span>); </span><br><span class="line">  FileOutputStream out = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;/tmp/file2.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[in.available()];</span><br><span class="line">  in.read(buf);</span><br><span class="line">  out.write(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>上面的代码是Java中典型的BIO，读取一个文件的内容，输出到另一个文件中。那么这个过程会发生那些事呢?请看下图</p>
+<p>上面的代码是Java中典型的BIO，读取一个文件的内容，输出到另一个文件中。那么这个过程会发生那些事呢？</p>
+<p>一次IO的读操作分为等待就绪和IO操作两个阶段，<strong>等待就绪</strong>就是等待TCP RecvBuffer里面的数据就绪好，也就是发送方的数据全部发送到网卡里面来，<strong>IO操作</strong>就是CPU将数据从网卡拷贝到用户空间。请看下图</p>
 <img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126195327555.png" style="zoom: 67%;" />
 
 <p>发生了什么呢？</p>
