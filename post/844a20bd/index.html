@@ -21,23 +21,23 @@
     var CONFIG = {"hostname":"feyl.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。 本文先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足，本文主要内容如下图所示：">
+  <meta name="description" content="随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。 本文先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足，本文主要内容如下图所示：   HashMap 遍历HashMap 遍历从大的方向来说，可分为以下 4 类：  迭代器（Itera">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HashMap 的 7 种遍历方式与性能分析">
 <meta property="og:url" content="https://feyl.github.io/post/844a20bd/index.html">
 <meta property="og:site_name" content="破晓">
-<meta property="og:description" content="随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。 本文先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足，本文主要内容如下图所示：">
+<meta property="og:description" content="随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。 本文先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足，本文主要内容如下图所示：   HashMap 遍历HashMap 遍历从大的方向来说，可分为以下 4 类：  迭代器（Itera">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203232307417.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203233203211.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204114938065.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204115254456.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204115422219.png">
-<meta property="article:published_time" content="2022-02-04T04:01:01.000Z">
-<meta property="article:modified_time" content="2022-02-04T04:03:18.416Z">
+<meta property="article:published_time" content="2022-02-04T09:14:53.000Z">
+<meta property="article:modified_time" content="2022-02-04T09:17:14.666Z">
 <meta property="article:author" content="Feng Yuliang">
-<meta property="article:tag" content="容器">
 <meta property="article:tag" content="Java">
+<meta property="article:tag" content="容器">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203232307417.png">
 
@@ -236,7 +236,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2022-02-04 12:01:01 / Modified: 12:03:18" itemprop="dateCreated datePublished" datetime="2022-02-04T12:01:01+08:00">2022-02-04</time>
+              <time title="Created: 2022-02-04 17:14:53 / Modified: 17:17:14" itemprop="dateCreated datePublished" datetime="2022-02-04T17:14:53+08:00">2022-02-04</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,25 +276,33 @@
         <p>随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。</p>
 <p>本文<strong>先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足</strong>，本文主要内容如下图所示：</p>
 <img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203232307417.png" style="zoom:75%;" />
-<span id="more"></span>
-## HashMap 遍历
 
-<p>HashMap <strong>遍历从大的方向来说，可分为以下 4 类</strong>：</p>
+<h2 id="HashMap-遍历"><a href="#HashMap-遍历" class="headerlink" title="HashMap 遍历"></a>HashMap 遍历</h2><p>HashMap <strong>遍历从大的方向来说，可分为以下 4 类</strong>：</p>
 <ol>
-<li>迭代器（Iterator）方式遍历；</li>
-<li>For Each 方式遍历；</li>
-<li>Lambda 表达式遍历（JDK 1.8+）；</li>
-<li>Streams API 遍历（JDK 1.8+）。</li>
-</ol>
+<li><p>迭代器（Iterator）方式遍历；</p>
+</li>
+<li><p>For Each 方式遍历；</p>
+</li>
+<li><p>Lambda 表达式遍历（JDK 1.8+）；</p>
+</li>
+<li><p>Streams API 遍历（JDK 1.8+）。</p>
+<span id="more"></span>
 <p>但每种类型下又有不同的实现方式，因此具体的遍历方式又可以分为以下 7 种：</p>
-<ol>
-<li>使用迭代器（Iterator）EntrySet 的方式进行遍历；</li>
-<li>使用迭代器（Iterator）KeySet 的方式进行遍历；</li>
-<li>使用 For Each EntrySet 的方式进行遍历；</li>
-<li>使用 For Each KeySet 的方式进行遍历；</li>
-<li>使用 Lambda 表达式的方式进行遍历；</li>
-<li>使用 Streams API 单线程的方式进行遍历；</li>
-<li>使用 Streams API 多线程的方式进行遍历。</li>
+</li>
+<li><p>使用迭代器（Iterator）EntrySet 的方式进行遍历；</p>
+</li>
+<li><p>使用迭代器（Iterator）KeySet 的方式进行遍历；</p>
+</li>
+<li><p>使用 For Each EntrySet 的方式进行遍历；</p>
+</li>
+<li><p>使用 For Each KeySet 的方式进行遍历；</p>
+</li>
+<li><p>使用 Lambda 表达式的方式进行遍历；</p>
+</li>
+<li><p>使用 Streams API 单线程的方式进行遍历；</p>
+</li>
+<li><p>使用 Streams API 多线程的方式进行遍历。</p>
+</li>
 </ol>
 <p>接下来我们来看每种遍历方式的具体实现代码。</p>
 <h3 id="迭代器-EntrySet"><a href="#迭代器-EntrySet" class="headerlink" title="迭代器 EntrySet"></a>迭代器 EntrySet</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -399,8 +407,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 容器</a>
               <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+              <a href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag"><i class="fa fa-tag"></i> 容器</a>
           </div>
 
         
@@ -471,7 +479,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8-EntrySet"><span class="nav-number">1.</span> <span class="nav-text">迭代器 EntrySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8-KeySet"><span class="nav-number">2.</span> <span class="nav-text">迭代器 KeySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForEach-EntrySet"><span class="nav-number">3.</span> <span class="nav-text">ForEach EntrySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForEach-KeySet"><span class="nav-number">4.</span> <span class="nav-text">ForEach KeySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lambda"><span class="nav-number">5.</span> <span class="nav-text">Lambda</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Streams-API-%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">Streams API 单线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Streams-API-%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">Streams API 多线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="nav-number"></span> <span class="nav-text">性能测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number"></span> <span class="nav-text">字节码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number"></span> <span class="nav-text">性能分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7%E6%B5%8B%E8%AF%95"><span class="nav-number"></span> <span class="nav-text">安全性测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">迭代器方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#For-%E5%BE%AA%E7%8E%AF%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">For 循环方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lambda-%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">Lambda 方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stream-%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">Stream 方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">总结</span></a></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#HashMap-%E9%81%8D%E5%8E%86"><span class="nav-number">1.</span> <span class="nav-text">HashMap 遍历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8-EntrySet"><span class="nav-number">1.1.</span> <span class="nav-text">迭代器 EntrySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8-KeySet"><span class="nav-number">1.2.</span> <span class="nav-text">迭代器 KeySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForEach-EntrySet"><span class="nav-number">1.3.</span> <span class="nav-text">ForEach EntrySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ForEach-KeySet"><span class="nav-number">1.4.</span> <span class="nav-text">ForEach KeySet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lambda"><span class="nav-number">1.5.</span> <span class="nav-text">Lambda</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Streams-API-%E5%8D%95%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.6.</span> <span class="nav-text">Streams API 单线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Streams-API-%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.7.</span> <span class="nav-text">Streams API 多线程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">性能测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">2.1.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">字节码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">性能分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7%E6%B5%8B%E8%AF%95"><span class="nav-number">5.</span> <span class="nav-text">安全性测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">5.1.</span> <span class="nav-text">迭代器方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#For-%E5%BE%AA%E7%8E%AF%E6%96%B9%E5%BC%8F"><span class="nav-number">5.2.</span> <span class="nav-text">For 循环方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lambda-%E6%96%B9%E5%BC%8F"><span class="nav-number">5.3.</span> <span class="nav-text">Lambda 方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stream-%E6%96%B9%E5%BC%8F"><span class="nav-number">5.4.</span> <span class="nav-text">Stream 方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">5.5.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -500,7 +508,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
