@@ -1,6 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Java 并发编程（基础）</title>
+    <url>/post/7f164aae/</url>
+    <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
+<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称<strong>主线程</strong>。</p>
+<p>如下图所示，在 windows 中通过查看任务管理器的方式，我们就可以清楚看到 window 当前运行的进程（.exe 文件的运行）。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202211820997.png" style="zoom:75%;" />
+
+<h3 id="何为线程？"><a href="#何为线程？" class="headerlink" title="何为线程？"></a>何为线程？</h3><p>线程与进程相似，但线程是一个比进程更小的执行单位。一个进程在其执行的过程中可以产生多个线程。与进程不同的是同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为<strong>轻量级进程</strong>。</p>
+<p>Java 程序天生就是多线程程序，我们可以通过 JMX 来看一下一个普通的 Java 程序有哪些线程，代码如下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取 Java 线程管理 MXBean</span></span><br><span class="line">	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">		<span class="comment">// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">// 遍历线程信息，仅打印线程 ID 和线程名称信息</span></span><br><span class="line">		<span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> + threadInfo.getThreadName());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述程序输出如下（输出内容可能不同，不用太纠结下面每个线程的作用，只用知道 main 线程执行 main 方法即可）：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">[5] Attach Listener //添加事件</span><br><span class="line">[4] Signal Dispatcher //分发处理给 JVM 信号的线程</span><br><span class="line">[3] Finalizer //调用对象 finalize 方法的线程</span><br><span class="line">[2] Reference Handler //清除 reference 线程</span><br><span class="line">[1] main //main 线程,程序入口</span><br></pre></td></tr></table></figure>
+
+<p>从上面的输出内容可以看出：<strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong>。</p>
+<h2 id="请简要描述线程与进程的关系-区别及优缺点？"><a href="#请简要描述线程与进程的关系-区别及优缺点？" class="headerlink" title="请简要描述线程与进程的关系,区别及优缺点？"></a>请简要描述线程与进程的关系,区别及优缺点？</h2><p><strong>从 JVM 角度说进程和线程之间的关系</strong></p>
+<h3 id="图解进程和线程的关系"><a href="#图解进程和线程的关系" class="headerlink" title="图解进程和线程的关系"></a>图解进程和线程的关系</h3><p>下图是 Java 内存区域，通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202212556937.png" style="zoom:80%;" />
+
+<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)<strong>资源，但是每个线程有自己的</strong>程序计数器</strong>、<strong>虚拟机栈</strong> 和 <strong>本地方法栈</strong>。</p>
+<p><strong>总结：</strong> <strong>线程是进程划分成的更小的运行单位。线程和进程最大的不同在于基本上各进程是独立的，而各线程则不一定，因为同一进程中的线程极有可能会相互影响。线程执行开销小，但不利于资源的管理和保护；而进程正相反。</strong></p>
+<p>下面来思考这样一个问题：为什么<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>是线程私有的呢？为什么堆和方法区是线程共享的呢？</p>
+<h3 id="程序计数器为什么是私有的？"><a href="#程序计数器为什么是私有的？" class="headerlink" title="程序计数器为什么是私有的？"></a>程序计数器为什么是私有的？</h3><p>程序计数器主要有下面两个作用：</p>
+<ol>
+<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
+<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
+</ol>
+<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
+<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
+<h3 id="虚拟机栈和本地方法栈为什么是私有的？"><a href="#虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="虚拟机栈和本地方法栈为什么是私有的？"></a>虚拟机栈和本地方法栈为什么是私有的？</h3><ul>
+<li><strong>虚拟机栈：</strong>每个 Java 方法在执行的同时会创建一个栈帧用于存储<strong>局部变量表</strong>、<strong>操作数栈</strong>、<strong>常量池引用</strong>等信息。从方法调用直至执行完成的过程，就对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。</li>
+<li><strong>本地方法栈：</strong>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
+</ul>
+<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
+<h3 id="一句话简单了解堆和方法区"><a href="#一句话简单了解堆和方法区" class="headerlink" title="一句话简单了解堆和方法区"></a>一句话简单了解堆和方法区</h3><p>堆和方法区是<strong>所有线程共享的资源</strong>，其中<strong>堆是进程中最大的一块内存</strong>，主要用于存放<strong>新创建的对象</strong>（几乎所有对象都在这里分配内存），方法区主要用于存放<strong>已被加载的类信息</strong>、<strong>常量</strong>、<strong>静态变量</strong>、<strong>即时编译器编译后的代码</strong>等数据。</p>
+<h2 id="说说并发与并行的区别？"><a href="#说说并发与并行的区别？" class="headerlink" title="说说并发与并行的区别？"></a>说说并发与并行的区别？</h2><p><strong>并发：</strong>同一时间段，多个任务都在执行（单位时间内不一定同时执行）；</p>
+<p><strong>并行：</strong>单位时间内（同一时刻），多个任务同时执行。</p>
+<h2 id="为什么要使用多线程呢"><a href="#为什么要使用多线程呢" class="headerlink" title="为什么要使用多线程呢?"></a>为什么要使用多线程呢?</h2><p>先从总体上来说：</p>
+<ul>
+<li><strong>从计算机底层来说：</strong>线程可以比作是轻量级的进程，是<strong>程序执行的最小单位</strong>，线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
+<li><strong>从当代互联网发展趋势来说：</strong>现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
+</ul>
+<p>再深入到计算机底层来探讨：</p>
+<ul>
+<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
+<li><strong>多核时代</strong>：多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）。</li>
+</ul>
+<h2 id="使用多线程可能带来什么问题？"><a href="#使用多线程可能带来什么问题？" class="headerlink" title="使用多线程可能带来什么问题？"></a>使用多线程可能带来什么问题？</h2><p>并发编程的目的就是为了能提高程序的执行效率提高程序运行速度，但是并发编程并不总是能提高程序运行速度的，而且并发编程可能会遇到很多问题，比如：内存泄漏、死锁、线程不安全等等。</p>
+<h2 id="说说线程的生命周期和状态"><a href="#说说线程的生命周期和状态" class="headerlink" title="说说线程的生命周期和状态?"></a>说说线程的生命周期和状态?</h2><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220155953.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
+<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220327647.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
+<blockquote>
+<p>订正(来自<a href="https://github.com/Snailclimb/JavaGuide/issues/736">issue736</a>)：原图中 wait 到 runnable 状态的转换中，<code>join</code>实际上是<code>Thread</code>类的方法，但这里写成了<code>Object</code>。</p>
+</blockquote>
+<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
+<blockquote>
+<p>在操作系统中层面线程有 READY 和 RUNNING 状态，而在 JVM 层面只能看到 RUNNABLE 状态（图源：<a href="https://howtodoinjava.com/">HowToDoInJava</a>：<a href="https://howtodoinjava.com/Java/multi-threading/Java-thread-life-cycle-and-thread-states/">Java Thread Life Cycle and Thread States</a>），所以 Java 系统一般将这两个状态统称为 <strong>RUNNABLE（运行中）</strong> 状态 。</p>
+<p><strong>为什么 JVM 没有区分这两种状态呢？</strong>（摘自：<a href="https://www.zhihu.com/question/56494969/answer/154053599">java线程运行怎么有第六种状态？ - Dawell的回答</a>）现在的<strong>时分</strong>（time-sharing）<strong>多任务</strong>（multi-task）操作系统架构通常都是用所谓的“<strong>时间分片</strong>（time quantum or time slice）”方式进行<strong>抢占式</strong>（preemptive）轮转调度（round-robin式）。这个时间分片通常是很小的，一个线程一次最多只能在 CPU 上运行比如 10-20ms 的时间（此时处于 running 状态），也即大概只有 0.01 秒这一量级，时间片用后就要被切换下来放入调度队列的末尾等待再次调度。（也即回到 ready 状态）。线程切换的如此之快，区分这两种状态就没什么意义了。</p>
+</blockquote>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202221236800.png"></p>
+<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIMED_WAITING（超时等待）</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep(long millis)</code>方法或 <code>wait(long millis)</code>方法可以将 Java 线程置于 TIMED_WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用<strong>同步方法</strong>时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
+<p>相关阅读：<a href="https://mp.weixin.qq.com/s/UOrXql_LhOD8dhTq_EPI0w">挑错 |《Java 并发编程的艺术》中关于线程状态的三处错误</a></p>
+<h2 id="什么是上下文切换"><a href="#什么是上下文切换" class="headerlink" title="什么是上下文切换?"></a>什么是上下文切换?</h2><p>线程在执行过程中会有自己的<strong>运行条件和状态</strong>（也称<strong>上下文</strong>），比如上文所说到过的<strong>程序计数器</strong>，<strong>栈信息</strong>等。当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
+<ul>
+<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
+<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用CPU导致其他线程或者进程饿死。</li>
+<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
+<li>被终止或结束运行。</li>
+</ul>
+<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
+<p>上下文切换是现代操作系统的基本功能，因其每次需要保存信息恢复信息，这将会占用 CPU，内存等系统资源进行处理，也就意味着效率会有一定损耗，如果频繁切换就会造成整体效率低下。</p>
+<h2 id="什么是线程死锁？如何避免死锁？"><a href="#什么是线程死锁？如何避免死锁？" class="headerlink" title="什么是线程死锁？如何避免死锁？"></a>什么是线程死锁？如何避免死锁？</h2><h3 id="认识线程死锁"><a href="#认识线程死锁" class="headerlink" title="认识线程死锁"></a>认识线程死锁</h3><p>线程死锁描述的是这样一种情况：多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。</p>
+<p>如下图所示，线程 A 持有资源 2，线程 B 持有资源 1，他们同时都想申请对方的资源，所以这两个线程就会互相等待而进入死锁状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202222752163.png"></p>
+<p>下面通过一个例子来说明线程死锁,代码模拟了上图的死锁的情况（代码来源于《并发编程之美》）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource1 = <span class="keyword">new</span> Object();<span class="comment">//资源 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource2 = <span class="keyword">new</span> Object();<span class="comment">//资源 2</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]waiting get resource1</span><br></pre></td></tr></table></figure>
+
+<p>线程 A 通过 <code>synchronized (resource1)</code> 获得 <code>resource1</code> 的监视器锁，然后通过<code>Thread.sleep(1000);</code>让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。上面的例子符合产生死锁的四个必要条件。</p>
+<p>产生死锁必须具备以下四个条件：</p>
+<ol>
+<li>互斥条件：该资源任意一个时刻只由一个线程占用。</li>
+<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
+<li>不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。</li>
+<li>循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。</li>
+</ol>
+<h3 id="如何预防和避免线程死锁"><a href="#如何预防和避免线程死锁" class="headerlink" title="如何预防和避免线程死锁?"></a>如何预防和避免线程死锁?</h3><p><strong>如何预防死锁？</strong> 破坏死锁的产生的必要条件即可：</p>
+<ol>
+<li><strong>破坏请求与保持条件</strong>：一次性申请所有的资源。</li>
+<li><strong>破坏不剥夺条件</strong> ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
+<li><strong>破坏循环等待条件</strong> ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
+</ol>
+<p><strong>如何避免死锁？</strong></p>
+<p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
+<p><strong>安全状态</strong> 指的是系统能够按照某种进程推进顺序（P1、P2、P3…..Pn）来为每个进程分配所需资源，直到满足每个进程对资源的最大需求，使每个进程都可顺利完成。称&lt;P1、P2、P3…..Pn&gt;序列为安全序列。</p>
+<p>我们对线程 2 的代码修改成下面这样就不会产生死锁了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">	<span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">		System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">	System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 1,5,main]get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
+
+<p>我们分析一下上面的代码为什么避免了死锁的发生?</p>
+<p>线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。</p>
+<h2 id="说说-sleep-方法和-wait-方法区别和共同点"><a href="#说说-sleep-方法和-wait-方法区别和共同点" class="headerlink" title="说说 sleep() 方法和 wait() 方法区别和共同点?"></a>说说 sleep() 方法和 wait() 方法区别和共同点?</h2><ul>
+<li>两者最主要的区别在于：<strong>sleep() 方法没有释放锁，而 wait() 方法释放了锁</strong> 。</li>
+<li>两者都可以暂停线程的执行。</li>
+<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
+<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒。或者可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
+</ul>
+<h2 id="为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？"><a href="#为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？" class="headerlink" title="为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？"></a>为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？</h2><p>new 一个 Thread，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程<strong>进入了就绪状态</strong>，当分配到时间片后就可以<strong>开始运行</strong>了。 <code>start()</code> 会执行线程的相应<strong>准备工作</strong>，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
+<p><strong>总结： 调用 start() 方法方可启动线程并使线程进入就绪状态，直接执行 run() 方法的话不会以多线程的方式执行。</strong></p>
+<p>文章来源：<a href="https://javaguide.cn/java/concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/">Java 并发常见知识点&amp;面试题总结（基础篇）</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>HashMap 的 7 种遍历方式与性能分析</title>
     <url>/post/844a20bd/</url>
     <content><![CDATA[<p>随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。</p>
@@ -132,134 +258,8 @@
         <category>Java</category>
       </categories>
       <tags>
+        <tag>Java</tag>
         <tag>容器</tag>
-        <tag>Java</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java 并发编程（基础）</title>
-    <url>/post/7f164aae/</url>
-    <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
-<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称<strong>主线程</strong>。</p>
-<p>如下图所示，在 windows 中通过查看任务管理器的方式，我们就可以清楚看到 window 当前运行的进程（.exe 文件的运行）。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202211820997.png" style="zoom:75%;" />
-
-<h3 id="何为线程？"><a href="#何为线程？" class="headerlink" title="何为线程？"></a>何为线程？</h3><p>线程与进程相似，但线程是一个比进程更小的执行单位。一个进程在其执行的过程中可以产生多个线程。与进程不同的是同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为<strong>轻量级进程</strong>。</p>
-<p>Java 程序天生就是多线程程序，我们可以通过 JMX 来看一下一个普通的 Java 程序有哪些线程，代码如下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取 Java 线程管理 MXBean</span></span><br><span class="line">	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">		<span class="comment">// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">// 遍历线程信息，仅打印线程 ID 和线程名称信息</span></span><br><span class="line">		<span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> + threadInfo.getThreadName());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述程序输出如下（输出内容可能不同，不用太纠结下面每个线程的作用，只用知道 main 线程执行 main 方法即可）：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">[5] Attach Listener //添加事件</span><br><span class="line">[4] Signal Dispatcher //分发处理给 JVM 信号的线程</span><br><span class="line">[3] Finalizer //调用对象 finalize 方法的线程</span><br><span class="line">[2] Reference Handler //清除 reference 线程</span><br><span class="line">[1] main //main 线程,程序入口</span><br></pre></td></tr></table></figure>
-
-<p>从上面的输出内容可以看出：<strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong>。</p>
-<h2 id="请简要描述线程与进程的关系-区别及优缺点？"><a href="#请简要描述线程与进程的关系-区别及优缺点？" class="headerlink" title="请简要描述线程与进程的关系,区别及优缺点？"></a>请简要描述线程与进程的关系,区别及优缺点？</h2><p><strong>从 JVM 角度说进程和线程之间的关系</strong></p>
-<h3 id="图解进程和线程的关系"><a href="#图解进程和线程的关系" class="headerlink" title="图解进程和线程的关系"></a>图解进程和线程的关系</h3><p>下图是 Java 内存区域，通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202212556937.png" style="zoom:80%;" />
-
-<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)<strong>资源，但是每个线程有自己的</strong>程序计数器</strong>、<strong>虚拟机栈</strong> 和 <strong>本地方法栈</strong>。</p>
-<p><strong>总结：</strong> <strong>线程是进程划分成的更小的运行单位。线程和进程最大的不同在于基本上各进程是独立的，而各线程则不一定，因为同一进程中的线程极有可能会相互影响。线程执行开销小，但不利于资源的管理和保护；而进程正相反。</strong></p>
-<p>下面来思考这样一个问题：为什么<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>是线程私有的呢？为什么堆和方法区是线程共享的呢？</p>
-<h3 id="程序计数器为什么是私有的？"><a href="#程序计数器为什么是私有的？" class="headerlink" title="程序计数器为什么是私有的？"></a>程序计数器为什么是私有的？</h3><p>程序计数器主要有下面两个作用：</p>
-<ol>
-<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
-<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
-</ol>
-<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
-<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
-<h3 id="虚拟机栈和本地方法栈为什么是私有的？"><a href="#虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="虚拟机栈和本地方法栈为什么是私有的？"></a>虚拟机栈和本地方法栈为什么是私有的？</h3><ul>
-<li><strong>虚拟机栈：</strong>每个 Java 方法在执行的同时会创建一个栈帧用于存储<strong>局部变量表</strong>、<strong>操作数栈</strong>、<strong>常量池引用</strong>等信息。从方法调用直至执行完成的过程，就对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。</li>
-<li><strong>本地方法栈：</strong>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
-</ul>
-<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
-<h3 id="一句话简单了解堆和方法区"><a href="#一句话简单了解堆和方法区" class="headerlink" title="一句话简单了解堆和方法区"></a>一句话简单了解堆和方法区</h3><p>堆和方法区是<strong>所有线程共享的资源</strong>，其中<strong>堆是进程中最大的一块内存</strong>，主要用于存放<strong>新创建的对象</strong>（几乎所有对象都在这里分配内存），方法区主要用于存放<strong>已被加载的类信息</strong>、<strong>常量</strong>、<strong>静态变量</strong>、<strong>即时编译器编译后的代码</strong>等数据。</p>
-<h2 id="说说并发与并行的区别？"><a href="#说说并发与并行的区别？" class="headerlink" title="说说并发与并行的区别？"></a>说说并发与并行的区别？</h2><p><strong>并发：</strong>同一时间段，多个任务都在执行（单位时间内不一定同时执行）；</p>
-<p><strong>并行：</strong>单位时间内（同一时刻），多个任务同时执行。</p>
-<h2 id="为什么要使用多线程呢"><a href="#为什么要使用多线程呢" class="headerlink" title="为什么要使用多线程呢?"></a>为什么要使用多线程呢?</h2><p>先从总体上来说：</p>
-<ul>
-<li><strong>从计算机底层来说：</strong>线程可以比作是轻量级的进程，是<strong>程序执行的最小单位</strong>，线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
-<li><strong>从当代互联网发展趋势来说：</strong>现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
-</ul>
-<p>再深入到计算机底层来探讨：</p>
-<ul>
-<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
-<li><strong>多核时代</strong>：多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）。</li>
-</ul>
-<h2 id="使用多线程可能带来什么问题？"><a href="#使用多线程可能带来什么问题？" class="headerlink" title="使用多线程可能带来什么问题？"></a>使用多线程可能带来什么问题？</h2><p>并发编程的目的就是为了能提高程序的执行效率提高程序运行速度，但是并发编程并不总是能提高程序运行速度的，而且并发编程可能会遇到很多问题，比如：内存泄漏、死锁、线程不安全等等。</p>
-<h2 id="说说线程的生命周期和状态"><a href="#说说线程的生命周期和状态" class="headerlink" title="说说线程的生命周期和状态?"></a>说说线程的生命周期和状态?</h2><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220155953.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
-<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220327647.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
-<blockquote>
-<p>订正(来自<a href="https://github.com/Snailclimb/JavaGuide/issues/736">issue736</a>)：原图中 wait 到 runnable 状态的转换中，<code>join</code>实际上是<code>Thread</code>类的方法，但这里写成了<code>Object</code>。</p>
-</blockquote>
-<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
-<blockquote>
-<p>在操作系统中层面线程有 READY 和 RUNNING 状态，而在 JVM 层面只能看到 RUNNABLE 状态（图源：<a href="https://howtodoinjava.com/">HowToDoInJava</a>：<a href="https://howtodoinjava.com/Java/multi-threading/Java-thread-life-cycle-and-thread-states/">Java Thread Life Cycle and Thread States</a>），所以 Java 系统一般将这两个状态统称为 <strong>RUNNABLE（运行中）</strong> 状态 。</p>
-<p><strong>为什么 JVM 没有区分这两种状态呢？</strong>（摘自：<a href="https://www.zhihu.com/question/56494969/answer/154053599">java线程运行怎么有第六种状态？ - Dawell的回答</a>）现在的<strong>时分</strong>（time-sharing）<strong>多任务</strong>（multi-task）操作系统架构通常都是用所谓的“<strong>时间分片</strong>（time quantum or time slice）”方式进行<strong>抢占式</strong>（preemptive）轮转调度（round-robin式）。这个时间分片通常是很小的，一个线程一次最多只能在 CPU 上运行比如 10-20ms 的时间（此时处于 running 状态），也即大概只有 0.01 秒这一量级，时间片用后就要被切换下来放入调度队列的末尾等待再次调度。（也即回到 ready 状态）。线程切换的如此之快，区分这两种状态就没什么意义了。</p>
-</blockquote>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202221236800.png"></p>
-<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIMED_WAITING（超时等待）</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep(long millis)</code>方法或 <code>wait(long millis)</code>方法可以将 Java 线程置于 TIMED_WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用<strong>同步方法</strong>时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
-<p>相关阅读：<a href="https://mp.weixin.qq.com/s/UOrXql_LhOD8dhTq_EPI0w">挑错 |《Java 并发编程的艺术》中关于线程状态的三处错误</a></p>
-<h2 id="什么是上下文切换"><a href="#什么是上下文切换" class="headerlink" title="什么是上下文切换?"></a>什么是上下文切换?</h2><p>线程在执行过程中会有自己的<strong>运行条件和状态</strong>（也称<strong>上下文</strong>），比如上文所说到过的<strong>程序计数器</strong>，<strong>栈信息</strong>等。当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
-<ul>
-<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
-<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用CPU导致其他线程或者进程饿死。</li>
-<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
-<li>被终止或结束运行。</li>
-</ul>
-<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
-<p>上下文切换是现代操作系统的基本功能，因其每次需要保存信息恢复信息，这将会占用 CPU，内存等系统资源进行处理，也就意味着效率会有一定损耗，如果频繁切换就会造成整体效率低下。</p>
-<h2 id="什么是线程死锁？如何避免死锁？"><a href="#什么是线程死锁？如何避免死锁？" class="headerlink" title="什么是线程死锁？如何避免死锁？"></a>什么是线程死锁？如何避免死锁？</h2><h3 id="认识线程死锁"><a href="#认识线程死锁" class="headerlink" title="认识线程死锁"></a>认识线程死锁</h3><p>线程死锁描述的是这样一种情况：多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。</p>
-<p>如下图所示，线程 A 持有资源 2，线程 B 持有资源 1，他们同时都想申请对方的资源，所以这两个线程就会互相等待而进入死锁状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202222752163.png"></p>
-<p>下面通过一个例子来说明线程死锁,代码模拟了上图的死锁的情况（代码来源于《并发编程之美》）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource1 = <span class="keyword">new</span> Object();<span class="comment">//资源 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource2 = <span class="keyword">new</span> Object();<span class="comment">//资源 2</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]waiting get resource1</span><br></pre></td></tr></table></figure>
-
-<p>线程 A 通过 <code>synchronized (resource1)</code> 获得 <code>resource1</code> 的监视器锁，然后通过<code>Thread.sleep(1000);</code>让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。上面的例子符合产生死锁的四个必要条件。</p>
-<p>产生死锁必须具备以下四个条件：</p>
-<ol>
-<li>互斥条件：该资源任意一个时刻只由一个线程占用。</li>
-<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
-<li>不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。</li>
-<li>循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。</li>
-</ol>
-<h3 id="如何预防和避免线程死锁"><a href="#如何预防和避免线程死锁" class="headerlink" title="如何预防和避免线程死锁?"></a>如何预防和避免线程死锁?</h3><p><strong>如何预防死锁？</strong> 破坏死锁的产生的必要条件即可：</p>
-<ol>
-<li><strong>破坏请求与保持条件</strong>：一次性申请所有的资源。</li>
-<li><strong>破坏不剥夺条件</strong> ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
-<li><strong>破坏循环等待条件</strong> ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
-</ol>
-<p><strong>如何避免死锁？</strong></p>
-<p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
-<p><strong>安全状态</strong> 指的是系统能够按照某种进程推进顺序（P1、P2、P3…..Pn）来为每个进程分配所需资源，直到满足每个进程对资源的最大需求，使每个进程都可顺利完成。称&lt;P1、P2、P3…..Pn&gt;序列为安全序列。</p>
-<p>我们对线程 2 的代码修改成下面这样就不会产生死锁了。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">	<span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">		System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">	System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br></pre></td></tr></table></figure>
-
-<p>Output</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 1,5,main]get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
-
-<p>我们分析一下上面的代码为什么避免了死锁的发生?</p>
-<p>线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。</p>
-<h2 id="说说-sleep-方法和-wait-方法区别和共同点"><a href="#说说-sleep-方法和-wait-方法区别和共同点" class="headerlink" title="说说 sleep() 方法和 wait() 方法区别和共同点?"></a>说说 sleep() 方法和 wait() 方法区别和共同点?</h2><ul>
-<li>两者最主要的区别在于：<strong>sleep() 方法没有释放锁，而 wait() 方法释放了锁</strong> 。</li>
-<li>两者都可以暂停线程的执行。</li>
-<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
-<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒。或者可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
-</ul>
-<h2 id="为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？"><a href="#为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？" class="headerlink" title="为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？"></a>为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？</h2><p>new 一个 Thread，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程<strong>进入了就绪状态</strong>，当分配到时间片后就可以<strong>开始运行</strong>了。 <code>start()</code> 会执行线程的相应<strong>准备工作</strong>，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
-<p><strong>总结： 调用 start() 方法方可启动线程并使线程进入就绪状态，直接执行 run() 方法的话不会以多线程的方式执行。</strong></p>
-<p>文章来源：<a href="https://javaguide.cn/java/concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/">Java 并发常见知识点&amp;面试题总结（基础篇）</a></p>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>并发编程</tag>
       </tags>
   </entry>
   <entry>
@@ -1114,6 +1114,46 @@
       </tags>
   </entry>
   <entry>
+    <title>位运算</title>
+    <url>/post/2633a26/</url>
+    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Spring IOC</title>
     <url>/post/eff096d5/</url>
     <content><![CDATA[<h2 id="Spring-IOC是什么？"><a href="#Spring-IOC是什么？" class="headerlink" title="Spring IOC是什么？"></a>Spring IOC是什么？</h2><p><strong>Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。</strong>在Java开发中，<strong>Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。</strong>如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
@@ -1168,43 +1208,388 @@
       </tags>
   </entry>
   <entry>
-    <title>位运算</title>
-    <url>/post/2633a26/</url>
-    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
-<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+    <title>curl</title>
+    <url>/post/3e01b4d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>cURL</strong>是一个开源项目，主要的产品是curl（<strong>命令行工具</strong>）和libcurl（C语言的API库），两者功能均是：基于网络协议，对指定URL进行网络传输（发出网络请求）。curl可以得到和提取数据，显示在”标准输出”（stdout）上面。</p>
+<p>cURL涉及是任何网络协议传输，不涉及对具体数据的具体处理。（如：html的渲染等）</p>
+<p>curl 支持多种协议，下面举例讲解如何将它用于网站开发。</p>
+<span id="more"></span>
 
-<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
-</li>
-<li><p><strong>判断两个数是否异号</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看网页源码"><a href="#查看网页源码" class="headerlink" title="查看网页源码"></a>查看网页源码</h3><p>直接在curl命令后加上网址，就可以看到网页源码。我们以网址<a href="http://www.mi.com为例（选择该网址，主要因为它的网页代码较短）：">www.mi.com为例（选择该网址，主要因为它的网页代码较短）：</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl www.mi.com</span><br></pre></td></tr></table></figure>
 
-<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
-</li>
-<li><p><strong>不用临时变量交换两个数</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>加一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>减一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>301 Moved Permanently<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Moved Permanently<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>The document has moved <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.sina.com.cn/&quot;</span>&gt;</span>here<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
-</blockquote>
-</li>
-</ol>
-<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+
+
+<h3 id="服务器的回应保存成文件"><a href="#服务器的回应保存成文件" class="headerlink" title="服务器的回应保存成文件"></a>服务器的回应保存成文件</h3><p><code>-o</code>参数将服务器的回应保存成文件，等同于<code>wget</code>命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o [文件名] www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o example.html https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将 <code>www.example.com </code>保存成 <code>example.html</code>。</p>
+<p><code>-O</code>参数将服务器回应保存成文件，并将 URL 的最后部分当作文件名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://www.example.com/foo/bar.html</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将服务器回应保存成文件，文件名为<code>bar.html</code>。</p>
+<h3 id="自动跳转（重定向）"><a href="#自动跳转（重定向）" class="headerlink" title="自动跳转（重定向）"></a>自动跳转（重定向）</h3><p><code>-L</code>参数会让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L www.sina.com</span><br></pre></td></tr></table></figure>
+
+<p>键入上面的命令，结果就自动跳转为<a href="http://www.sina.com.cn./">www.sina.com.cn。</a></p>
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="显示头信息"><a href="#显示头信息" class="headerlink" title="显示头信息"></a>显示头信息</h3><p><code>-i </code>参数可以<strong>显示http response的头信息，连同网页代码一起</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令收到服务器回应后，先输出服务器回应的标头，然后空一行，再输出网页的源码。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">TP/1.1 302 Moved Temporarily</span><br><span class="line">Server: kngx/1.10.2</span><br><span class="line">Date: Fri, 04 Feb 2022 09:49:31 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 160</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.mi.com/</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">x-link-via: zzct010:80;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-I</code> 参数则是<strong>只显示http response的头信息</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令输出服务器对 HEAD 请求的回应。</p>
+<p><code>--head</code>参数等同于<code>-I</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --head https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="显示通信过程"><a href="#显示通信过程" class="headerlink" title="显示通信过程"></a>显示通信过程</h3><p><code>-v </code>参数可以<strong>显示一次http通信的整个过程</strong>（用于调试），包括端口连接和http request头信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v www.mi.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">  Trying 240e:93c:210:3::6:80...</span><br><span class="line">* Connected to www.mi.com (240e:93c:210:3::6) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; Host: www.mi.com</span><br><span class="line">&gt; User-Agent: curl/7.74.0</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt;</span><br><span class="line">* Mark bundle as not supporting multiuse</span><br><span class="line">&lt; HTTP/1.1 302 Moved Temporarily</span><br><span class="line">&lt; Server: kngx/1.10.2</span><br><span class="line">&lt; Date: Fri, 04 Feb 2022 09:52:02 GMT</span><br><span class="line">&lt; Content-Type: text/html</span><br><span class="line">&lt; Content-Length: 160</span><br><span class="line">&lt; Connection: keep-alive</span><br><span class="line">&lt; Location: https://www.mi.com/</span><br><span class="line">&lt; Cache-Control: max-age=0</span><br><span class="line">&lt; x-link-via: zzct010:80;</span><br><span class="line">&lt;</span><br><span class="line">&#123; [160 bytes data]</span><br><span class="line">100   160  100   160    0     0   4444      0 --:--:-- --:--:-- --:--:--  4444<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">* Connection #0 to host www.mi.com left intact</span><br></pre></td></tr></table></figure>
+
+<p>如果你觉得上面的信息还不够，那么下面的命令<strong>可以查看更详细的通信过程</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace output.txt www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace-ascii output.txt www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>运行后，请打开 output.txt文件查看。</p>
+<p><code>--trace</code>参数也可以用于调试，还会输出原始的二进制数据。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace - https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="发送表单信息"><a href="#发送表单信息" class="headerlink" title="发送表单信息"></a>发送表单信息</h3><p><strong>发送表单信息有GET和POST两种方法</strong>。GET方法相对简单，只要把数据附在网址后面就行。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl example.com/form.cgi?data=xxx</span><br></pre></td></tr></table></figure>
+
+<p><code>-G</code>参数用来构造 URL 的查询字符串。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会发出一个 GET 请求，实际请求的 URL 为<code>https://google.com/search?q=kitties&amp;count=20</code>。如果省略<code>--G</code>，会发出一个 POST 请求。</p>
+<p>如果数据需要 URL 编码，可以结合<code>--data--urlencode</code>参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="发送-POST-请求的数据体"><a href="#发送-POST-请求的数据体" class="headerlink" title="发送 POST 请求的数据体"></a>发送 POST 请求的数据体</h4><p>POST方法必须把数据和网址分开，curl就要用到 <code>--data</code>参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;data=xxx&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-d</code>参数用于发送 POST 请求的数据体。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;login=emma&#x27;</span> -d <span class="string">&#x27;password=123&#x27;</span> -X POST  https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>-d</code> 参数以后，HTTP 请求会自动加上标头<code>Content-Type : application/x-www-form-urlencoded</code>。并且会自动将请求转为 POST 方法，因此可以省略<code>-X POST</code>。</p>
+<p><code>-d</code> 参数可以读取本地文本文件的数据，向服务器发送。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;@data.txt&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令读取<code>data.txt</code>文件的内容，作为数据体向服务器发送。</p>
+<p><code>--data-urlencode</code>参数等同于<code>-d</code>，发送 POST 请求的数据体，区别在于会自动将发送的数据进行 URL 编码。</p>
+<p>如果你的数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST--data-urlencode <span class="string">&quot;date=April 1&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，发送的数据<code>hello world</code>之间有一个空格，需要进行 URL 编码。</p>
+<h3 id="HTTP-请求的代理"><a href="#HTTP-请求的代理" class="headerlink" title="HTTP 请求的代理"></a>HTTP 请求的代理</h3><p><code>-x</code>参数指定 HTTP 请求的代理。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令指定 HTTP 请求通过<code>myproxy.com:8080</code>的 socks5 代理发出。</p>
+<p>如果没有指定代理协议，默认为 HTTP。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令中，请求的代理使用 HTTP 协议。</p>
+<h3 id="HTTP动词"><a href="#HTTP动词" class="headerlink" title="HTTP动词"></a>HTTP动词</h3><p><code>-X</code>参数指定 HTTP 请求的方法。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令对<code>https://www.example.com</code>发出 POST 请求。</p>
+<p><strong>curl默认的HTTP动词是GET</strong>，<strong>使用</strong> <code>-X</code> <strong>参数可以支持其他动词</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST www.example.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X DELETE www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>假定文件上传的表单是下面这样：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&#x27;multipart/form-data&#x27;</span> <span class="attr">action</span>=<span class="string">&quot;upload.cgi&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">file</span> <span class="attr">name</span>=<span class="string">upload</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">submit</span> <span class="attr">name</span>=<span class="string">press</span> <span class="attr">value</span>=<span class="string">&quot;OK&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以用curl这样上传文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --form upload=@localfilename --form press=OK [URL]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-F</code>参数用来向服务器上传二进制文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会给 HTTP 请求加上标头<code>Content-Type: multipart/form-data</code>，然后将文件<code>photo.png</code>作为<code>file</code>字段上传。</p>
+<p><code>-F</code>参数可以指定 MIME 类型。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令指定 MIME 类型为<code>image/png</code>，否则 curl 会把 MIME 类型设为<code>application/octet-stream</code>。</p>
+<p><code>-F</code>参数也可以指定文件名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;filename=me.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令中，原始文件名为<code>photo.png</code>，但是服务器接收到的文件名为<code>me.png</code>。</p>
+<h3 id="Referer字段"><a href="#Referer字段" class="headerlink" title="Referer字段"></a>Referer字段</h3><p>有时你需要在http request头信息中，提供一个referer字段，表示你是从哪里跳转过来的。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --referer http://www.example.com http://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p><code>-e</code>参数用来设置 HTTP 的标头<code>Referer</code>，表示请求的来源。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将<code>Referer</code>标头设为<code>https://google.com?q=example</code>。</p>
+<p><code>-H</code>参数可以通过直接添加标头<code>Referer</code>，达到同样效果。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Referer: https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="User-Agent字段"><a href="#User-Agent字段" class="headerlink" title="User Agent字段"></a>User Agent字段</h3><p>这个字段是用来表示<strong>客户端的设备信息</strong>。服务器有时会根据这个字段，针对不同设备，返回不同格式的网页，比如手机版和桌面版。</p>
+<p>iPhone4的User Agent是</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Mozilla/5.0 (iPhone; U; CPU iPhone OS 4<span class="built_in">_</span>0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7</span><br></pre></td></tr></table></figure>
+
+<p>curl可以这样模拟：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user-agent <span class="string">&quot;[User Agent]&quot;</span> [URL]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-A</code>参数指定客户端的用户代理标头，即<code>User-Agent</code>。curl 的默认用户代理字符串是<code>curl/[version]</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将<code>User-Agent</code>改成 Chrome 浏览器。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会移除<code>User-Agent</code>标头。</p>
+<p>也可以通过<code>-H</code>参数直接指定标头，更改<code>User-Agent</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;User-Agent: php/1.0&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>使用 <code>--cookie</code> 参数，可以让curl发送cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --cookie <span class="string">&quot;name=xxx&quot;</span> www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>至于具体的cookie的值，可以从http response头信息的<code>Set-Cookie</code>字段中得到。</p>
+<p><code>-c cookie-file</code>可以保存服务器返回的cookie到文件，<code>-b cookie-file</code>可以使用这个文件作为cookie信息，进行后续的请求。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies http://example.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将服务器的 HTTP 回应所设置 Cookie 写入文本文件<code>cookies.txt</code>。</p>
+<p><code>-b</code>参数用来向服务器发送 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies http://example.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo=bar&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会生成一个标头<code>Cookie: foo=bar</code>，向服务器发送一个名为<code>foo</code>、值为<code>bar</code>的 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo1=bar;foo2=bar2&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令发送两个 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令读取本地文件<code>cookies.txt</code>，里面是服务器设置的 Cookie（参见<code>-c</code>参数），将其发送到服务器。</p>
+<h3 id="增加头信息"><a href="#增加头信息" class="headerlink" title="增加头信息"></a>增加头信息</h3><p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --header <span class="string">&quot;Content-Type:application/json&quot;</span> http://example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-H</code>参数添加 HTTP 请求的标头。</p>
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加 HTTP 标头<code>Accept-Language: en-US</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> -H <span class="string">&#x27;Secret-Message: xyzzy&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加两个 HTTP 标头。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;&#123;&quot;login&quot;: &quot;emma&quot;, &quot;pass&quot;: &quot;123&quot;&#125;&#x27;</span> -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加 HTTP 请求的标头是<code>Content-Type: application/json</code>，然后用<code>-d</code>参数发送 JSON 数据。</p>
+<h3 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h3><p>有些网域需要HTTP认证，这时curl需要用到 <code>--user</code> 参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user name:password example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="跳过-SSL-检测"><a href="#跳过-SSL-检测" class="headerlink" title="跳过 SSL 检测"></a>跳过 SSL 检测</h3><p><code>-k</code>参数指定跳过 SSL 检测。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -k https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令不会检查服务器的 SSL 证书是否正确。</p>
+<h3 id="限制-HTTP-请求和回应的带宽"><a href="#限制-HTTP-请求和回应的带宽" class="headerlink" title="限制 HTTP 请求和回应的带宽"></a>限制 HTTP 请求和回应的带宽</h3><p><code>--limit-rate</code>用来限制 HTTP 请求和回应的带宽，模拟慢网速的环境。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 200k https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将带宽限制在每秒 200K 字节。</p>
+<h3 id="错误信息的输出"><a href="#错误信息的输出" class="headerlink" title="错误信息的输出"></a>错误信息的输出</h3><p><code>-s</code> 参数将不输出错误和进度信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令一旦发生错误，不会显示错误信息。不发生错误的话，会正常显示运行结果。</p>
+<p>如果想让 curl 不产生任何输出，可以使用下面的命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-S</code>参数指定只输出错误信息，通常与<code>-s</code>一起使用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -S -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令没有任何输出，除非发生错误。</p>
+<h3 id="权限认证"><a href="#权限认证" class="headerlink" title="权限认证"></a>权限认证</h3><p><code>-u</code> 参数用来设置服务器认证的用户名和密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob:12345&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令设置用户名为<code>bob</code>，密码为<code>12345</code>，然后将其转为 HTTP 标头<code>Authorization: Basic Ym9iOjEyMzQ1</code>。</p>
+<p>curl 能够识别 URL 里面的用户名和密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://bob:12345@google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令能够识别 URL 里面的用户名和密码，将其转为上个例子里面的 HTTP 标头。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令只设置了用户名，执行后，curl 会提示用户输入密码。</p>
+<h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><p>​        curl命令作用 curl命令是一个功能强大的网络工具，它能够通过http、ftp等方式下载文件，也能够上传文件，同时支持HTTPS等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。其实curl远不止前面所说的那些功能，大家可以通过man curl阅读手册页获取更多的信息。类似的工具还有wget。curl命令使用了libcurl库来实现，libcurl库常用在C程序中用来处理HTTP请求，curlpp是libcurl的一个C++封装，这几个东西可以用在抓取网页、网络监控等方面的开发，而curl命令可以帮助来解决开发过程中遇到的问题。</p>
+<p>常用参数 curl命令参数很多，这里只列出我曾经用过、特别是在shell脚本中经常用到过的那些。</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">-a/--append 上传文件时，附加到目标文件</span><br><span class="line"></span><br><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line"></span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line"></span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line"></span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line"></span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line"></span><br><span class="line">    --data-ascii &lt;data&gt;	以ascii的方式post数据</span><br><span class="line">     --data-binary &lt;data&gt;	以二进制的方式post数据</span><br><span class="line">     --negotiate	使用HTTP身份验证</span><br><span class="line">     --digest	使用数字身份验证</span><br><span class="line">     --disable-eprt	禁止使用EPRT或LPRT</span><br><span class="line">     --disable-epsv	禁止使用EPSV</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line"></span><br><span class="line">     --egd-file &lt;file&gt;  为随机数据(SSL)设置EGD socket路径</span><br><span class="line"></span><br><span class="line">     --tcp-nodelay     使用TCP<span class="built_in">_</span>NODELAY选项</span><br><span class="line"></span><br><span class="line">-e/--referer &lt;URL&gt;  指定引用地址</span><br><span class="line"></span><br><span class="line">-F/--form &lt;name=content&gt;   模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">     --form-string &lt;name=string&gt; 模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">-G/--get    以get的方式来发送数据</span><br><span class="line"></span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">    --ignore-content-length  忽略的HTTP头信息的长度</span><br><span class="line"></span><br><span class="line">-i/--include     输出时包括protocol头信息</span><br><span class="line"></span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line"></span><br><span class="line">-k/--insecure  允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line">-K/--config    指定的配置文件读取</span><br><span class="line"></span><br><span class="line">-l/--list-only   列出ftp目录下的文件名称</span><br><span class="line"></span><br><span class="line">    --limit-rate &lt;rate&gt; 设置传输速度</span><br><span class="line"></span><br><span class="line">     --local-port&lt;NUM&gt;  强制使用本地端口号</span><br><span class="line"></span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line"></span><br><span class="line">     --max-redirs &lt;num&gt;    设置最大读取的目录数</span><br><span class="line"></span><br><span class="line">     --max-filesize &lt;bytes&gt;  设置最大下载的文件总量</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt;   指定输出文件名称</span><br><span class="line"></span><br><span class="line">-O/--remote-name  把输出写到该文件中，保留远程文件的文件名</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-v/--verbose  小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line"></span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line"></span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line"></span><br><span class="line">   --range-file 读取（SSL）的随机文件</span><br><span class="line"></span><br><span class="line">-R/--remote-time   在本地生成文件时，保留远程文件时间</span><br><span class="line"></span><br><span class="line">    --retry &lt;num&gt;   指定重试次数</span><br><span class="line"></span><br><span class="line">    --retry-delay &lt;seconds&gt;   传输出现问题时，设置重试间隔时间</span><br><span class="line"></span><br><span class="line">    --retry-max-time &lt;seconds&gt;  传输出现问题时，设置最大重试时间</span><br><span class="line"></span><br><span class="line">-s/--silent  静默模式。不输出任何东西</span><br><span class="line"></span><br><span class="line">-S/--show-error  显示错误</span><br><span class="line"></span><br><span class="line">    --socks4 &lt;host[:port]&gt; 用socks4代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --socks5 &lt;host[:port]&gt; 用socks5代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --stderr &lt;file&gt;</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;host[:port]&gt; 在给定的端口上使用HTTP代理</span><br><span class="line"></span><br><span class="line">-X/--request &lt;command&gt; 指定什么命令。curl默认的HTTP动词是GET，使用-X参数可以支持其他动词。</span><br><span class="line"></span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>文章总结来源：</p>
+<p><a href="https://www.ruanyifeng.com/blog/2011/09/curl.html">curl网站开发指南</a></p>
+<p><a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 的用法指南</a></p>
+<p><a href="https://handerfly.github.io/linux/2019/05/26/curl%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">curl命令详解</a></p>
+<p>更多内容查看：</p>
+<p><a href="https://curl.se/docs/manpage.html">curl 用户手册</a></p>
 ]]></content>
       <categories>
-        <category>算法</category>
+        <category>命令行工具</category>
       </categories>
       <tags>
-        <tag>位运算</tag>
+        <tag>命令行工具</tag>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+<span id="more"></span>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>字符集</tag>
       </tags>
   </entry>
   <entry>
@@ -1749,391 +2134,6 @@
       <categories>
         <category>Java</category>
       </categories>
-  </entry>
-  <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>curl</title>
-    <url>/post/3e01b4d/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>cURL</strong>是一个开源项目，主要的产品是curl（<strong>命令行工具</strong>）和libcurl（C语言的API库），两者功能均是：基于网络协议，对指定URL进行网络传输（发出网络请求）。curl可以得到和提取数据，显示在”标准输出”（stdout）上面。</p>
-<p>cURL涉及是任何网络协议传输，不涉及对具体数据的具体处理。（如：html的渲染等）</p>
-<p>curl 支持多种协议，下面举例讲解如何将它用于网站开发。</p>
-<span id="more"></span>
-
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看网页源码"><a href="#查看网页源码" class="headerlink" title="查看网页源码"></a>查看网页源码</h3><p>直接在curl命令后加上网址，就可以看到网页源码。我们以网址<a href="http://www.mi.com为例（选择该网址，主要因为它的网页代码较短）：">www.mi.com为例（选择该网址，主要因为它的网页代码较短）：</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl www.mi.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>301 Moved Permanently<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Moved Permanently<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>The document has moved <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.sina.com.cn/&quot;</span>&gt;</span>here<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="服务器的回应保存成文件"><a href="#服务器的回应保存成文件" class="headerlink" title="服务器的回应保存成文件"></a>服务器的回应保存成文件</h3><p><code>-o</code>参数将服务器的回应保存成文件，等同于<code>wget</code>命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o [文件名] www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o example.html https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将 <code>www.example.com </code>保存成 <code>example.html</code>。</p>
-<p><code>-O</code>参数将服务器回应保存成文件，并将 URL 的最后部分当作文件名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://www.example.com/foo/bar.html</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将服务器回应保存成文件，文件名为<code>bar.html</code>。</p>
-<h3 id="自动跳转（重定向）"><a href="#自动跳转（重定向）" class="headerlink" title="自动跳转（重定向）"></a>自动跳转（重定向）</h3><p><code>-L</code>参数会让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L www.sina.com</span><br></pre></td></tr></table></figure>
-
-<p>键入上面的命令，结果就自动跳转为<a href="http://www.sina.com.cn./">www.sina.com.cn。</a></p>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="显示头信息"><a href="#显示头信息" class="headerlink" title="显示头信息"></a>显示头信息</h3><p><code>-i </code>参数可以<strong>显示http response的头信息，连同网页代码一起</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令收到服务器回应后，先输出服务器回应的标头，然后空一行，再输出网页的源码。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">TP/1.1 302 Moved Temporarily</span><br><span class="line">Server: kngx/1.10.2</span><br><span class="line">Date: Fri, 04 Feb 2022 09:49:31 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 160</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.mi.com/</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">x-link-via: zzct010:80;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-I</code> 参数则是<strong>只显示http response的头信息</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令输出服务器对 HEAD 请求的回应。</p>
-<p><code>--head</code>参数等同于<code>-I</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --head https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="显示通信过程"><a href="#显示通信过程" class="headerlink" title="显示通信过程"></a>显示通信过程</h3><p><code>-v </code>参数可以<strong>显示一次http通信的整个过程</strong>（用于调试），包括端口连接和http request头信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v www.mi.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">  Trying 240e:93c:210:3::6:80...</span><br><span class="line">* Connected to www.mi.com (240e:93c:210:3::6) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; Host: www.mi.com</span><br><span class="line">&gt; User-Agent: curl/7.74.0</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt;</span><br><span class="line">* Mark bundle as not supporting multiuse</span><br><span class="line">&lt; HTTP/1.1 302 Moved Temporarily</span><br><span class="line">&lt; Server: kngx/1.10.2</span><br><span class="line">&lt; Date: Fri, 04 Feb 2022 09:52:02 GMT</span><br><span class="line">&lt; Content-Type: text/html</span><br><span class="line">&lt; Content-Length: 160</span><br><span class="line">&lt; Connection: keep-alive</span><br><span class="line">&lt; Location: https://www.mi.com/</span><br><span class="line">&lt; Cache-Control: max-age=0</span><br><span class="line">&lt; x-link-via: zzct010:80;</span><br><span class="line">&lt;</span><br><span class="line">&#123; [160 bytes data]</span><br><span class="line">100   160  100   160    0     0   4444      0 --:--:-- --:--:-- --:--:--  4444<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">* Connection #0 to host www.mi.com left intact</span><br></pre></td></tr></table></figure>
-
-<p>如果你觉得上面的信息还不够，那么下面的命令<strong>可以查看更详细的通信过程</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace output.txt www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace-ascii output.txt www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>运行后，请打开 output.txt文件查看。</p>
-<p><code>--trace</code>参数也可以用于调试，还会输出原始的二进制数据。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace - https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="发送表单信息"><a href="#发送表单信息" class="headerlink" title="发送表单信息"></a>发送表单信息</h3><p><strong>发送表单信息有GET和POST两种方法</strong>。GET方法相对简单，只要把数据附在网址后面就行。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl example.com/form.cgi?data=xxx</span><br></pre></td></tr></table></figure>
-
-<p><code>-G</code>参数用来构造 URL 的查询字符串。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会发出一个 GET 请求，实际请求的 URL 为<code>https://google.com/search?q=kitties&amp;count=20</code>。如果省略<code>--G</code>，会发出一个 POST 请求。</p>
-<p>如果数据需要 URL 编码，可以结合<code>--data--urlencode</code>参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="发送-POST-请求的数据体"><a href="#发送-POST-请求的数据体" class="headerlink" title="发送 POST 请求的数据体"></a>发送 POST 请求的数据体</h4><p>POST方法必须把数据和网址分开，curl就要用到 <code>--data</code>参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;data=xxx&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-d</code>参数用于发送 POST 请求的数据体。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;login=emma&#x27;</span> -d <span class="string">&#x27;password=123&#x27;</span> -X POST  https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>使用 <code>-d</code> 参数以后，HTTP 请求会自动加上标头<code>Content-Type : application/x-www-form-urlencoded</code>。并且会自动将请求转为 POST 方法，因此可以省略<code>-X POST</code>。</p>
-<p><code>-d</code> 参数可以读取本地文本文件的数据，向服务器发送。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;@data.txt&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令读取<code>data.txt</code>文件的内容，作为数据体向服务器发送。</p>
-<p><code>--data-urlencode</code>参数等同于<code>-d</code>，发送 POST 请求的数据体，区别在于会自动将发送的数据进行 URL 编码。</p>
-<p>如果你的数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST--data-urlencode <span class="string">&quot;date=April 1&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面代码中，发送的数据<code>hello world</code>之间有一个空格，需要进行 URL 编码。</p>
-<h3 id="HTTP-请求的代理"><a href="#HTTP-请求的代理" class="headerlink" title="HTTP 请求的代理"></a>HTTP 请求的代理</h3><p><code>-x</code>参数指定 HTTP 请求的代理。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令指定 HTTP 请求通过<code>myproxy.com:8080</code>的 socks5 代理发出。</p>
-<p>如果没有指定代理协议，默认为 HTTP。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令中，请求的代理使用 HTTP 协议。</p>
-<h3 id="HTTP动词"><a href="#HTTP动词" class="headerlink" title="HTTP动词"></a>HTTP动词</h3><p><code>-X</code>参数指定 HTTP 请求的方法。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令对<code>https://www.example.com</code>发出 POST 请求。</p>
-<p><strong>curl默认的HTTP动词是GET</strong>，<strong>使用</strong> <code>-X</code> <strong>参数可以支持其他动词</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST www.example.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X DELETE www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>假定文件上传的表单是下面这样：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&#x27;multipart/form-data&#x27;</span> <span class="attr">action</span>=<span class="string">&quot;upload.cgi&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">file</span> <span class="attr">name</span>=<span class="string">upload</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">submit</span> <span class="attr">name</span>=<span class="string">press</span> <span class="attr">value</span>=<span class="string">&quot;OK&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>可以用curl这样上传文件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --form upload=@localfilename --form press=OK [URL]</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-F</code>参数用来向服务器上传二进制文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会给 HTTP 请求加上标头<code>Content-Type: multipart/form-data</code>，然后将文件<code>photo.png</code>作为<code>file</code>字段上传。</p>
-<p><code>-F</code>参数可以指定 MIME 类型。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令指定 MIME 类型为<code>image/png</code>，否则 curl 会把 MIME 类型设为<code>application/octet-stream</code>。</p>
-<p><code>-F</code>参数也可以指定文件名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;filename=me.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令中，原始文件名为<code>photo.png</code>，但是服务器接收到的文件名为<code>me.png</code>。</p>
-<h3 id="Referer字段"><a href="#Referer字段" class="headerlink" title="Referer字段"></a>Referer字段</h3><p>有时你需要在http request头信息中，提供一个referer字段，表示你是从哪里跳转过来的。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --referer http://www.example.com http://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p><code>-e</code>参数用来设置 HTTP 的标头<code>Referer</code>，表示请求的来源。</p>
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将<code>Referer</code>标头设为<code>https://google.com?q=example</code>。</p>
-<p><code>-H</code>参数可以通过直接添加标头<code>Referer</code>，达到同样效果。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Referer: https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="User-Agent字段"><a href="#User-Agent字段" class="headerlink" title="User Agent字段"></a>User Agent字段</h3><p>这个字段是用来表示<strong>客户端的设备信息</strong>。服务器有时会根据这个字段，针对不同设备，返回不同格式的网页，比如手机版和桌面版。</p>
-<p>iPhone4的User Agent是</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Mozilla/5.0 (iPhone; U; CPU iPhone OS 4<span class="built_in">_</span>0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7</span><br></pre></td></tr></table></figure>
-
-<p>curl可以这样模拟：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user-agent <span class="string">&quot;[User Agent]&quot;</span> [URL]</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-A</code>参数指定客户端的用户代理标头，即<code>User-Agent</code>。curl 的默认用户代理字符串是<code>curl/[version]</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将<code>User-Agent</code>改成 Chrome 浏览器。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会移除<code>User-Agent</code>标头。</p>
-<p>也可以通过<code>-H</code>参数直接指定标头，更改<code>User-Agent</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;User-Agent: php/1.0&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>使用 <code>--cookie</code> 参数，可以让curl发送cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --cookie <span class="string">&quot;name=xxx&quot;</span> www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>至于具体的cookie的值，可以从http response头信息的<code>Set-Cookie</code>字段中得到。</p>
-<p><code>-c cookie-file</code>可以保存服务器返回的cookie到文件，<code>-b cookie-file</code>可以使用这个文件作为cookie信息，进行后续的请求。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies http://example.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将服务器的 HTTP 回应所设置 Cookie 写入文本文件<code>cookies.txt</code>。</p>
-<p><code>-b</code>参数用来向服务器发送 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies http://example.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo=bar&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会生成一个标头<code>Cookie: foo=bar</code>，向服务器发送一个名为<code>foo</code>、值为<code>bar</code>的 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo1=bar;foo2=bar2&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令发送两个 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令读取本地文件<code>cookies.txt</code>，里面是服务器设置的 Cookie（参见<code>-c</code>参数），将其发送到服务器。</p>
-<h3 id="增加头信息"><a href="#增加头信息" class="headerlink" title="增加头信息"></a>增加头信息</h3><p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --header <span class="string">&quot;Content-Type:application/json&quot;</span> http://example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-H</code>参数添加 HTTP 请求的标头。</p>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加 HTTP 标头<code>Accept-Language: en-US</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> -H <span class="string">&#x27;Secret-Message: xyzzy&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加两个 HTTP 标头。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;&#123;&quot;login&quot;: &quot;emma&quot;, &quot;pass&quot;: &quot;123&quot;&#125;&#x27;</span> -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加 HTTP 请求的标头是<code>Content-Type: application/json</code>，然后用<code>-d</code>参数发送 JSON 数据。</p>
-<h3 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h3><p>有些网域需要HTTP认证，这时curl需要用到 <code>--user</code> 参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user name:password example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="跳过-SSL-检测"><a href="#跳过-SSL-检测" class="headerlink" title="跳过 SSL 检测"></a>跳过 SSL 检测</h3><p><code>-k</code>参数指定跳过 SSL 检测。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -k https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令不会检查服务器的 SSL 证书是否正确。</p>
-<h3 id="限制-HTTP-请求和回应的带宽"><a href="#限制-HTTP-请求和回应的带宽" class="headerlink" title="限制 HTTP 请求和回应的带宽"></a>限制 HTTP 请求和回应的带宽</h3><p><code>--limit-rate</code>用来限制 HTTP 请求和回应的带宽，模拟慢网速的环境。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 200k https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将带宽限制在每秒 200K 字节。</p>
-<h3 id="错误信息的输出"><a href="#错误信息的输出" class="headerlink" title="错误信息的输出"></a>错误信息的输出</h3><p><code>-s</code> 参数将不输出错误和进度信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令一旦发生错误，不会显示错误信息。不发生错误的话，会正常显示运行结果。</p>
-<p>如果想让 curl 不产生任何输出，可以使用下面的命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-S</code>参数指定只输出错误信息，通常与<code>-s</code>一起使用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -S -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令没有任何输出，除非发生错误。</p>
-<h3 id="权限认证"><a href="#权限认证" class="headerlink" title="权限认证"></a>权限认证</h3><p><code>-u</code> 参数用来设置服务器认证的用户名和密码。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob:12345&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令设置用户名为<code>bob</code>，密码为<code>12345</code>，然后将其转为 HTTP 标头<code>Authorization: Basic Ym9iOjEyMzQ1</code>。</p>
-<p>curl 能够识别 URL 里面的用户名和密码。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://bob:12345@google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令能够识别 URL 里面的用户名和密码，将其转为上个例子里面的 HTTP 标头。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令只设置了用户名，执行后，curl 会提示用户输入密码。</p>
-<h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><p>​        curl命令作用 curl命令是一个功能强大的网络工具，它能够通过http、ftp等方式下载文件，也能够上传文件，同时支持HTTPS等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。其实curl远不止前面所说的那些功能，大家可以通过man curl阅读手册页获取更多的信息。类似的工具还有wget。curl命令使用了libcurl库来实现，libcurl库常用在C程序中用来处理HTTP请求，curlpp是libcurl的一个C++封装，这几个东西可以用在抓取网页、网络监控等方面的开发，而curl命令可以帮助来解决开发过程中遇到的问题。</p>
-<p>常用参数 curl命令参数很多，这里只列出我曾经用过、特别是在shell脚本中经常用到过的那些。</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">-a/--append 上传文件时，附加到目标文件</span><br><span class="line"></span><br><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line"></span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line"></span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line"></span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line"></span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line"></span><br><span class="line">    --data-ascii &lt;data&gt;	以ascii的方式post数据</span><br><span class="line">     --data-binary &lt;data&gt;	以二进制的方式post数据</span><br><span class="line">     --negotiate	使用HTTP身份验证</span><br><span class="line">     --digest	使用数字身份验证</span><br><span class="line">     --disable-eprt	禁止使用EPRT或LPRT</span><br><span class="line">     --disable-epsv	禁止使用EPSV</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line"></span><br><span class="line">     --egd-file &lt;file&gt;  为随机数据(SSL)设置EGD socket路径</span><br><span class="line"></span><br><span class="line">     --tcp-nodelay     使用TCP<span class="built_in">_</span>NODELAY选项</span><br><span class="line"></span><br><span class="line">-e/--referer &lt;URL&gt;  指定引用地址</span><br><span class="line"></span><br><span class="line">-F/--form &lt;name=content&gt;   模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">     --form-string &lt;name=string&gt; 模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">-G/--get    以get的方式来发送数据</span><br><span class="line"></span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">    --ignore-content-length  忽略的HTTP头信息的长度</span><br><span class="line"></span><br><span class="line">-i/--include     输出时包括protocol头信息</span><br><span class="line"></span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line"></span><br><span class="line">-k/--insecure  允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line">-K/--config    指定的配置文件读取</span><br><span class="line"></span><br><span class="line">-l/--list-only   列出ftp目录下的文件名称</span><br><span class="line"></span><br><span class="line">    --limit-rate &lt;rate&gt; 设置传输速度</span><br><span class="line"></span><br><span class="line">     --local-port&lt;NUM&gt;  强制使用本地端口号</span><br><span class="line"></span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line"></span><br><span class="line">     --max-redirs &lt;num&gt;    设置最大读取的目录数</span><br><span class="line"></span><br><span class="line">     --max-filesize &lt;bytes&gt;  设置最大下载的文件总量</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt;   指定输出文件名称</span><br><span class="line"></span><br><span class="line">-O/--remote-name  把输出写到该文件中，保留远程文件的文件名</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-v/--verbose  小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line"></span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line"></span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line"></span><br><span class="line">   --range-file 读取（SSL）的随机文件</span><br><span class="line"></span><br><span class="line">-R/--remote-time   在本地生成文件时，保留远程文件时间</span><br><span class="line"></span><br><span class="line">    --retry &lt;num&gt;   指定重试次数</span><br><span class="line"></span><br><span class="line">    --retry-delay &lt;seconds&gt;   传输出现问题时，设置重试间隔时间</span><br><span class="line"></span><br><span class="line">    --retry-max-time &lt;seconds&gt;  传输出现问题时，设置最大重试时间</span><br><span class="line"></span><br><span class="line">-s/--silent  静默模式。不输出任何东西</span><br><span class="line"></span><br><span class="line">-S/--show-error  显示错误</span><br><span class="line"></span><br><span class="line">    --socks4 &lt;host[:port]&gt; 用socks4代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --socks5 &lt;host[:port]&gt; 用socks5代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --stderr &lt;file&gt;</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;host[:port]&gt; 在给定的端口上使用HTTP代理</span><br><span class="line"></span><br><span class="line">-X/--request &lt;command&gt; 指定什么命令。curl默认的HTTP动词是GET，使用-X参数可以支持其他动词。</span><br><span class="line"></span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>文章总结来源：</p>
-<p><a href="https://www.ruanyifeng.com/blog/2011/09/curl.html">curl网站开发指南</a></p>
-<p><a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 的用法指南</a></p>
-<p><a href="https://handerfly.github.io/linux/2019/05/26/curl%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">curl命令详解</a></p>
-<p>更多内容查看：</p>
-<p><a href="https://curl.se/docs/manpage.html">curl 用户手册</a></p>
-]]></content>
-      <categories>
-        <category>命令行工具</category>
-      </categories>
-      <tags>
-        <tag>命令行工具</tag>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
-      </tags>
   </entry>
   <entry>
     <title>Linux IO</title>
@@ -2810,6 +2810,54 @@
       </tags>
   </entry>
   <entry>
+    <title>记忆化搜索</title>
+    <url>/post/cb5e0eb8/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
+<span id="more"></span>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+</ul>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<blockquote>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>记忆化搜索</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>模拟</title>
     <url>/post/d1f7904c/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
@@ -2852,6 +2900,130 @@
       </categories>
       <tags>
         <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>理解linux中的file descriptor(文件描述符)</title>
+    <url>/post/1e8930fb/</url>
+    <content><![CDATA[<p>file descriptor（以下简称fd）又叫文件描述符，它是一个抽象的指示符，用一个整数表示（非负整数）。它指向了由系统内核维护的一个file table中的某个条目（entry）。这个解释可能过于抽象，不过在正式详细介绍fd之前，有必要先了解用户程序和系统内核之间的工作过程。</p>
+<p>注：本文描述的所有场景仅限于类unix系统环境，在windows中叫file handle（句柄）。</p>
+<span id="more"></span>
+<h2 id="User-space-amp-Kernel-space"><a href="#User-space-amp-Kernel-space" class="headerlink" title="User space &amp; Kernel space"></a>User space &amp; Kernel space</h2><p>现代操作系统会把内存划分为2个区域，分别为Use space(用户空间) 和 Kernel space(内核空间)。用户的程序在User space执行，系统内核在Kernel space中执行。</p>
+<p>用户的程序没有权限直接访问硬件资源，但系统内核可以。比如读写本地文件需要访问磁盘，创建socket需要网卡等。因此用户程序想要读写文件，必须要向内核发起读写请求，这个过程叫system call。</p>
+<p>内核收到用户程序system call时，负责访问硬件，并把结果返回给程序。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/test.txt&quot;</span>);</span><br><span class="line"><span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">256</span>];</span><br><span class="line">fis.read(buf);</span><br></pre></td></tr></table></figure>
+
+<p>上面代码的流程如下图所示：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126181103666.png" style="zoom:50%;" />
+
+
+
+<h2 id="File-Descriptor"><a href="#File-Descriptor" class="headerlink" title="File Descriptor"></a>File Descriptor</h2><p>上面简单介绍了User space和Kernel space，这对于理解fd有很大的帮助。fd会存在，就是因为用户程序无法直接访问硬件，因此当程序向内核发起system call打开一个文件时，在用户进程中必须有一个东西标识着打开的文件，这个东西就是fd。</p>
+<h3 id="file-tables"><a href="#file-tables" class="headerlink" title="file tables"></a>file tables</h3><p>和fd相关的一共有3张表，分别是file descriptor、file table、inode table，如下图所示。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126181152940.png"></p>
+<ul>
+<li><p>file descriptors</p>
+<p>file descriptors table由用户进程所有，每个进程都有一个这样的表，这里记录了进程打开的文件所代表的fd，fd的值映射到file table中的条目(entry)。</p>
+<p>另外，每个进程都会预留3个默认的fd: stdin、stdout、stderr;它们的值分别是0、1，2。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Integer value</th>
+<th align="center">Name</th>
+<th align="center">symbolic constant</th>
+<th align="center">file stream</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td align="center"><a href="https://en.wikipedia.org/wiki/Stdin">Standard input</a></td>
+<td align="center">STDIN_FILENO</td>
+<td align="center">stdin</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center"><a href="https://en.wikipedia.org/wiki/Stdout">Standard output</a></td>
+<td align="center">STDOUT_FILENO</td>
+<td align="center">stdout</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center"><a href="https://en.wikipedia.org/wiki/Stderr">Standard error</a></td>
+<td align="center">STDERR_FILENO</td>
+<td align="center">stderr</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>file table</p>
+<p>file table是全局唯一的表，由系统内核维护。这个表记录了所有进程打开的文件的状态（是否可读、可写等状态），同时它也映射到inode table中的entry。</p>
+</li>
+<li><p>inode table</p>
+<p>inode table同样是全局唯一的，它指向了真正的文件地址（磁盘中的位置），每个entry全局唯一。</p>
+</li>
+</ul>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p>当程序向内核发起system call <code>open()</code>，内核将会</p>
+<ol>
+<li>允许程序请求</li>
+<li>创建一个entry插入到file table，并返回file descriptor</li>
+<li>程序把fd插入到fds中。</li>
+</ol>
+<p>当程序再次发起<code>read()</code>system call时，需要把相关的fd传给内核，内核定位到具体的文件(fd –&gt; file table –&gt; inode table)向磁盘发起读取请求，再把读取到的数据返回给程序处理。</p>
+<p>下面是<code>read</code>这个函数的定义，第一个参数<code>fd</code>即file descriptor。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>同样的，<code>write</code>system call函数如下</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的结果来看，fd就是file table的一个索引，指向了file table中的entry。</p>
+<h2 id="查看进程的file-descriptors"><a href="#查看进程的file-descriptors" class="headerlink" title="查看进程的file descriptors"></a>查看进程的file descriptors</h2><h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>linux系统可以通过<code>/proc/pid/fd</code>文件夹查看进程的fd，比如我的redis进程id为96104，执行以下命令查看</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ls -l /proc/96104/fd</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126182056967.png" style="zoom:67%;" />
+
+<p>上图中的数字即fd。</p>
+<h3 id="mac-os-x"><a href="#mac-os-x" class="headerlink" title="mac os x"></a>mac os x</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -p pid</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126194304823.png" style="zoom: 67%;" />
+
+<h2 id="操作file-descriptors"><a href="#操作file-descriptors" class="headerlink" title="操作file descriptors"></a>操作file descriptors</h2><p>下面是一些系统函数。当程序发起system call，大多需要传递fd到这些函数中，kernel去访问具体的资源。</p>
+<ul>
+<li>open()</li>
+<li>read()</li>
+<li>write()</li>
+<li>select()</li>
+<li>poll()</li>
+</ul>
+<p>更多系统函数可以参考维基百科<a href="https://en.wikipedia.org/wiki/File_descriptor">File Descriptor</a>，整理了大量常见的函数</p>
+<h2 id="Java中的File-Descriptor"><a href="#Java中的File-Descriptor" class="headerlink" title="Java中的File Descriptor"></a>Java中的File Descriptor</h2><p>Java封装了<code>FileDescriptor</code>类表示fd，FileInputStrem和FileOutputStream中都会持有这个类。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">FileDescriptor</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> fd;  </span><br><span class="line">  <span class="comment">//.......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面可以看到fd和之前描述的一致，是一个整数。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileInputStream</span> <span class="keyword">extends</span> <span class="title">InputStream</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* File Descriptor - handle to the open file */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> FileDescriptor fd;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">FileInputStream</span><span class="params">(File file)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    String name = (file != <span class="keyword">null</span> ? file.getPath() : <span class="keyword">null</span>);</span><br><span class="line">    SecurityManager security = System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (security != <span class="keyword">null</span>) &#123;</span><br><span class="line">      security.checkRead(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (file.isInvalid()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> FileNotFoundException(<span class="string">&quot;Invalid file path&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fd = <span class="keyword">new</span> FileDescriptor();</span><br><span class="line">    fd.attach(<span class="keyword">this</span>);</span><br><span class="line">    path = name;</span><br><span class="line">    open(name);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>fd在输入输出流的构造器中创建，JVM会发起system call <code>open()</code>初始化资源并返回fd。</p>
+<p><strong>stand stream fd</strong></p>
+<p>下面代码可以查看标准输入/输出/错误流中的fd，用debug启动即可在面板中看到fd的值。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FDTester</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        BufferedInputStream in = (BufferedInputStream) System.in;</span><br><span class="line">        PrintStream out = System.out;</span><br><span class="line">        PrintStream err = System.err;</span><br><span class="line">        FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/test.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.in.read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192812494.png" style="zoom:50%;" />
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192838936.png" style="zoom:50%;" />
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192905490.png" style="zoom:50%;" />
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192934419.png" style="zoom:50%;" />
+
+
+
+
+
+<p>文章来源：<a href="https://wiyi.org/linux-file-descriptor.html">理解linux中的file descriptor(文件描述符)</a></p>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
       </tags>
   </entry>
   <entry>
@@ -3005,178 +3177,6 @@
       </categories>
       <tags>
         <tag>基础知识</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>理解linux中的file descriptor(文件描述符)</title>
-    <url>/post/1e8930fb/</url>
-    <content><![CDATA[<p>file descriptor（以下简称fd）又叫文件描述符，它是一个抽象的指示符，用一个整数表示（非负整数）。它指向了由系统内核维护的一个file table中的某个条目（entry）。这个解释可能过于抽象，不过在正式详细介绍fd之前，有必要先了解用户程序和系统内核之间的工作过程。</p>
-<p>注：本文描述的所有场景仅限于类unix系统环境，在windows中叫file handle（句柄）。</p>
-<span id="more"></span>
-<h2 id="User-space-amp-Kernel-space"><a href="#User-space-amp-Kernel-space" class="headerlink" title="User space &amp; Kernel space"></a>User space &amp; Kernel space</h2><p>现代操作系统会把内存划分为2个区域，分别为Use space(用户空间) 和 Kernel space(内核空间)。用户的程序在User space执行，系统内核在Kernel space中执行。</p>
-<p>用户的程序没有权限直接访问硬件资源，但系统内核可以。比如读写本地文件需要访问磁盘，创建socket需要网卡等。因此用户程序想要读写文件，必须要向内核发起读写请求，这个过程叫system call。</p>
-<p>内核收到用户程序system call时，负责访问硬件，并把结果返回给程序。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/test.txt&quot;</span>);</span><br><span class="line"><span class="keyword">byte</span>[] buf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">256</span>];</span><br><span class="line">fis.read(buf);</span><br></pre></td></tr></table></figure>
-
-<p>上面代码的流程如下图所示：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126181103666.png" style="zoom:50%;" />
-
-
-
-<h2 id="File-Descriptor"><a href="#File-Descriptor" class="headerlink" title="File Descriptor"></a>File Descriptor</h2><p>上面简单介绍了User space和Kernel space，这对于理解fd有很大的帮助。fd会存在，就是因为用户程序无法直接访问硬件，因此当程序向内核发起system call打开一个文件时，在用户进程中必须有一个东西标识着打开的文件，这个东西就是fd。</p>
-<h3 id="file-tables"><a href="#file-tables" class="headerlink" title="file tables"></a>file tables</h3><p>和fd相关的一共有3张表，分别是file descriptor、file table、inode table，如下图所示。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126181152940.png"></p>
-<ul>
-<li><p>file descriptors</p>
-<p>file descriptors table由用户进程所有，每个进程都有一个这样的表，这里记录了进程打开的文件所代表的fd，fd的值映射到file table中的条目(entry)。</p>
-<p>另外，每个进程都会预留3个默认的fd: stdin、stdout、stderr;它们的值分别是0、1，2。</p>
-<table>
-<thead>
-<tr>
-<th align="center">Integer value</th>
-<th align="center">Name</th>
-<th align="center">symbolic constant</th>
-<th align="center">file stream</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">0</td>
-<td align="center"><a href="https://en.wikipedia.org/wiki/Stdin">Standard input</a></td>
-<td align="center">STDIN_FILENO</td>
-<td align="center">stdin</td>
-</tr>
-<tr>
-<td align="center">1</td>
-<td align="center"><a href="https://en.wikipedia.org/wiki/Stdout">Standard output</a></td>
-<td align="center">STDOUT_FILENO</td>
-<td align="center">stdout</td>
-</tr>
-<tr>
-<td align="center">2</td>
-<td align="center"><a href="https://en.wikipedia.org/wiki/Stderr">Standard error</a></td>
-<td align="center">STDERR_FILENO</td>
-<td align="center">stderr</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>file table</p>
-<p>file table是全局唯一的表，由系统内核维护。这个表记录了所有进程打开的文件的状态（是否可读、可写等状态），同时它也映射到inode table中的entry。</p>
-</li>
-<li><p>inode table</p>
-<p>inode table同样是全局唯一的，它指向了真正的文件地址（磁盘中的位置），每个entry全局唯一。</p>
-</li>
-</ul>
-<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p>当程序向内核发起system call <code>open()</code>，内核将会</p>
-<ol>
-<li>允许程序请求</li>
-<li>创建一个entry插入到file table，并返回file descriptor</li>
-<li>程序把fd插入到fds中。</li>
-</ol>
-<p>当程序再次发起<code>read()</code>system call时，需要把相关的fd传给内核，内核定位到具体的文件(fd –&gt; file table –&gt; inode table)向磁盘发起读取请求，再把读取到的数据返回给程序处理。</p>
-<p>下面是<code>read</code>这个函数的定义，第一个参数<code>fd</code>即file descriptor。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">read</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> count)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>同样的，<code>write</code>system call函数如下</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> fd, <span class="keyword">const</span> <span class="keyword">void</span> *buf, <span class="keyword">size_t</span> nbytes)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>从上面的结果来看，fd就是file table的一个索引，指向了file table中的entry。</p>
-<h2 id="查看进程的file-descriptors"><a href="#查看进程的file-descriptors" class="headerlink" title="查看进程的file descriptors"></a>查看进程的file descriptors</h2><h3 id="linux"><a href="#linux" class="headerlink" title="linux"></a>linux</h3><p>linux系统可以通过<code>/proc/pid/fd</code>文件夹查看进程的fd，比如我的redis进程id为96104，执行以下命令查看</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ls -l /proc/96104/fd</span><br></pre></td></tr></table></figure>
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126182056967.png" style="zoom:67%;" />
-
-<p>上图中的数字即fd。</p>
-<h3 id="mac-os-x"><a href="#mac-os-x" class="headerlink" title="mac os x"></a>mac os x</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">lsof -p pid</span><br></pre></td></tr></table></figure>
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126194304823.png" style="zoom: 67%;" />
-
-<h2 id="操作file-descriptors"><a href="#操作file-descriptors" class="headerlink" title="操作file descriptors"></a>操作file descriptors</h2><p>下面是一些系统函数。当程序发起system call，大多需要传递fd到这些函数中，kernel去访问具体的资源。</p>
-<ul>
-<li>open()</li>
-<li>read()</li>
-<li>write()</li>
-<li>select()</li>
-<li>poll()</li>
-</ul>
-<p>更多系统函数可以参考维基百科<a href="https://en.wikipedia.org/wiki/File_descriptor">File Descriptor</a>，整理了大量常见的函数</p>
-<h2 id="Java中的File-Descriptor"><a href="#Java中的File-Descriptor" class="headerlink" title="Java中的File Descriptor"></a>Java中的File Descriptor</h2><p>Java封装了<code>FileDescriptor</code>类表示fd，FileInputStrem和FileOutputStream中都会持有这个类。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">FileDescriptor</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">int</span> fd;  </span><br><span class="line">  <span class="comment">//.......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面可以看到fd和之前描述的一致，是一个整数。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileInputStream</span> <span class="keyword">extends</span> <span class="title">InputStream</span> </span>&#123;</span><br><span class="line">    <span class="comment">/* File Descriptor - handle to the open file */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> FileDescriptor fd;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">FileInputStream</span><span class="params">(File file)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    String name = (file != <span class="keyword">null</span> ? file.getPath() : <span class="keyword">null</span>);</span><br><span class="line">    SecurityManager security = System.getSecurityManager();</span><br><span class="line">    <span class="keyword">if</span> (security != <span class="keyword">null</span>) &#123;</span><br><span class="line">      security.checkRead(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (name == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (file.isInvalid()) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> FileNotFoundException(<span class="string">&quot;Invalid file path&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    fd = <span class="keyword">new</span> FileDescriptor();</span><br><span class="line">    fd.attach(<span class="keyword">this</span>);</span><br><span class="line">    path = name;</span><br><span class="line">    open(name);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>fd在输入输出流的构造器中创建，JVM会发起system call <code>open()</code>初始化资源并返回fd。</p>
-<p><strong>stand stream fd</strong></p>
-<p>下面代码可以查看标准输入/输出/错误流中的fd，用debug启动即可在面板中看到fd的值。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FDTester</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        BufferedInputStream in = (BufferedInputStream) System.in;</span><br><span class="line">        PrintStream out = System.out;</span><br><span class="line">        PrintStream err = System.err;</span><br><span class="line">        FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;/tmp/test.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.in.read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192812494.png" style="zoom:50%;" />
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192838936.png" style="zoom:50%;" />
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192905490.png" style="zoom:50%;" />
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220126192934419.png" style="zoom:50%;" />
-
-
-
-
-
-<p>文章来源：<a href="https://wiyi.org/linux-file-descriptor.html">理解linux中的file descriptor(文件描述符)</a></p>
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>记忆化搜索</title>
-    <url>/post/cb5e0eb8/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
-<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
-<span id="more"></span>
-
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>函数有返回值</li>
-<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
-<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
-</ul>
-<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
-<blockquote>
-<p>本质上是自顶向下的动态规划加备忘录。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
-<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>记忆化搜索</tag>
       </tags>
   </entry>
   <entry>
