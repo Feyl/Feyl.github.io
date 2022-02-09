@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125414593.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125528595.png">
 <meta property="article:published_time" content="2022-02-08T05:05:23.000Z">
-<meta property="article:modified_time" content="2022-02-08T05:10:23.580Z">
+<meta property="article:modified_time" content="2022-02-09T00:55:26.054Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="跳表">
 <meta property="article:tag" content="双向链表">
@@ -245,10 +245,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-02-08 13:05:23 / Modified: 13:10:23" itemprop="dateCreated datePublished" datetime="2022-02-08T13:05:23+08:00">2022-02-08</time>
+              <time title="Created: 2022-02-08 13:05:23" itemprop="dateCreated datePublished" datetime="2022-02-08T13:05:23+08:00">2022-02-08</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-02-09 08:55:26" itemprop="dateModified" datetime="2022-02-09T08:55:26+08:00">2022-02-09</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -301,12 +307,12 @@
 
 <p>到这里大家应该已经明白了什么是跳表。跳表是<strong>可以实现二分查找的有序链表</strong>。</p>
 <h2 id="操作-amp-时空复杂度分析"><a href="#操作-amp-时空复杂度分析" class="headerlink" title="操作 &amp; 时空复杂度分析"></a>操作 &amp; 时空复杂度分析</h2><h3 id="查找数据"><a href="#查找数据" class="headerlink" title="查找数据"></a>查找数据</h3><p>既然跳表可以提升链表查找元素的效率，那查找一个元素的时间复杂度到底是多少呢？查找元素的过程是从最高级索引开始，一层一层遍历最后下沉到原始链表。所以，时间复杂度 = 索引的高度 * 每层索引遍历元素的个数。</p>
-<p>先来求跳表的索引高度。如下图所示，假设每两个结点会抽出一个结点作为上一级索引的结点，原始的链表有n个元素，则一级索引有n/2 个元素、二级索引有 n/4 个元素、k级索引就有 n/2^k^个元素。最高级索引一般有2个元素，即：最高级索引 h 满足 2 = n/2^h^，即 h = log2^n^ - 1，最高级索引 h 为索引层的高度加上原始数据一层，跳表的总高度 h = log2^n^。</p>
+<p>先来求跳表的索引高度。如下图所示，假设每两个结点会抽出一个结点作为上一级索引的结点，原始的链表有n个元素，则一级索引有n/2 个元素、二级索引有 n/4 个元素、k级索引就有 n/2<sup>k</sup>个元素。最高级索引一般有2个元素，即：最高级索引 h 满足 2 = n/2<sup>h</sup>，即 h = log2<sup>n</sup> - 1，最高级索引 h 为索引层的高度加上原始数据一层，跳表的总高度 h = log2<sup>n</sup>。</p>
 <img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120216604.png" style="zoom:67%;" />
 
 <p>我们看上图中加粗的箭头，表示查找元素 x 的路径，那查找过程中每一层索引最多遍历几个元素呢？</p>
 <p>图中所示，现在到达第 k 级索引，我们发现要查找的元素 x 比 y 大比 z 小，所以，我们需要从 y 处下降到 k-1 级索引继续查找，k-1级索引中比 y 大比 z 小的只有一个 w，所以在 k-1 级索引中，我们遍历的元素最多就是 y、w、z，发现 x 比 w大比 z 小之后，再下降到 k-2 级索引。所以，k-2 级索引最多遍历的元素为 w、u、z。其实每级索引都是类似的道理，每级索引中都是两个结点抽出一个结点作为上一级索引的结点。 现在我们得出结论：当每级索引都是两个结点抽出一个结点作为上一级索引的结点时，每一层最多遍历3个结点。</p>
-<p>跳表的索引高度 h = log2^n^，且每层索引最多遍历 3 个元素。所以跳表中查找一个元素的时间复杂度为 <code>O(3*logn)</code>，省略常数即：<code>O(logn)</code>。</p>
+<p>跳表的索引高度 h = log2<sup>n</sup>，且每层索引最多遍历 3 个元素。所以跳表中查找一个元素的时间复杂度为 <code>O(3*logn)</code>，省略常数即：<code>O(logn)</code>。</p>
 <h3 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h3><p>跳表通过建立索引，来提高查找元素的效率，就是典型的“<strong>空间换时间</strong>”的思想，所以在空间上做了一些牺牲，那空间复杂度到底是多少呢？</p>
 <p>假如原始链表包含 n 个元素，则一级索引元素个数为 n/2、二级索引元素个数为 n/4、三级索引元素个数为 n/8 以此类推。所以，索引节点的总和是：n/2 + n/4 + n/8 + … + 8 + 4 + 2 = n-2，**空间复杂度是 O(n)**。</p>
 <p>如下图所示：如果每三个结点抽一个结点做为索引，索引总和数就是 n/3 + n/9 + n/27 + … + 9 + 3 + 1= n/2，减少了一半。所以我们可以通过较少索引数来减少空间复杂度，但是相应的肯定会造成查找效率有一定下降，我们可以根据我们的应用场景来控制这个阈值，看我们更注重时间还是空间。</p>
