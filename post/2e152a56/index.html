@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125414593.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125528595.png">
 <meta property="article:published_time" content="2022-02-08T05:05:23.000Z">
-<meta property="article:modified_time" content="2022-02-09T01:15:14.899Z">
+<meta property="article:modified_time" content="2022-02-09T01:19:17.385Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="跳表">
 <meta property="article:tag" content="双向链表">
@@ -253,7 +253,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-02-09 09:15:14" itemprop="dateModified" datetime="2022-02-09T09:15:14+08:00">2022-02-09</time>
+                <time title="Modified: 2022-02-09 09:19:17" itemprop="dateModified" datetime="2022-02-09T09:19:17+08:00">2022-02-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -341,7 +341,7 @@
 <p>所以，通过 <code>randomLevel()</code> 方法，我们可以控制整个跳表各级索引中元素的个数。<strong>重点来了</strong>：<code>randomLevel()</code> 方法返回 2 的时候会建立一级索引，我们想要一级索引中元素个数占原始数据的 1/2，但是 <code>randomLevel()</code> 方法返回 2 的概率为 1/4，那是不是有矛盾呢？明明说好的 1/2，结果一级索引元素个数怎么变成了原始链表的 1/4？我们先看下图，应该就明白了。</p>
 <img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208122204227.png" style="zoom:67%;" />
 
-<p>假设我们在插入元素 6 的时候，<code>randomLevel()</code> 方法返回 1，则我们不会为 6 建立索引。插入 7 的时候，<code>randomLevel()</code> 方法返回3 ，所以我们需要为元素 7 建立二级索引。这里我们发现了一个特点：当建立二级索引的时候，同时也会建立一级索引；当建立三级索引时，同时也会建立一级、二级索引。所以，一级索引中元素的个数等于 <em>[ 原始链表元素个数 ]</em> * *[ <code>randomLevel()</code> 方法返回值 &gt; 1 的概率 ]*。因为 <code>randomLevel()</code> 方法返回值 &gt; 1就会建索引，凡是建索引，无论几级索引必然有一级索引，<strong>所以一级索引中元素个数占原始数据个数的比率为 randomLevel() 方法返回值 &gt; 1 的概率</strong>。那 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率是多少呢？因为 <code>randomLevel()</code> 方法随机生成 <code>1~MAX_LEVEL</code> 的数字，且 <code>randomLevel()</code> 方法返回值 1 的概率为 1/2，则 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率为 1 - 1/2 = 1/2。即<strong>通过上述流程实现了一级索引中元素个数占原始数据个数的 1/2</strong>。</p>
+<p>假设我们在插入元素 6 的时候，<code>randomLevel()</code> 方法返回 1，则我们不会为 6 建立索引。插入 7 的时候，<code>randomLevel()</code> 方法返回3 ，所以我们需要为元素 7 建立二级索引。这里我们发现了一个特点：当建立二级索引的时候，同时也会建立一级索引；当建立三级索引时，同时也会建立一级、二级索引。所以，一级索引中元素的个数等于 [ 原始链表元素个数 ] * [ <code>randomLevel()</code> 方法返回值 &gt; 1 的概率 ]。因为 <code>randomLevel()</code> 方法返回值 &gt; 1就会建索引，凡是建索引，无论几级索引必然有一级索引，<strong>所以一级索引中元素个数占原始数据个数的比率为 randomLevel() 方法返回值 &gt; 1 的概率</strong>。那 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率是多少呢？因为 <code>randomLevel()</code> 方法随机生成 <code>1~MAX_LEVEL</code> 的数字，且 <code>randomLevel()</code> 方法返回值 1 的概率为 1/2，则 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率为 1 - 1/2 = 1/2。即<strong>通过上述流程实现了一级索引中元素个数占原始数据个数的 1/2</strong>。</p>
 <p>同理，当 <code>randomLevel()</code> 方法返回值 &gt; 2 时，会建立二级或二级以上索引，都会在二级索引中增加元素，因此<strong>二级索引中元素个数占原始数据的比率为 randomLevel() 方法返回值 &gt; 2 的概率</strong>。 <code>randomLevel()</code> 方法返回值 &gt; 2 的概率为 1 减去 <code>randomLevel()</code> = 1 或 =2 的概率，即 1 - 1/2 - 1/4 = 1/4。OK，达到了我们设计的目标：<strong>二级索引中元素个数占原始数据的 1/4</strong>。</p>
 <p>以此类推，可以得出，遵守以下两个条件：</p>
 <ul>
