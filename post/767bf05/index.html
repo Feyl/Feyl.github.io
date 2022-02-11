@@ -30,7 +30,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211100733345.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211103507042.png">
-<meta property="og:image" content="e:/Typora/images/image-20220211103646545.png">
+<meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211103646545.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211123707245.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211124408586.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211160458562.png">
@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211170050814.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211094515896.png">
 <meta property="article:published_time" content="2022-02-11T09:07:55.000Z">
-<meta property="article:modified_time" content="2022-02-11T10:03:47.381Z">
+<meta property="article:modified_time" content="2022-02-11T10:23:30.592Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="开源项目">
 <meta property="article:tag" content="学习经验">
@@ -245,7 +245,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2022-02-11 17:07:55 / Modified: 18:03:47" itemprop="dateCreated datePublished" datetime="2022-02-11T17:07:55+08:00">2022-02-11</time>
+              <time title="Created: 2022-02-11 17:07:55 / Modified: 18:23:30" itemprop="dateCreated datePublished" datetime="2022-02-11T17:07:55+08:00">2022-02-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -333,7 +333,7 @@
 <li><code>项目根目录/src/test/java</code>：放置项目<strong>测试用例代码</strong></li>
 </ul>
 <p>而位于 <code>/src/main/java</code> 目录下的Java源代码的组织结构大家比较关心，这地方也只能给出一个通常典型的结构，毕竟不同项目和团队实践不一样，稍许有区别，但整体安排应该差不多。而且如果是<strong>多模块</strong>的项目的话，下面的结构应该只对应其中一个模块，其他模块的代码组织也大致差不多。</p>
-<img src="E:\Typora\images\image-20220211103646545.png" style="zoom: 65%;" />
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211103646545.png" style="zoom: 65%;" />
 
 <p>各个目录详细介绍：</p>
 <figure class="highlight tex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">|<span class="built_in">_</span>annotation：放置项目自定义注解</span><br><span class="line">|<span class="built_in">_</span>aspect：放置切面代码</span><br><span class="line">|<span class="built_in">_</span>config：放置配置类</span><br><span class="line">|<span class="built_in">_</span>constant：放置常量、枚举等定义</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>consist：存放常量定义</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>enums：存放枚举定义</span><br><span class="line">|<span class="built_in">_</span>controller：放置控制器代码</span><br><span class="line">|<span class="built_in">_</span>filter：放置一些过滤、拦截相关的代码</span><br><span class="line">|<span class="built_in">_</span>mapper：放置数据访问层代码接口</span><br><span class="line">|<span class="built_in">_</span>model：放置数据模型代码</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>entity：放置数据库实体对象定义</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>dto：存放数据传输对象定义</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>vo：存放显示层对象定义</span><br><span class="line">|<span class="built_in">_</span>service：放置具体的业务逻辑代码（接口和实现分离）</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>intf：存放业务逻辑接口定义</span><br><span class="line">   |<span class="built_in">_</span><span class="built_in">_</span>impl：存放业务逻辑实际实现</span><br><span class="line">|<span class="built_in">_</span>utils：放置工具类和辅助代码</span><br></pre></td></tr></table></figure>
@@ -538,7 +538,7 @@
 <p>5、<strong>先整体后细节</strong>：对于复杂函数，不要上来就陷入细节，前期阅读只需了解这个函数大致做了什么事情，建立框架，等搭建起框架之后，再去填充细节。</p>
 <p>6、<strong>先主线后支线</strong>：整个主线逻辑清晰之后，再去延伸阅读支线逻辑，因为支线逻辑肯定是服务主线逻辑的，读完主线后再去读这些支线，也会变得更简单。</p>
 <p>7、<strong>查漏补缺</strong>：在工作中遇到具体问题，带着这些实际的问题出发再次去读源码，进行查漏补缺，填补之前读源码时没有注意到的地方。</p>
-<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>你可以看到，这篇文章介绍的阅读源码的方法，其实并不局限于读 Redis 代码。</p>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>你可以看到，上面介绍的阅读源码的方法，其实并不局限于读 Redis 代码。</p>
 <p>这 7 个步骤，可以算是一个的「通用思路」，我也经常用这个思路来读其它项目的源码，非常有用，你也可以试试。</p>
 <p>另外，我认为很多人读源码觉得难，<strong>一是因为心理上自认为自己读不懂，不敢迈步这一步，二是因为找不到合理的方法，在读源码时屡次受挫，最终知难而退。</strong></p>
 <p>我在读源码时也经历过这些，这里再分享一下我的经验。</p>
