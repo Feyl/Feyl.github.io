@@ -43,7 +43,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211170050814.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211094515896.png">
 <meta property="article:published_time" content="2022-02-11T09:07:55.000Z">
-<meta property="article:modified_time" content="2022-02-11T09:13:12.097Z">
+<meta property="article:modified_time" content="2022-02-11T09:22:50.099Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="开源项目">
 <meta property="article:tag" content="学习经验">
@@ -245,7 +245,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2022-02-11 17:07:55 / Modified: 17:13:12" itemprop="dateCreated datePublished" datetime="2022-02-11T17:07:55+08:00">2022-02-11</time>
+              <time title="Created: 2022-02-11 17:07:55 / Modified: 17:22:50" itemprop="dateCreated datePublished" datetime="2022-02-11T17:07:55+08:00">2022-02-11</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -263,7 +263,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>15k</span>
+              <span>14k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -284,19 +284,25 @@
       
         <h2 id="开源项目结构"><a href="#开源项目结构" class="headerlink" title="开源项目结构"></a>开源项目结构</h2><h3 id="阿里巴巴-Java开发手册-工程结构-应用分层"><a href="#阿里巴巴-Java开发手册-工程结构-应用分层" class="headerlink" title="阿里巴巴 Java开发手册-工程结构-应用分层"></a>阿里巴巴 Java开发手册-工程结构-应用分层</h3><ol>
 <li><p>【推荐】根据业务架构实践，结合业界分层规范与流行技术框架分析，推荐分层结构如图所示， <strong>默认上层依赖于下层</strong>，箭头关系表示可直接依赖，如：开放 API 层可以依赖于 Web 层 （Controller 层），也可以直接依赖于 Service 层，依此类推：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211100733345.png" style="zoom: 75%;" />
 <span id="more"></span>
-* 开放 API 层：可直接封装 Service 接口暴露成 **RPC 接口**；通过 Web 封装成 **http 接口**；**网关控制**层等。
-* 终端显示层：各个端的**模板渲染并执行**显示的层。当前主要是 velocity 渲染，JS 渲染，JSP 渲染，移动端展示等。
-* Web 层：主要是**对访问控制进行转发**，**各类基本参数校验**，或者**不复用的业务简单处理**等。
-* Service 层：相对**具体的业务逻辑**服务层。
-* Manager 层：**通用业务处理**层，它有如下特征：
-  1. 对第三方平台封装的层，预处理返回结果及转化异常信息，适配上层接口。
-  2. 对 Service 层**通用**能力的下沉，如缓存方案、中间件通用处理。
-  3. 与 DAO 层交互，对多个 DAO 的组合复用。
-* DAO 层：**数据访问**层，与底层 MySQL、Oracle、Hbase、OB 等进行数据交互。
-* 第三方服务：包括**其它部门 RPC 服务接口**，基础平台，**其它公司的 HTTP 接口**，如淘宝开放平台、支付宝付款服务、高德地图服务等。
-* 外部数据接口：**外部（应用）数据存储服务提供的接口**，多见于**数据迁移场景**中。</li>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220211100733345.png" style="zoom: 75%;" />
+
+<ul>
+<li>开放 API 层：可直接封装 Service 接口暴露成 <strong>RPC 接口</strong>；通过 Web 封装成 <strong>http 接口</strong>；<strong>网关控制</strong>层等。</li>
+<li>终端显示层：各个端的<strong>模板渲染并执行</strong>显示的层。当前主要是 velocity 渲染，JS 渲染，JSP 渲染，移动端展示等。</li>
+<li>Web 层：主要是<strong>对访问控制进行转发</strong>，<strong>各类基本参数校验</strong>，或者<strong>不复用的业务简单处理</strong>等。</li>
+<li>Service 层：相对<strong>具体的业务逻辑</strong>服务层。</li>
+<li>Manager 层：<strong>通用业务处理</strong>层，它有如下特征：<ol>
+<li>对第三方平台封装的层，预处理返回结果及转化异常信息，适配上层接口。</li>
+<li>对 Service 层<strong>通用</strong>能力的下沉，如缓存方案、中间件通用处理。</li>
+<li>与 DAO 层交互，对多个 DAO 的组合复用。</li>
+</ol>
+</li>
+<li>DAO 层：<strong>数据访问</strong>层，与底层 MySQL、Oracle、Hbase、OB 等进行数据交互。</li>
+<li>第三方服务：包括<strong>其它部门 RPC 服务接口</strong>，基础平台，<strong>其它公司的 HTTP 接口</strong>，如淘宝开放平台、支付宝付款服务、高德地图服务等。</li>
+<li>外部数据接口：<strong>外部（应用）数据存储服务提供的接口</strong>，多见于<strong>数据迁移场景</strong>中。</li>
+</ul>
+</li>
 <li><p>【参考】分层异常处理规约：</p>
 <ul>
 <li>在 DAO 层，产生的异常类型有很多，无法用细粒度的异常进行 <code>catch</code>，使用 <code>catch(Exception e)</code>方式，并 <code>throw new DAOException(e)</code>，不需要打印日志，因为日志在 Manager/Service 层一定需要捕获并打印到日志文件中去，如果同台服务器再打日志，浪费性能和存储。</li>
@@ -397,14 +403,12 @@
 <h4 id="系统性学习与实践"><a href="#系统性学习与实践" class="headerlink" title="系统性学习与实践"></a>系统性学习与实践</h4><p>目标是达到检视学习的层次，对项目有<strong>系统性、全面性</strong>的了解，包括项目的功能、组成模块、基本原理、使用场景、配置项、API使用、与其他类似项目的优缺点比较等。</p>
 <p>方法步骤如下：</p>
 <ol>
-<li> <strong>安装运行</strong> 按照相关文档，安装运行项目。在这个过程中，需要关注：</li>
-</ol>
-<ul>
+<li><strong>安装运行</strong> 按照相关文档，安装运行项目。在这个过程中，需要关注：<ul>
 <li><strong>系统的依赖组件</strong>：因为依赖组件是系统设计和实现的基础，可以了解系统一下关键信息，例如 Memcached最重要的依赖是高性能的网络库 <code>libevent</code>，我们就能大概推测 Memcached 的网络实现应该是 <code>Reactor</code> 模型的。</li>
 <li><strong>安装目录</strong>：常见的安装目录是 <code>conf </code>存放配置文件，<code>logs</code> 存放日志文件，<code>bin</code> 存放日志文件，而不同项目有些特殊目录，比如Nginx有 <code>html</code>目录，这种目录能促使我们带着相关疑问继续去研究学习，带着问题去学习效率是最高的。</li>
 <li><strong>系统提供的工具</strong>：需要特别<strong>关注命令行和配置文件</strong>，它们提供两个非常重要的关键信息，系统具备哪些能力和系统将会如何运行。这些信息是我们学习系统内部机制和原理的一个观察窗口。 通常情况下，如果对每个命令行参数和配置项的作用和原理基本掌握了解的话，基本上对系统已经很熟悉了。实践中，可以不断尝试去修改配置项，然后观察系统有什么变化。</li>
 </ul>
-<ol start="2">
+</li>
 <li><strong>系统性研究原理与特性</strong> 这点相当重要，因为只有清楚掌握技术的原理特性，才能算真正掌握这门技术，才能做架构设计的时候做出合理的选择，在这个过程中，需要重点关注：<ul>
 <li><strong>关键特性的基本实现原理</strong>：关键特性是该开源项目流行的重要卖点，常见的有高性能、高可用、可扩展等特性，项目是如何做到的，这是我们需要重点关注的地方。</li>
 <li><strong>优缺点比对分析</strong>：优缺点主要通过对比来分析，即：我们将两个类似的系统进行对比，看看它们的实现差异，以及不同的实现优缺点都是什么。典型的对比有 Memcached 和 Redis、Kafka和ActiveMQ、RocketMQ的比较。</li>
