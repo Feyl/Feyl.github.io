@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/Stream_pipeline_example.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/Stream_pipeline_Sink.png">
 <meta property="article:published_time" content="2022-01-16T16:53:22.000Z">
-<meta property="article:modified_time" content="2022-02-12T12:24:07.495Z">
+<meta property="article:modified_time" content="2022-02-12T13:09:54.530Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="Java8">
 <meta name="twitter:card" content="summary">
@@ -251,7 +251,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-02-12 20:24:07" itemprop="dateModified" datetime="2022-02-12T20:24:07+08:00">2022-02-12</time>
+                <time title="Modified: 2022-02-12 21:09:54" itemprop="dateModified" datetime="2022-02-12T21:09:54+08:00">2022-02-12</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -269,7 +269,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>39k</span>
+              <span>38k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -505,7 +505,7 @@
 <li><strong>惰式执行</strong>。<em>stream</em>上的操作并不会立即执行，只有等到用户真正需要结果的时候才会执行。</li>
 <li><strong>可消费性</strong>。<em>stream</em>只能被“消费”一次，一旦遍历过就会失效，就像容器的迭代器那样，想要再次遍历必须重新生成。</li>
 </ul>
-<p>对<em>stream</em>的操作分为为两类，**中间操作(*intermediate operations*)和结束操作(*terminal operations*)**，二者特点是：</p>
+<p>对<em>stream</em>的操作分为为两类，**中间操作(intermediate operations)和结束操作(terminal operations)**，二者特点是：</p>
 <ol>
 <li><strong>中间操作总是会惰式执行</strong>，调用中间操作只会生成一个标记了该操作的新<em>stream</em>，仅此而已。</li>
 <li><strong>结束操作会触发实际计算</strong>，计算发生时会把所有中间操作积攒的操作以<em>pipeline</em>的方式执行，这样可以减少迭代次数。计算完成之后<em>stream</em>就会失效。</li>
@@ -781,7 +781,7 @@
 <p>现在流水线上从开始到结束的所有的操作都被包装到了一个 Sink 里，执行这个 Sink 就相当于执行整个流水线，执行 Sink 的代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// AbstractPipeline.copyInto(), 对spliterator代表的数据执行wrappedSink代表的操作。</span></span><br><span class="line"><span class="keyword">final</span> &lt;P_IN&gt; <span class="function"><span class="keyword">void</span> <span class="title">copyInto</span><span class="params">(Sink&lt;P_IN&gt; wrappedSink, Spliterator&lt;P_IN&gt; spliterator)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (!StreamOpFlag.SHORT_CIRCUIT.isKnown(getStreamAndOpFlags())) &#123;</span><br><span class="line">        wrappedSink.begin(spliterator.getExactSizeIfKnown());<span class="comment">// 通知开始遍历</span></span><br><span class="line">        spliterator.forEachRemaining(wrappedSink);<span class="comment">// 迭代</span></span><br><span class="line">        wrappedSink.end();<span class="comment">// 通知遍历结束</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>上述代码首先调用 wrappedSink.begin()方法告诉 Sink 数据即将到来，然后调用 spliterator.forEachRemaining()方法对数据进行迭代（Spliterator 是容器的一种迭代器，[参阅](<a target="_blank" rel="noopener" href="https://github.com/CarpenterLee/JavaLambdaInternals/blob/master/3-Lambda">https://github.com/CarpenterLee/JavaLambdaInternals/blob/master/3-Lambda</a> and Collections.md#spliterator)），最后调用 wrappedSink.end()方法通知 Sink 数据处理结束。逻辑如此清晰。</p>
+<p>上述代码首先调用 wrappedSink.begin()方法告诉 Sink 数据即将到来，然后调用 spliterator.forEachRemaining()方法对数据进行迭代（Spliterator 是容器的一种迭代器，<a target="_blank" rel="noopener" href="https://github.com/CarpenterLee/JavaLambdaInternals/blob/master/3-Lambda%20and%20Collections.md#spliterator">参阅</a>），最后调用 wrappedSink.end()方法通知 Sink 数据处理结束。逻辑如此清晰。</p>
 <h4 id="执行后的结果在哪里？"><a href="#执行后的结果在哪里？" class="headerlink" title="执行后的结果在哪里？"></a>执行后的结果在哪里？</h4><p>最后一个问题是流水线上所有操作都执行后，用户所需要的结果（如果有）在哪里？首先要说明的是不是所有的 Stream 结束操作都需要返回结果，有些操作只是为了使用其副作用(<em>Side-effects</em>)，比如使用<code>Stream.forEach()</code>方法将结果打印出来就是常见的使用副作用的场景（事实上，除了打印之外其他场景都应避免使用副作用），对于真正需要返回结果的结束操作结果存在哪里呢？</p>
 <blockquote>
 <p>特别说明：副作用不应该被滥用，也许你会觉得在 Stream.forEach()里进行元素收集是个不错的选择，就像下面代码中那样，但遗憾的是这样使用的正确性和效率都无法保证，因为 Stream 可能会并行执行。大多数使用副作用的地方都可以使用<strong>归约操作</strong>更安全和有效的完成。</p>
@@ -923,20 +923,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-count">31</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -986,12 +986,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="Symbols count total">153k</span>
+    <span title="Symbols count total">154k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="Reading time total">2:19</span>
+    <span title="Reading time total">2:20</span>
 </div>
 
         

@@ -1112,341 +1112,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Spring IOC</title>
-    <url>/post/eff096d5/</url>
-    <content><![CDATA[<h2 id="Spring-IOC是什么？"><a href="#Spring-IOC是什么？" class="headerlink" title="Spring IOC是什么？"></a>Spring IOC是什么？</h2><p><strong>Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。</strong>在Java开发中，<strong>Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。</strong>如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
-<p><strong>谁控制谁，控制什么：</strong>传统Java SE程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而<strong>IoC是有专门一个容器来创建这些对象，即由Ioc容器来控制对象的创建</strong>；</p>
-<ul>
-<li><p><strong>谁控制谁？当然是IoC 容器控制了对象；</strong></p>
-</li>
-<li><p><strong>控制什么？那就是主要控制了外部资源获取（不只是对象包括比如文件等）。</strong></p>
-<span id="more"></span></li>
-<li><p><strong>为何是反转，哪些方面反转了：</strong>有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；</p>
-</li>
-<li><p><strong>为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；</strong></p>
-</li>
-<li><p><strong>哪些方面反转了？依赖对象的获取被反转了。</strong></p>
-</li>
-</ul>
-<p>传统程序设计，都是主动去创建相关对象然后再组合起来：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg"></p>
-<p>当有了IoC/DI的容器后，在客户端类中不再主动去创建这些对象了：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png"></p>
-<p><strong>Spring所倡导的开发方式</strong>：<strong>所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。</strong></p>
-<h2 id="IoC能做什么？"><a href="#IoC能做什么？" class="headerlink" title="IoC能做什么？"></a>IoC能做什么？</h2><p>​        <strong>IoC 不是一种技术，只是一种思想</strong>，一个重要的<strong>面向对象编程的法则</strong>，它能指导我们如何设计出<strong>松耦合</strong>、更优良的程序。传统应用程序都是由我们在类内部主动创建依赖对象，从而导致类与类之间高耦合，难于测试；有了IoC容器后，把创建和查找依赖对象的控制权交给了容器，由容器进行注入组合对象，所以对象与对象之间是松散耦合，这样也方便测试，利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活。</p>
-<p>​        其实<strong>IoC对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在IoC/DI思想中，应用程序就变成被动的了，被动的等待IoC容器来创建并注入它所需要的资源了。</strong></p>
-<p>​        <strong>IoC很好的体现了面向对象设计法则之一—— 好莱坞法则：“别找我们，我们找你”；即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找。</strong></p>
-<h2 id="IoC和DI"><a href="#IoC和DI" class="headerlink" title="IoC和DI"></a>IoC和DI</h2><p>　<strong>DI—Dependency Injection</strong>，即“依赖注入”：组件之间依赖关系由容器在<strong>运行期决定</strong>，形象的说，即<strong>由容器动态的将某个依赖关系注入到组件之中</strong>。<strong>依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。</strong>通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。</p>
-<p>DI是如何实现的呢？ Java 1.3之后一个重要特征是<strong>反射（reflection）</strong>，它允许程序<strong>在运行的时候动态的生成对象、执行对象的方法、改变对象的属性，spring就是通过反射来实现注入的</strong>。</p>
-<p>理解DI的关键是：“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”，那我们来深入分析一下：</p>
-<ul>
-<li><strong>谁依赖于谁：</strong>当然是<strong>应用程序依赖于IoC容器</strong>；</li>
-<li><strong>为什么需要依赖：</strong> <strong>应用程序需要IoC容器来提供对象需要的外部资源</strong>；</li>
-<li><strong>谁注入谁：</strong>很明显是<strong>IoC容器注入应用程序某个对象，应用程序依赖的对象</strong>；</li>
-<li><strong>注入了什么：</strong>就是<strong>注入某个对象所需要的外部资源（包括对象、资源、常量数据）</strong>。</li>
-</ul>
-<p><strong>IoC和DI</strong>由什么<strong>关系</strong>呢？其实它们<strong>是同一个概念的不同角度描述</strong>，由于控制反转概念比较含糊（可能只是理解为容器控制对象这一个层面，很难让人想到谁来维护对象关系），所以2004年大师级人物Martin Fowler又给出了一个新的名字：“依赖注入”，相对IoC 而言，<strong>“</strong> <strong>依赖注入”</strong> <strong>明确描述了“被注入对象依赖IoC</strong> <strong>容器配置依赖对象”。</strong></p>
-<h2 id="对IoC-控制反转-和DI-依赖注入-的理解"><a href="#对IoC-控制反转-和DI-依赖注入-的理解" class="headerlink" title="对IoC(控制反转)和DI(依赖注入)的理解"></a>对IoC(控制反转)和DI(依赖注入)的理解</h2><p>​        在平时的java应用开发中，我们要实现某一个功能或者说是完成某个业务逻辑时至少需要两个或以上的对象来协作完成，在没有使用Spring的时候，每个对象在需要使用他的合作对象时，自己均要使用像<code>new object()</code> 这样的语法来将合作对象创建出来，这个合作对象是由自己主动创建出来的，创建合作对象的主动权在自己手上，自己需要哪个合作对象，就主动去创建，创建合作对象的主动权和创建时机是由自己把控的，而这样就会使得对象间的耦合度高了，A对象需要使用合作对象B来共同完成一件事，A要使用B，那么A就对B产生了依赖，也就是A和B之间存在一种耦合关系，并且是紧密耦合在一起，而使用了Spring之后就不一样了，创建合作对象B的工作是由Spring来做的，Spring创建好B对象，然后存储到一个容器里面，当A对象需要使用B对象时，Spring就从存放对象的那个容器里面取出A要使用的那个B对象，然后交给A对象使用，至于Spring是如何创建那个对象，以及什么时候创建好对象的，A对象不需要关心这些细节问题(你是什么时候生的，怎么生出来的我可不关心，能帮我干活就行)，A得到Spring给我们的对象之后，两个人一起协作完成要完成的工作即可。</p>
-<p>　　所以<strong>控制反转IoC(Inversion of Control)是说创建对象的控制权进行转移，以前创建对象的主动权和创建时机是由自己把控的，而现在这种权力转移到第三方</strong>，比如转移交给了IoC容器，它就是一个专门用来创建对象的工厂，你要什么对象，它就给你什么对象，有了 IoC容器，依赖关系就变了，原先的依赖关系就没了，它们都依赖IoC容器了，通过IoC容器来建立它们之间的关系。</p>
-<hr>
-<p>相关文章：</p>
-<p> <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Dependency_injection">Dependency injection </a></p>
-<p> <a href="https://link.zhihu.com/?target=https://martinfowler.com/articles/injection.html">Inversion of Control Containers and the Dependency Injection pattern</a> </p>
-<p><a href="https://javadoop.com/post/spring-ioc">Spring IOC 容器源码分析</a></p>
-<p>参考总结来源：</p>
-<p><a href="https://www.cnblogs.com/xdp-gacl/p/4249939.html">谈谈对Spring IOC的理解</a></p>
-]]></content>
-      <categories>
-        <category>开发框架</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Spring</tag>
-        <tag>后端</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>curl</title>
-    <url>/post/3e01b4d/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>cURL</strong>是一个开源项目，主要的产品是curl（<strong>命令行工具</strong>）和libcurl（C语言的API库），两者功能均是：基于网络协议，对指定URL进行网络传输（发出网络请求）。curl可以得到和提取数据，显示在”标准输出”（stdout）上面。</p>
-<p>cURL涉及是任何网络协议传输，不涉及对具体数据的具体处理。（如：html的渲染等）</p>
-<p>curl 支持多种协议，下面举例讲解如何将它用于网站开发。</p>
-<span id="more"></span>
-
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看网页源码"><a href="#查看网页源码" class="headerlink" title="查看网页源码"></a>查看网页源码</h3><p>直接在curl命令后加上网址，就可以看到网页源码。我们以网址<a href="http://www.mi.com为例（选择该网址，主要因为它的网页代码较短）：">www.mi.com为例（选择该网址，主要因为它的网页代码较短）：</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl www.mi.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>301 Moved Permanently<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Moved Permanently<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>The document has moved <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.sina.com.cn/&quot;</span>&gt;</span>here<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="服务器的回应保存成文件"><a href="#服务器的回应保存成文件" class="headerlink" title="服务器的回应保存成文件"></a>服务器的回应保存成文件</h3><p><code>-o</code>参数将服务器的回应保存成文件，等同于<code>wget</code>命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o [文件名] www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o example.html https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将 <code>www.example.com </code>保存成 <code>example.html</code>。</p>
-<p><code>-O</code>参数将服务器回应保存成文件，并将 URL 的最后部分当作文件名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://www.example.com/foo/bar.html</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将服务器回应保存成文件，文件名为<code>bar.html</code>。</p>
-<h3 id="自动跳转（重定向）"><a href="#自动跳转（重定向）" class="headerlink" title="自动跳转（重定向）"></a>自动跳转（重定向）</h3><p><code>-L</code>参数会让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L www.sina.com</span><br></pre></td></tr></table></figure>
-
-<p>键入上面的命令，结果就自动跳转为<a href="http://www.sina.com.cn./">www.sina.com.cn。</a></p>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="显示头信息"><a href="#显示头信息" class="headerlink" title="显示头信息"></a>显示头信息</h3><p><code>-i </code>参数可以<strong>显示http response的头信息，连同网页代码一起</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令收到服务器回应后，先输出服务器回应的标头，然后空一行，再输出网页的源码。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">TP/1.1 302 Moved Temporarily</span><br><span class="line">Server: kngx/1.10.2</span><br><span class="line">Date: Fri, 04 Feb 2022 09:49:31 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 160</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.mi.com/</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">x-link-via: zzct010:80;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-I</code> 参数则是<strong>只显示http response的头信息</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令输出服务器对 HEAD 请求的回应。</p>
-<p><code>--head</code>参数等同于<code>-I</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --head https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="显示通信过程"><a href="#显示通信过程" class="headerlink" title="显示通信过程"></a>显示通信过程</h3><p><code>-v </code>参数可以<strong>显示一次http通信的整个过程</strong>（用于调试），包括端口连接和http request头信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v www.mi.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">  Trying 240e:93c:210:3::6:80...</span><br><span class="line">* Connected to www.mi.com (240e:93c:210:3::6) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; Host: www.mi.com</span><br><span class="line">&gt; User-Agent: curl/7.74.0</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt;</span><br><span class="line">* Mark bundle as not supporting multiuse</span><br><span class="line">&lt; HTTP/1.1 302 Moved Temporarily</span><br><span class="line">&lt; Server: kngx/1.10.2</span><br><span class="line">&lt; Date: Fri, 04 Feb 2022 09:52:02 GMT</span><br><span class="line">&lt; Content-Type: text/html</span><br><span class="line">&lt; Content-Length: 160</span><br><span class="line">&lt; Connection: keep-alive</span><br><span class="line">&lt; Location: https://www.mi.com/</span><br><span class="line">&lt; Cache-Control: max-age=0</span><br><span class="line">&lt; x-link-via: zzct010:80;</span><br><span class="line">&lt;</span><br><span class="line">&#123; [160 bytes data]</span><br><span class="line">100   160  100   160    0     0   4444      0 --:--:-- --:--:-- --:--:--  4444<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">* Connection #0 to host www.mi.com left intact</span><br></pre></td></tr></table></figure>
-
-<p>如果你觉得上面的信息还不够，那么下面的命令<strong>可以查看更详细的通信过程</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace output.txt www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace-ascii output.txt www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>运行后，请打开 output.txt文件查看。</p>
-<p><code>--trace</code>参数也可以用于调试，还会输出原始的二进制数据。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace - https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="发送表单信息"><a href="#发送表单信息" class="headerlink" title="发送表单信息"></a>发送表单信息</h3><p><strong>发送表单信息有GET和POST两种方法</strong>。GET方法相对简单，只要把数据附在网址后面就行。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl example.com/form.cgi?data=xxx</span><br></pre></td></tr></table></figure>
-
-<p><code>-G</code>参数用来构造 URL 的查询字符串。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会发出一个 GET 请求，实际请求的 URL 为<code>https://google.com/search?q=kitties&amp;count=20</code>。如果省略<code>--G</code>，会发出一个 POST 请求。</p>
-<p>如果数据需要 URL 编码，可以结合<code>--data--urlencode</code>参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="发送-POST-请求的数据体"><a href="#发送-POST-请求的数据体" class="headerlink" title="发送 POST 请求的数据体"></a>发送 POST 请求的数据体</h4><p>POST方法必须把数据和网址分开，curl就要用到 <code>--data</code>参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;data=xxx&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-d</code>参数用于发送 POST 请求的数据体。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;login=emma&#x27;</span> -d <span class="string">&#x27;password=123&#x27;</span> -X POST  https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>使用 <code>-d</code> 参数以后，HTTP 请求会自动加上标头<code>Content-Type : application/x-www-form-urlencoded</code>。并且会自动将请求转为 POST 方法，因此可以省略<code>-X POST</code>。</p>
-<p><code>-d</code> 参数可以读取本地文本文件的数据，向服务器发送。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;@data.txt&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令读取<code>data.txt</code>文件的内容，作为数据体向服务器发送。</p>
-<p><code>--data-urlencode</code>参数等同于<code>-d</code>，发送 POST 请求的数据体，区别在于会自动将发送的数据进行 URL 编码。</p>
-<p>如果你的数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST--data-urlencode <span class="string">&quot;date=April 1&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面代码中，发送的数据<code>hello world</code>之间有一个空格，需要进行 URL 编码。</p>
-<h3 id="HTTP-请求的代理"><a href="#HTTP-请求的代理" class="headerlink" title="HTTP 请求的代理"></a>HTTP 请求的代理</h3><p><code>-x</code>参数指定 HTTP 请求的代理。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令指定 HTTP 请求通过<code>myproxy.com:8080</code>的 socks5 代理发出。</p>
-<p>如果没有指定代理协议，默认为 HTTP。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令中，请求的代理使用 HTTP 协议。</p>
-<h3 id="HTTP动词"><a href="#HTTP动词" class="headerlink" title="HTTP动词"></a>HTTP动词</h3><p><code>-X</code>参数指定 HTTP 请求的方法。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令对<code>https://www.example.com</code>发出 POST 请求。</p>
-<p><strong>curl默认的HTTP动词是GET</strong>，<strong>使用</strong> <code>-X</code> <strong>参数可以支持其他动词</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST www.example.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X DELETE www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>假定文件上传的表单是下面这样：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&#x27;multipart/form-data&#x27;</span> <span class="attr">action</span>=<span class="string">&quot;upload.cgi&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">file</span> <span class="attr">name</span>=<span class="string">upload</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">submit</span> <span class="attr">name</span>=<span class="string">press</span> <span class="attr">value</span>=<span class="string">&quot;OK&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>可以用curl这样上传文件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --form upload=@localfilename --form press=OK [URL]</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-F</code>参数用来向服务器上传二进制文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会给 HTTP 请求加上标头<code>Content-Type: multipart/form-data</code>，然后将文件<code>photo.png</code>作为<code>file</code>字段上传。</p>
-<p><code>-F</code>参数可以指定 MIME 类型。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令指定 MIME 类型为<code>image/png</code>，否则 curl 会把 MIME 类型设为<code>application/octet-stream</code>。</p>
-<p><code>-F</code>参数也可以指定文件名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;filename=me.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令中，原始文件名为<code>photo.png</code>，但是服务器接收到的文件名为<code>me.png</code>。</p>
-<h3 id="Referer字段"><a href="#Referer字段" class="headerlink" title="Referer字段"></a>Referer字段</h3><p>有时你需要在http request头信息中，提供一个referer字段，表示你是从哪里跳转过来的。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --referer http://www.example.com http://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p><code>-e</code>参数用来设置 HTTP 的标头<code>Referer</code>，表示请求的来源。</p>
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将<code>Referer</code>标头设为<code>https://google.com?q=example</code>。</p>
-<p><code>-H</code>参数可以通过直接添加标头<code>Referer</code>，达到同样效果。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Referer: https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="User-Agent字段"><a href="#User-Agent字段" class="headerlink" title="User Agent字段"></a>User Agent字段</h3><p>这个字段是用来表示<strong>客户端的设备信息</strong>。服务器有时会根据这个字段，针对不同设备，返回不同格式的网页，比如手机版和桌面版。</p>
-<p>iPhone4的User Agent是</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Mozilla/5.0 (iPhone; U; CPU iPhone OS 4<span class="built_in">_</span>0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7</span><br></pre></td></tr></table></figure>
-
-<p>curl可以这样模拟：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user-agent <span class="string">&quot;[User Agent]&quot;</span> [URL]</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-A</code>参数指定客户端的用户代理标头，即<code>User-Agent</code>。curl 的默认用户代理字符串是<code>curl/[version]</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将<code>User-Agent</code>改成 Chrome 浏览器。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会移除<code>User-Agent</code>标头。</p>
-<p>也可以通过<code>-H</code>参数直接指定标头，更改<code>User-Agent</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;User-Agent: php/1.0&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>使用 <code>--cookie</code> 参数，可以让curl发送cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --cookie <span class="string">&quot;name=xxx&quot;</span> www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>至于具体的cookie的值，可以从http response头信息的<code>Set-Cookie</code>字段中得到。</p>
-<p><code>-c cookie-file</code>可以保存服务器返回的cookie到文件，<code>-b cookie-file</code>可以使用这个文件作为cookie信息，进行后续的请求。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies http://example.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将服务器的 HTTP 回应所设置 Cookie 写入文本文件<code>cookies.txt</code>。</p>
-<p><code>-b</code>参数用来向服务器发送 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies http://example.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo=bar&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会生成一个标头<code>Cookie: foo=bar</code>，向服务器发送一个名为<code>foo</code>、值为<code>bar</code>的 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo1=bar;foo2=bar2&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令发送两个 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令读取本地文件<code>cookies.txt</code>，里面是服务器设置的 Cookie（参见<code>-c</code>参数），将其发送到服务器。</p>
-<h3 id="增加头信息"><a href="#增加头信息" class="headerlink" title="增加头信息"></a>增加头信息</h3><p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --header <span class="string">&quot;Content-Type:application/json&quot;</span> http://example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-H</code>参数添加 HTTP 请求的标头。</p>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加 HTTP 标头<code>Accept-Language: en-US</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> -H <span class="string">&#x27;Secret-Message: xyzzy&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加两个 HTTP 标头。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;&#123;&quot;login&quot;: &quot;emma&quot;, &quot;pass&quot;: &quot;123&quot;&#125;&#x27;</span> -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加 HTTP 请求的标头是<code>Content-Type: application/json</code>，然后用<code>-d</code>参数发送 JSON 数据。</p>
-<h3 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h3><p>有些网域需要HTTP认证，这时curl需要用到 <code>--user</code> 参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user name:password example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="跳过-SSL-检测"><a href="#跳过-SSL-检测" class="headerlink" title="跳过 SSL 检测"></a>跳过 SSL 检测</h3><p><code>-k</code>参数指定跳过 SSL 检测。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -k https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令不会检查服务器的 SSL 证书是否正确。</p>
-<h3 id="限制-HTTP-请求和回应的带宽"><a href="#限制-HTTP-请求和回应的带宽" class="headerlink" title="限制 HTTP 请求和回应的带宽"></a>限制 HTTP 请求和回应的带宽</h3><p><code>--limit-rate</code>用来限制 HTTP 请求和回应的带宽，模拟慢网速的环境。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 200k https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将带宽限制在每秒 200K 字节。</p>
-<h3 id="错误信息的输出"><a href="#错误信息的输出" class="headerlink" title="错误信息的输出"></a>错误信息的输出</h3><p><code>-s</code> 参数将不输出错误和进度信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令一旦发生错误，不会显示错误信息。不发生错误的话，会正常显示运行结果。</p>
-<p>如果想让 curl 不产生任何输出，可以使用下面的命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-S</code>参数指定只输出错误信息，通常与<code>-s</code>一起使用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -S -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令没有任何输出，除非发生错误。</p>
-<h3 id="权限认证"><a href="#权限认证" class="headerlink" title="权限认证"></a>权限认证</h3><p><code>-u</code> 参数用来设置服务器认证的用户名和密码。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob:12345&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令设置用户名为<code>bob</code>，密码为<code>12345</code>，然后将其转为 HTTP 标头<code>Authorization: Basic Ym9iOjEyMzQ1</code>。</p>
-<p>curl 能够识别 URL 里面的用户名和密码。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://bob:12345@google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令能够识别 URL 里面的用户名和密码，将其转为上个例子里面的 HTTP 标头。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令只设置了用户名，执行后，curl 会提示用户输入密码。</p>
-<h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><p>​        curl命令作用 curl命令是一个功能强大的网络工具，它能够通过http、ftp等方式下载文件，也能够上传文件，同时支持HTTPS等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。其实curl远不止前面所说的那些功能，大家可以通过man curl阅读手册页获取更多的信息。类似的工具还有wget。curl命令使用了libcurl库来实现，libcurl库常用在C程序中用来处理HTTP请求，curlpp是libcurl的一个C++封装，这几个东西可以用在抓取网页、网络监控等方面的开发，而curl命令可以帮助来解决开发过程中遇到的问题。</p>
-<p>常用参数 curl命令参数很多，这里只列出我曾经用过、特别是在shell脚本中经常用到过的那些。</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">-a/--append 上传文件时，附加到目标文件</span><br><span class="line"></span><br><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line"></span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line"></span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line"></span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line"></span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line"></span><br><span class="line">    --data-ascii &lt;data&gt;	以ascii的方式post数据</span><br><span class="line">     --data-binary &lt;data&gt;	以二进制的方式post数据</span><br><span class="line">     --negotiate	使用HTTP身份验证</span><br><span class="line">     --digest	使用数字身份验证</span><br><span class="line">     --disable-eprt	禁止使用EPRT或LPRT</span><br><span class="line">     --disable-epsv	禁止使用EPSV</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line"></span><br><span class="line">     --egd-file &lt;file&gt;  为随机数据(SSL)设置EGD socket路径</span><br><span class="line"></span><br><span class="line">     --tcp-nodelay     使用TCP<span class="built_in">_</span>NODELAY选项</span><br><span class="line"></span><br><span class="line">-e/--referer &lt;URL&gt;  指定引用地址</span><br><span class="line"></span><br><span class="line">-F/--form &lt;name=content&gt;   模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">     --form-string &lt;name=string&gt; 模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">-G/--get    以get的方式来发送数据</span><br><span class="line"></span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">    --ignore-content-length  忽略的HTTP头信息的长度</span><br><span class="line"></span><br><span class="line">-i/--include     输出时包括protocol头信息</span><br><span class="line"></span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line"></span><br><span class="line">-k/--insecure  允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line">-K/--config    指定的配置文件读取</span><br><span class="line"></span><br><span class="line">-l/--list-only   列出ftp目录下的文件名称</span><br><span class="line"></span><br><span class="line">    --limit-rate &lt;rate&gt; 设置传输速度</span><br><span class="line"></span><br><span class="line">     --local-port&lt;NUM&gt;  强制使用本地端口号</span><br><span class="line"></span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line"></span><br><span class="line">     --max-redirs &lt;num&gt;    设置最大读取的目录数</span><br><span class="line"></span><br><span class="line">     --max-filesize &lt;bytes&gt;  设置最大下载的文件总量</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt;   指定输出文件名称</span><br><span class="line"></span><br><span class="line">-O/--remote-name  把输出写到该文件中，保留远程文件的文件名</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-v/--verbose  小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line"></span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line"></span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line"></span><br><span class="line">   --range-file 读取（SSL）的随机文件</span><br><span class="line"></span><br><span class="line">-R/--remote-time   在本地生成文件时，保留远程文件时间</span><br><span class="line"></span><br><span class="line">    --retry &lt;num&gt;   指定重试次数</span><br><span class="line"></span><br><span class="line">    --retry-delay &lt;seconds&gt;   传输出现问题时，设置重试间隔时间</span><br><span class="line"></span><br><span class="line">    --retry-max-time &lt;seconds&gt;  传输出现问题时，设置最大重试时间</span><br><span class="line"></span><br><span class="line">-s/--silent  静默模式。不输出任何东西</span><br><span class="line"></span><br><span class="line">-S/--show-error  显示错误</span><br><span class="line"></span><br><span class="line">    --socks4 &lt;host[:port]&gt; 用socks4代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --socks5 &lt;host[:port]&gt; 用socks5代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --stderr &lt;file&gt;</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;host[:port]&gt; 在给定的端口上使用HTTP代理</span><br><span class="line"></span><br><span class="line">-X/--request &lt;command&gt; 指定什么命令。curl默认的HTTP动词是GET，使用-X参数可以支持其他动词。</span><br><span class="line"></span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<p>文章总结来源：</p>
-<p><a href="https://www.ruanyifeng.com/blog/2011/09/curl.html">curl网站开发指南</a></p>
-<p><a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 的用法指南</a></p>
-<p><a href="https://handerfly.github.io/linux/2019/05/26/curl%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">curl命令详解</a></p>
-<p>更多内容查看：</p>
-<p><a href="https://curl.se/docs/manpage.html">curl 用户手册</a></p>
-]]></content>
-      <categories>
-        <category>命令行工具</category>
-      </categories>
-      <tags>
-        <tag>命令行工具</tag>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Lambda 表达式</title>
     <url>/post/9fa75fc1/</url>
     <content><![CDATA[<p>Java <em>Lambda 表达式</em>的一个重要用法是简化某些<em>匿名内部类</em>（<code>Anonymous Classes</code>）的写法。实际上 Lambda 表达式并不仅仅是匿名内部类的语法糖，JVM 内部是通过<em>invokedynamic</em>指令来实现 Lambda 表达式的。具体原理放到下一篇。本篇我们首先感受一下使用 Lambda 表达式带来的便利之处。</p>
@@ -1666,7 +1331,7 @@
 <li><strong>惰式执行</strong>。<em>stream</em>上的操作并不会立即执行，只有等到用户真正需要结果的时候才会执行。</li>
 <li><strong>可消费性</strong>。<em>stream</em>只能被“消费”一次，一旦遍历过就会失效，就像容器的迭代器那样，想要再次遍历必须重新生成。</li>
 </ul>
-<p>对<em>stream</em>的操作分为为两类，**中间操作(*intermediate operations*)和结束操作(*terminal operations*)**，二者特点是：</p>
+<p>对<em>stream</em>的操作分为为两类，**中间操作(intermediate operations)和结束操作(terminal operations)**，二者特点是：</p>
 <ol>
 <li><strong>中间操作总是会惰式执行</strong>，调用中间操作只会生成一个标记了该操作的新<em>stream</em>，仅此而已。</li>
 <li><strong>结束操作会触发实际计算</strong>，计算发生时会把所有中间操作积攒的操作以<em>pipeline</em>的方式执行，这样可以减少迭代次数。计算完成之后<em>stream</em>就会失效。</li>
@@ -1942,7 +1607,7 @@
 <p>现在流水线上从开始到结束的所有的操作都被包装到了一个 Sink 里，执行这个 Sink 就相当于执行整个流水线，执行 Sink 的代码如下：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// AbstractPipeline.copyInto(), 对spliterator代表的数据执行wrappedSink代表的操作。</span></span><br><span class="line"><span class="keyword">final</span> &lt;P_IN&gt; <span class="function"><span class="keyword">void</span> <span class="title">copyInto</span><span class="params">(Sink&lt;P_IN&gt; wrappedSink, Spliterator&lt;P_IN&gt; spliterator)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span> (!StreamOpFlag.SHORT_CIRCUIT.isKnown(getStreamAndOpFlags())) &#123;</span><br><span class="line">        wrappedSink.begin(spliterator.getExactSizeIfKnown());<span class="comment">// 通知开始遍历</span></span><br><span class="line">        spliterator.forEachRemaining(wrappedSink);<span class="comment">// 迭代</span></span><br><span class="line">        wrappedSink.end();<span class="comment">// 通知遍历结束</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>上述代码首先调用 wrappedSink.begin()方法告诉 Sink 数据即将到来，然后调用 spliterator.forEachRemaining()方法对数据进行迭代（Spliterator 是容器的一种迭代器，[参阅](<a href="https://github.com/CarpenterLee/JavaLambdaInternals/blob/master/3-Lambda">https://github.com/CarpenterLee/JavaLambdaInternals/blob/master/3-Lambda</a> and Collections.md#spliterator)），最后调用 wrappedSink.end()方法通知 Sink 数据处理结束。逻辑如此清晰。</p>
+<p>上述代码首先调用 wrappedSink.begin()方法告诉 Sink 数据即将到来，然后调用 spliterator.forEachRemaining()方法对数据进行迭代（Spliterator 是容器的一种迭代器，<a href="https://github.com/CarpenterLee/JavaLambdaInternals/blob/master/3-Lambda%20and%20Collections.md#spliterator">参阅</a>），最后调用 wrappedSink.end()方法通知 Sink 数据处理结束。逻辑如此清晰。</p>
 <h4 id="执行后的结果在哪里？"><a href="#执行后的结果在哪里？" class="headerlink" title="执行后的结果在哪里？"></a>执行后的结果在哪里？</h4><p>最后一个问题是流水线上所有操作都执行后，用户所需要的结果（如果有）在哪里？首先要说明的是不是所有的 Stream 结束操作都需要返回结果，有些操作只是为了使用其副作用(<em>Side-effects</em>)，比如使用<code>Stream.forEach()</code>方法将结果打印出来就是常见的使用副作用的场景（事实上，除了打印之外其他场景都应避免使用副作用），对于真正需要返回结果的结束操作结果存在哪里呢？</p>
 <blockquote>
 <p>特别说明：副作用不应该被滥用，也许你会觉得在 Stream.forEach()里进行元素收集是个不错的选择，就像下面代码中那样，但遗憾的是这样使用的正确性和效率都无法保证，因为 Stream 可能会并行执行。大多数使用副作用的地方都可以使用<strong>归约操作</strong>更安全和有效的完成。</p>
@@ -1990,6 +1655,106 @@
       </categories>
       <tags>
         <tag>Java8</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring IOC</title>
+    <url>/post/eff096d5/</url>
+    <content><![CDATA[<h2 id="Spring-IOC是什么？"><a href="#Spring-IOC是什么？" class="headerlink" title="Spring IOC是什么？"></a>Spring IOC是什么？</h2><p><strong>Ioc—Inversion of Control，即“控制反转”，不是什么技术，而是一种设计思想。</strong>在Java开发中，<strong>Ioc意味着将你设计好的对象交给容器控制，而不是传统的在你的对象内部直接控制。</strong>如何理解好Ioc呢？理解好Ioc的关键是要明确“谁控制谁，控制什么，为何是反转（有反转就应该有正转了），哪些方面反转了”，那我们来深入分析一下：</p>
+<p><strong>谁控制谁，控制什么：</strong>传统Java SE程序设计，我们直接在对象内部通过new进行创建对象，是程序主动去创建依赖对象；而<strong>IoC是有专门一个容器来创建这些对象，即由Ioc容器来控制对象的创建</strong>；</p>
+<ul>
+<li><p><strong>谁控制谁？当然是IoC 容器控制了对象；</strong></p>
+</li>
+<li><p><strong>控制什么？那就是主要控制了外部资源获取（不只是对象包括比如文件等）。</strong></p>
+<span id="more"></span></li>
+<li><p><strong>为何是反转，哪些方面反转了：</strong>有反转就有正转，传统应用程序是由我们自己在对象中主动控制去直接获取依赖对象，也就是正转；而反转则是由容器来帮忙创建及注入依赖对象；</p>
+</li>
+<li><p><strong>为何是反转？因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；</strong></p>
+</li>
+<li><p><strong>哪些方面反转了？依赖对象的获取被反转了。</strong></p>
+</li>
+</ul>
+<p>传统程序设计，都是主动去创建相关对象然后再组合起来：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/261421378318292.jpg"></p>
+<p>当有了IoC/DI的容器后，在客户端类中不再主动去创建这些对象了：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/M4WDLSB3%5B__W1$PJZ1%60%7DXGF.png"></p>
+<p><strong>Spring所倡导的开发方式</strong>：<strong>所有的类都会在spring容器中登记，告诉spring你是个什么东西，你需要什么东西，然后spring会在系统运行到适当的时候，把你要的东西主动给你，同时也把你交给其他需要你的东西。所有的类的创建、销毁都由 spring来控制，也就是说控制对象生存周期的不再是引用它的对象，而是spring。对于某个具体的对象而言，以前是它控制其他对象，现在是所有对象都被spring控制，所以这叫控制反转。</strong></p>
+<h2 id="IoC能做什么？"><a href="#IoC能做什么？" class="headerlink" title="IoC能做什么？"></a>IoC能做什么？</h2><p>​        <strong>IoC 不是一种技术，只是一种思想</strong>，一个重要的<strong>面向对象编程的法则</strong>，它能指导我们如何设计出<strong>松耦合</strong>、更优良的程序。传统应用程序都是由我们在类内部主动创建依赖对象，从而导致类与类之间高耦合，难于测试；有了IoC容器后，把创建和查找依赖对象的控制权交给了容器，由容器进行注入组合对象，所以对象与对象之间是松散耦合，这样也方便测试，利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活。</p>
+<p>​        其实<strong>IoC对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在IoC/DI思想中，应用程序就变成被动的了，被动的等待IoC容器来创建并注入它所需要的资源了。</strong></p>
+<p>​        <strong>IoC很好的体现了面向对象设计法则之一—— 好莱坞法则：“别找我们，我们找你”；即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找。</strong></p>
+<h2 id="IoC和DI"><a href="#IoC和DI" class="headerlink" title="IoC和DI"></a>IoC和DI</h2><p>　<strong>DI—Dependency Injection</strong>，即“依赖注入”：组件之间依赖关系由容器在<strong>运行期决定</strong>，形象的说，即<strong>由容器动态的将某个依赖关系注入到组件之中</strong>。<strong>依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。</strong>通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。</p>
+<p>DI是如何实现的呢？ Java 1.3之后一个重要特征是<strong>反射（reflection）</strong>，它允许程序<strong>在运行的时候动态的生成对象、执行对象的方法、改变对象的属性，spring就是通过反射来实现注入的</strong>。</p>
+<p>理解DI的关键是：“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”，那我们来深入分析一下：</p>
+<ul>
+<li><strong>谁依赖于谁：</strong>当然是<strong>应用程序依赖于IoC容器</strong>；</li>
+<li><strong>为什么需要依赖：</strong> <strong>应用程序需要IoC容器来提供对象需要的外部资源</strong>；</li>
+<li><strong>谁注入谁：</strong>很明显是<strong>IoC容器注入应用程序某个对象，应用程序依赖的对象</strong>；</li>
+<li><strong>注入了什么：</strong>就是<strong>注入某个对象所需要的外部资源（包括对象、资源、常量数据）</strong>。</li>
+</ul>
+<p><strong>IoC和DI</strong>由什么<strong>关系</strong>呢？其实它们<strong>是同一个概念的不同角度描述</strong>，由于控制反转概念比较含糊（可能只是理解为容器控制对象这一个层面，很难让人想到谁来维护对象关系），所以2004年大师级人物Martin Fowler又给出了一个新的名字：“依赖注入”，相对IoC 而言，<strong>“</strong> <strong>依赖注入”</strong> <strong>明确描述了“被注入对象依赖IoC</strong> <strong>容器配置依赖对象”。</strong></p>
+<h2 id="对IoC-控制反转-和DI-依赖注入-的理解"><a href="#对IoC-控制反转-和DI-依赖注入-的理解" class="headerlink" title="对IoC(控制反转)和DI(依赖注入)的理解"></a>对IoC(控制反转)和DI(依赖注入)的理解</h2><p>​        在平时的java应用开发中，我们要实现某一个功能或者说是完成某个业务逻辑时至少需要两个或以上的对象来协作完成，在没有使用Spring的时候，每个对象在需要使用他的合作对象时，自己均要使用像<code>new object()</code> 这样的语法来将合作对象创建出来，这个合作对象是由自己主动创建出来的，创建合作对象的主动权在自己手上，自己需要哪个合作对象，就主动去创建，创建合作对象的主动权和创建时机是由自己把控的，而这样就会使得对象间的耦合度高了，A对象需要使用合作对象B来共同完成一件事，A要使用B，那么A就对B产生了依赖，也就是A和B之间存在一种耦合关系，并且是紧密耦合在一起，而使用了Spring之后就不一样了，创建合作对象B的工作是由Spring来做的，Spring创建好B对象，然后存储到一个容器里面，当A对象需要使用B对象时，Spring就从存放对象的那个容器里面取出A要使用的那个B对象，然后交给A对象使用，至于Spring是如何创建那个对象，以及什么时候创建好对象的，A对象不需要关心这些细节问题(你是什么时候生的，怎么生出来的我可不关心，能帮我干活就行)，A得到Spring给我们的对象之后，两个人一起协作完成要完成的工作即可。</p>
+<p>　　所以<strong>控制反转IoC(Inversion of Control)是说创建对象的控制权进行转移，以前创建对象的主动权和创建时机是由自己把控的，而现在这种权力转移到第三方</strong>，比如转移交给了IoC容器，它就是一个专门用来创建对象的工厂，你要什么对象，它就给你什么对象，有了 IoC容器，依赖关系就变了，原先的依赖关系就没了，它们都依赖IoC容器了，通过IoC容器来建立它们之间的关系。</p>
+<hr>
+<p>相关文章：</p>
+<p> <a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Dependency_injection">Dependency injection </a></p>
+<p> <a href="https://link.zhihu.com/?target=https://martinfowler.com/articles/injection.html">Inversion of Control Containers and the Dependency Injection pattern</a> </p>
+<p><a href="https://javadoop.com/post/spring-ioc">Spring IOC 容器源码分析</a></p>
+<p>参考总结来源：</p>
+<p><a href="https://www.cnblogs.com/xdp-gacl/p/4249939.html">谈谈对Spring IOC的理解</a></p>
+]]></content>
+      <categories>
+        <category>开发框架</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Spring</tag>
+        <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Xshell</title>
+    <url>/post/d2af6ed9/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>Xshell</strong>是<a href="https://zh.wikipedia.org/w/index.php?title=Netsarang_Computer&action=edit&redlink=1">Netsarang Computer</a>推出的的<a href="https://zh.wikipedia.org/wiki/Secure_Shell">Secure Shell</a>、<a href="https://zh.wikipedia.org/wiki/Telnet">Telnet</a>和<a href="https://zh.wikipedia.org/w/index.php?title=Rlogin&action=edit&redlink=1">Rlogin</a><a href="https://zh.wikipedia.org/wiki/%E8%99%9A%E6%8B%9F%E7%BB%88%E7%AB%AF">虚拟终端</a>。Xshell可以为每个<a href="https://zh.wikipedia.org/wiki/%E4%B8%BB%E6%A9%9F">主机</a>创建单独的<a href="https://zh.wikipedia.org/wiki/%E4%BC%9A%E8%AF%9D_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6)">会话</a>，用户可以通过标签查看每个会话，方便同时操作和管理与主机的会话。</p>
+<span id="more"></span>
+<blockquote>
+<p>Xshell 7（win系统）是一个用于MS Windows平台的强大的SSH、TELNET和RLOGIN终端仿真软件。它使得用户能轻松和安全地从Windows PC上访问UNIX/Linux主机。简单地说，X shell就是一个<strong>终端模拟软件</strong>，就是模拟服务器所在的linux，在Xshell中可以输入命令，就像在服务器的linux中输入命令一样，从而实现远程控制服务器。</p>
+</blockquote>
+<p><a href="https://www.netsarang.com/en/xshell-download/">官网下载地址</a></p>
+<h2 id="使用教程"><a href="#使用教程" class="headerlink" title="使用教程"></a>使用教程</h2><ol>
+<li><p>下载Xftp并安装后出现如下界面</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213221603368.png"></p>
+</li>
+<li><p><strong>点击文件 -&gt; 新建</strong> 或者 如下图所示的<strong>图标</strong></p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213221708340.png"></p>
+</li>
+<li><p>输入相关信息</p>
+<ul>
+<li>名称：随便填写即可</li>
+<li>主机：服务器的IP地址</li>
+<li>端口号：就是你空间的端口号ssh port，一般VPS服务器的端口是22</li>
+</ul>
+<p>其他都默认不填，填好后点击左侧的用户身份验证</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213221954187.png" style="zoom: 75%;" /></li>
+<li><p>在用户身份验证这一块填写你的服务器的用户名和密码。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213222425089.png" style="zoom:75%;" /></li>
+<li><p>第一次进入时出现SSH安全警告弹框，可以选择“一次性接受”或者“接受并保存”；点击接受并保存，出现如下界面则表示连接成功。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213222627909.png"></p>
+</li>
+</ol>
+<blockquote>
+<p>备注：Linux的<strong>IP</strong>地址的<strong>查询方法</strong>为在Linux终端输入 <code>ifconfig</code> 命令并回车即可。</p>
+</blockquote>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220257354.png" style="zoom:80%;" />
+
+
+
+<p>参考文章：<a href="https://cloud.tencent.com/developer/article/1822579">Xshell怎么用？详细的Xshell使用教程</a></p>
+]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>Xshell</tag>
       </tags>
   </entry>
   <entry>
@@ -2554,6 +2319,399 @@
       </tags>
   </entry>
   <entry>
+    <title>Xftp</title>
+    <url>/post/78f1820d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>Xftp</strong>是一个基于 MS windows 平台的SFTP、FTP 文件传输软件。使用Xftp，MS windows 用户能安全地在 UNIX/Linux 和 Windows PC 之间传输文件。Xftp能同时适应初级用户和高级用户的需要。它采用了标准的Windows风格的向导，它简单的界面能与其他 Windows应用程序紧密地协同工作，此外它还为高级用户提供了众多功能特性。</p>
+<span id="more"></span>
+<p><a href="https://www.netsarang.com/en/xftp-download/">官网下载地址</a></p>
+<h2 id="使用教程"><a href="#使用教程" class="headerlink" title="使用教程"></a>使用教程</h2><ol>
+<li><p>下载Xftp并安装后出现如下界面</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215552716.png"></p>
+</li>
+<li><p><strong>点击文件 -&gt; 新建</strong> 或者 如下图所示的<strong>图标</strong></p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220445527.png"></p>
+</li>
+<li><p>输入相关信息</p>
+<p>说明： 为了创建一个新的会话交换文件，应该输入会话名称、主机IP地址、选择适当的协议、输入远程服务器使用的端口号、用户帐户和密码。</p>
+<ul>
+<li>名称：随便填写即可</li>
+<li>主机：填写Linux的IP地址</li>
+<li>协议：选择SFTP</li>
+<li>方法：password，输入与Linux相同的用户名与密码</li>
+</ul>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215759908.png" style="zoom:80%;" /></li>
+<li><p>第一次进入后出现SSH安全警告弹框，可以选择“一次性接受”或者“接受并保存”；若之前选择过“接受并保存”选项则直接出现会话选择框提供用户选择之前创建的会话。点击连接即可。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215957097.png" style="zoom:80%;" />
+
+<p>成功创建会话后界面如下所示</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220134528.png"></p>
+</li>
+<li><p>此时就可以使用Xftp工具来完成windows系统和linux系统的文件传输了。可以从本地文件夹窗口选择要转移的文件或直接将其拖拽到主窗口。 可以使用超过两个窗格。每个窗格都可能包含多个选项卡，因此多个会话可以在单个Xftp窗口打开，方便多任务同时处理。</p>
+<blockquote>
+<p>备注：Linux的<strong>IP</strong>地址的<strong>查询方法</strong>为在Linux终端输入 <code>ifconfig</code> 命令并回车即可。</p>
+</blockquote>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220257354.png" style="zoom:80%;" /></li>
+</ol>
+<p>文章转载来源：<a href="https://www.jianshu.com/p/6fa90b84c4b7">Xftp使用方法</a></p>
+]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>Xftp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>curl</title>
+    <url>/post/3e01b4d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>cURL</strong>是一个开源项目，主要的产品是curl（<strong>命令行工具</strong>）和libcurl（C语言的API库），两者功能均是：基于网络协议，对指定URL进行网络传输（发出网络请求）。curl可以得到和提取数据，显示在”标准输出”（stdout）上面。</p>
+<p>cURL涉及是任何网络协议传输，不涉及对具体数据的具体处理。（如：html的渲染等）</p>
+<p>curl 支持多种协议，下面举例讲解如何将它用于网站开发。</p>
+<span id="more"></span>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看网页源码"><a href="#查看网页源码" class="headerlink" title="查看网页源码"></a>查看网页源码</h3><p>直接在curl命令后加上网址，就可以看到网页源码。我们以网址<a href="http://www.mi.com为例（选择该网址，主要因为它的网页代码较短）：">www.mi.com为例（选择该网址，主要因为它的网页代码较短）：</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl www.mi.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>301 Moved Permanently<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Moved Permanently<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>The document has moved <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.sina.com.cn/&quot;</span>&gt;</span>here<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="服务器的回应保存成文件"><a href="#服务器的回应保存成文件" class="headerlink" title="服务器的回应保存成文件"></a>服务器的回应保存成文件</h3><p><code>-o</code>参数将服务器的回应保存成文件，等同于<code>wget</code>命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o [文件名] www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o example.html https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将 <code>www.example.com </code>保存成 <code>example.html</code>。</p>
+<p><code>-O</code>参数将服务器回应保存成文件，并将 URL 的最后部分当作文件名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://www.example.com/foo/bar.html</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将服务器回应保存成文件，文件名为<code>bar.html</code>。</p>
+<h3 id="自动跳转（重定向）"><a href="#自动跳转（重定向）" class="headerlink" title="自动跳转（重定向）"></a>自动跳转（重定向）</h3><p><code>-L</code>参数会让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L www.sina.com</span><br></pre></td></tr></table></figure>
+
+<p>键入上面的命令，结果就自动跳转为<a href="http://www.sina.com.cn./">www.sina.com.cn。</a></p>
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="显示头信息"><a href="#显示头信息" class="headerlink" title="显示头信息"></a>显示头信息</h3><p><code>-i </code>参数可以<strong>显示http response的头信息，连同网页代码一起</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令收到服务器回应后，先输出服务器回应的标头，然后空一行，再输出网页的源码。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">TP/1.1 302 Moved Temporarily</span><br><span class="line">Server: kngx/1.10.2</span><br><span class="line">Date: Fri, 04 Feb 2022 09:49:31 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 160</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.mi.com/</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">x-link-via: zzct010:80;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-I</code> 参数则是<strong>只显示http response的头信息</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令输出服务器对 HEAD 请求的回应。</p>
+<p><code>--head</code>参数等同于<code>-I</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --head https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="显示通信过程"><a href="#显示通信过程" class="headerlink" title="显示通信过程"></a>显示通信过程</h3><p><code>-v </code>参数可以<strong>显示一次http通信的整个过程</strong>（用于调试），包括端口连接和http request头信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v www.mi.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">  Trying 240e:93c:210:3::6:80...</span><br><span class="line">* Connected to www.mi.com (240e:93c:210:3::6) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; Host: www.mi.com</span><br><span class="line">&gt; User-Agent: curl/7.74.0</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt;</span><br><span class="line">* Mark bundle as not supporting multiuse</span><br><span class="line">&lt; HTTP/1.1 302 Moved Temporarily</span><br><span class="line">&lt; Server: kngx/1.10.2</span><br><span class="line">&lt; Date: Fri, 04 Feb 2022 09:52:02 GMT</span><br><span class="line">&lt; Content-Type: text/html</span><br><span class="line">&lt; Content-Length: 160</span><br><span class="line">&lt; Connection: keep-alive</span><br><span class="line">&lt; Location: https://www.mi.com/</span><br><span class="line">&lt; Cache-Control: max-age=0</span><br><span class="line">&lt; x-link-via: zzct010:80;</span><br><span class="line">&lt;</span><br><span class="line">&#123; [160 bytes data]</span><br><span class="line">100   160  100   160    0     0   4444      0 --:--:-- --:--:-- --:--:--  4444<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">* Connection #0 to host www.mi.com left intact</span><br></pre></td></tr></table></figure>
+
+<p>如果你觉得上面的信息还不够，那么下面的命令<strong>可以查看更详细的通信过程</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace output.txt www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace-ascii output.txt www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>运行后，请打开 output.txt文件查看。</p>
+<p><code>--trace</code>参数也可以用于调试，还会输出原始的二进制数据。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace - https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="发送表单信息"><a href="#发送表单信息" class="headerlink" title="发送表单信息"></a>发送表单信息</h3><p><strong>发送表单信息有GET和POST两种方法</strong>。GET方法相对简单，只要把数据附在网址后面就行。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl example.com/form.cgi?data=xxx</span><br></pre></td></tr></table></figure>
+
+<p><code>-G</code>参数用来构造 URL 的查询字符串。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会发出一个 GET 请求，实际请求的 URL 为<code>https://google.com/search?q=kitties&amp;count=20</code>。如果省略<code>--G</code>，会发出一个 POST 请求。</p>
+<p>如果数据需要 URL 编码，可以结合<code>--data--urlencode</code>参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="发送-POST-请求的数据体"><a href="#发送-POST-请求的数据体" class="headerlink" title="发送 POST 请求的数据体"></a>发送 POST 请求的数据体</h4><p>POST方法必须把数据和网址分开，curl就要用到 <code>--data</code>参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;data=xxx&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-d</code>参数用于发送 POST 请求的数据体。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;login=emma&#x27;</span> -d <span class="string">&#x27;password=123&#x27;</span> -X POST  https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>-d</code> 参数以后，HTTP 请求会自动加上标头<code>Content-Type : application/x-www-form-urlencoded</code>。并且会自动将请求转为 POST 方法，因此可以省略<code>-X POST</code>。</p>
+<p><code>-d</code> 参数可以读取本地文本文件的数据，向服务器发送。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;@data.txt&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令读取<code>data.txt</code>文件的内容，作为数据体向服务器发送。</p>
+<p><code>--data-urlencode</code>参数等同于<code>-d</code>，发送 POST 请求的数据体，区别在于会自动将发送的数据进行 URL 编码。</p>
+<p>如果你的数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST--data-urlencode <span class="string">&quot;date=April 1&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，发送的数据<code>hello world</code>之间有一个空格，需要进行 URL 编码。</p>
+<h3 id="HTTP-请求的代理"><a href="#HTTP-请求的代理" class="headerlink" title="HTTP 请求的代理"></a>HTTP 请求的代理</h3><p><code>-x</code>参数指定 HTTP 请求的代理。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令指定 HTTP 请求通过<code>myproxy.com:8080</code>的 socks5 代理发出。</p>
+<p>如果没有指定代理协议，默认为 HTTP。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令中，请求的代理使用 HTTP 协议。</p>
+<h3 id="HTTP动词"><a href="#HTTP动词" class="headerlink" title="HTTP动词"></a>HTTP动词</h3><p><code>-X</code>参数指定 HTTP 请求的方法。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令对<code>https://www.example.com</code>发出 POST 请求。</p>
+<p><strong>curl默认的HTTP动词是GET</strong>，<strong>使用</strong> <code>-X</code> <strong>参数可以支持其他动词</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST www.example.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X DELETE www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>假定文件上传的表单是下面这样：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&#x27;multipart/form-data&#x27;</span> <span class="attr">action</span>=<span class="string">&quot;upload.cgi&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">file</span> <span class="attr">name</span>=<span class="string">upload</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">submit</span> <span class="attr">name</span>=<span class="string">press</span> <span class="attr">value</span>=<span class="string">&quot;OK&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以用curl这样上传文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --form upload=@localfilename --form press=OK [URL]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-F</code>参数用来向服务器上传二进制文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会给 HTTP 请求加上标头<code>Content-Type: multipart/form-data</code>，然后将文件<code>photo.png</code>作为<code>file</code>字段上传。</p>
+<p><code>-F</code>参数可以指定 MIME 类型。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令指定 MIME 类型为<code>image/png</code>，否则 curl 会把 MIME 类型设为<code>application/octet-stream</code>。</p>
+<p><code>-F</code>参数也可以指定文件名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;filename=me.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令中，原始文件名为<code>photo.png</code>，但是服务器接收到的文件名为<code>me.png</code>。</p>
+<h3 id="Referer字段"><a href="#Referer字段" class="headerlink" title="Referer字段"></a>Referer字段</h3><p>有时你需要在http request头信息中，提供一个referer字段，表示你是从哪里跳转过来的。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --referer http://www.example.com http://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p><code>-e</code>参数用来设置 HTTP 的标头<code>Referer</code>，表示请求的来源。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将<code>Referer</code>标头设为<code>https://google.com?q=example</code>。</p>
+<p><code>-H</code>参数可以通过直接添加标头<code>Referer</code>，达到同样效果。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Referer: https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="User-Agent字段"><a href="#User-Agent字段" class="headerlink" title="User Agent字段"></a>User Agent字段</h3><p>这个字段是用来表示<strong>客户端的设备信息</strong>。服务器有时会根据这个字段，针对不同设备，返回不同格式的网页，比如手机版和桌面版。</p>
+<p>iPhone4的User Agent是</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Mozilla/5.0 (iPhone; U; CPU iPhone OS 4<span class="built_in">_</span>0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7</span><br></pre></td></tr></table></figure>
+
+<p>curl可以这样模拟：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user-agent <span class="string">&quot;[User Agent]&quot;</span> [URL]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-A</code>参数指定客户端的用户代理标头，即<code>User-Agent</code>。curl 的默认用户代理字符串是<code>curl/[version]</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将<code>User-Agent</code>改成 Chrome 浏览器。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会移除<code>User-Agent</code>标头。</p>
+<p>也可以通过<code>-H</code>参数直接指定标头，更改<code>User-Agent</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;User-Agent: php/1.0&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>使用 <code>--cookie</code> 参数，可以让curl发送cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --cookie <span class="string">&quot;name=xxx&quot;</span> www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>至于具体的cookie的值，可以从http response头信息的<code>Set-Cookie</code>字段中得到。</p>
+<p><code>-c cookie-file</code>可以保存服务器返回的cookie到文件，<code>-b cookie-file</code>可以使用这个文件作为cookie信息，进行后续的请求。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies http://example.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将服务器的 HTTP 回应所设置 Cookie 写入文本文件<code>cookies.txt</code>。</p>
+<p><code>-b</code>参数用来向服务器发送 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies http://example.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo=bar&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会生成一个标头<code>Cookie: foo=bar</code>，向服务器发送一个名为<code>foo</code>、值为<code>bar</code>的 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo1=bar;foo2=bar2&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令发送两个 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令读取本地文件<code>cookies.txt</code>，里面是服务器设置的 Cookie（参见<code>-c</code>参数），将其发送到服务器。</p>
+<h3 id="增加头信息"><a href="#增加头信息" class="headerlink" title="增加头信息"></a>增加头信息</h3><p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --header <span class="string">&quot;Content-Type:application/json&quot;</span> http://example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-H</code>参数添加 HTTP 请求的标头。</p>
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加 HTTP 标头<code>Accept-Language: en-US</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> -H <span class="string">&#x27;Secret-Message: xyzzy&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加两个 HTTP 标头。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;&#123;&quot;login&quot;: &quot;emma&quot;, &quot;pass&quot;: &quot;123&quot;&#125;&#x27;</span> -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加 HTTP 请求的标头是<code>Content-Type: application/json</code>，然后用<code>-d</code>参数发送 JSON 数据。</p>
+<h3 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h3><p>有些网域需要HTTP认证，这时curl需要用到 <code>--user</code> 参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user name:password example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="跳过-SSL-检测"><a href="#跳过-SSL-检测" class="headerlink" title="跳过 SSL 检测"></a>跳过 SSL 检测</h3><p><code>-k</code>参数指定跳过 SSL 检测。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -k https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令不会检查服务器的 SSL 证书是否正确。</p>
+<h3 id="限制-HTTP-请求和回应的带宽"><a href="#限制-HTTP-请求和回应的带宽" class="headerlink" title="限制 HTTP 请求和回应的带宽"></a>限制 HTTP 请求和回应的带宽</h3><p><code>--limit-rate</code>用来限制 HTTP 请求和回应的带宽，模拟慢网速的环境。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 200k https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将带宽限制在每秒 200K 字节。</p>
+<h3 id="错误信息的输出"><a href="#错误信息的输出" class="headerlink" title="错误信息的输出"></a>错误信息的输出</h3><p><code>-s</code> 参数将不输出错误和进度信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令一旦发生错误，不会显示错误信息。不发生错误的话，会正常显示运行结果。</p>
+<p>如果想让 curl 不产生任何输出，可以使用下面的命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-S</code>参数指定只输出错误信息，通常与<code>-s</code>一起使用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -S -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令没有任何输出，除非发生错误。</p>
+<h3 id="权限认证"><a href="#权限认证" class="headerlink" title="权限认证"></a>权限认证</h3><p><code>-u</code> 参数用来设置服务器认证的用户名和密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob:12345&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令设置用户名为<code>bob</code>，密码为<code>12345</code>，然后将其转为 HTTP 标头<code>Authorization: Basic Ym9iOjEyMzQ1</code>。</p>
+<p>curl 能够识别 URL 里面的用户名和密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://bob:12345@google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令能够识别 URL 里面的用户名和密码，将其转为上个例子里面的 HTTP 标头。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令只设置了用户名，执行后，curl 会提示用户输入密码。</p>
+<h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><p>​        curl命令作用 curl命令是一个功能强大的网络工具，它能够通过http、ftp等方式下载文件，也能够上传文件，同时支持HTTPS等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。其实curl远不止前面所说的那些功能，大家可以通过man curl阅读手册页获取更多的信息。类似的工具还有wget。curl命令使用了libcurl库来实现，libcurl库常用在C程序中用来处理HTTP请求，curlpp是libcurl的一个C++封装，这几个东西可以用在抓取网页、网络监控等方面的开发，而curl命令可以帮助来解决开发过程中遇到的问题。</p>
+<p>常用参数 curl命令参数很多，这里只列出我曾经用过、特别是在shell脚本中经常用到过的那些。</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">-a/--append 上传文件时，附加到目标文件</span><br><span class="line"></span><br><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line"></span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line"></span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line"></span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line"></span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line"></span><br><span class="line">    --data-ascii &lt;data&gt;	以ascii的方式post数据</span><br><span class="line">     --data-binary &lt;data&gt;	以二进制的方式post数据</span><br><span class="line">     --negotiate	使用HTTP身份验证</span><br><span class="line">     --digest	使用数字身份验证</span><br><span class="line">     --disable-eprt	禁止使用EPRT或LPRT</span><br><span class="line">     --disable-epsv	禁止使用EPSV</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line"></span><br><span class="line">     --egd-file &lt;file&gt;  为随机数据(SSL)设置EGD socket路径</span><br><span class="line"></span><br><span class="line">     --tcp-nodelay     使用TCP<span class="built_in">_</span>NODELAY选项</span><br><span class="line"></span><br><span class="line">-e/--referer &lt;URL&gt;  指定引用地址</span><br><span class="line"></span><br><span class="line">-F/--form &lt;name=content&gt;   模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">     --form-string &lt;name=string&gt; 模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">-G/--get    以get的方式来发送数据</span><br><span class="line"></span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">    --ignore-content-length  忽略的HTTP头信息的长度</span><br><span class="line"></span><br><span class="line">-i/--include     输出时包括protocol头信息</span><br><span class="line"></span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line"></span><br><span class="line">-k/--insecure  允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line">-K/--config    指定的配置文件读取</span><br><span class="line"></span><br><span class="line">-l/--list-only   列出ftp目录下的文件名称</span><br><span class="line"></span><br><span class="line">    --limit-rate &lt;rate&gt; 设置传输速度</span><br><span class="line"></span><br><span class="line">     --local-port&lt;NUM&gt;  强制使用本地端口号</span><br><span class="line"></span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line"></span><br><span class="line">     --max-redirs &lt;num&gt;    设置最大读取的目录数</span><br><span class="line"></span><br><span class="line">     --max-filesize &lt;bytes&gt;  设置最大下载的文件总量</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt;   指定输出文件名称</span><br><span class="line"></span><br><span class="line">-O/--remote-name  把输出写到该文件中，保留远程文件的文件名</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-v/--verbose  小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line"></span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line"></span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line"></span><br><span class="line">   --range-file 读取（SSL）的随机文件</span><br><span class="line"></span><br><span class="line">-R/--remote-time   在本地生成文件时，保留远程文件时间</span><br><span class="line"></span><br><span class="line">    --retry &lt;num&gt;   指定重试次数</span><br><span class="line"></span><br><span class="line">    --retry-delay &lt;seconds&gt;   传输出现问题时，设置重试间隔时间</span><br><span class="line"></span><br><span class="line">    --retry-max-time &lt;seconds&gt;  传输出现问题时，设置最大重试时间</span><br><span class="line"></span><br><span class="line">-s/--silent  静默模式。不输出任何东西</span><br><span class="line"></span><br><span class="line">-S/--show-error  显示错误</span><br><span class="line"></span><br><span class="line">    --socks4 &lt;host[:port]&gt; 用socks4代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --socks5 &lt;host[:port]&gt; 用socks5代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --stderr &lt;file&gt;</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;host[:port]&gt; 在给定的端口上使用HTTP代理</span><br><span class="line"></span><br><span class="line">-X/--request &lt;command&gt; 指定什么命令。curl默认的HTTP动词是GET，使用-X参数可以支持其他动词。</span><br><span class="line"></span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>文章总结来源：</p>
+<p><a href="https://www.ruanyifeng.com/blog/2011/09/curl.html">curl网站开发指南</a></p>
+<p><a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 的用法指南</a></p>
+<p><a href="https://handerfly.github.io/linux/2019/05/26/curl%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">curl命令详解</a></p>
+<p>更多内容查看：</p>
+<p><a href="https://curl.se/docs/manpage.html">curl 用户手册</a></p>
+]]></content>
+      <categories>
+        <category>命令行工具</category>
+      </categories>
+      <tags>
+        <tag>命令行工具</tag>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/post/2633a26/</url>
+    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>回溯</title>
     <url>/post/f92eff5d/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
@@ -2610,150 +2768,6 @@
       </categories>
       <tags>
         <tag>回溯</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>位运算</title>
-    <url>/post/2633a26/</url>
-    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
-<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
-</li>
-<li><p><strong>判断两个数是否异号</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
-</li>
-<li><p><strong>不用临时变量交换两个数</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>加一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>减一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
-</blockquote>
-</li>
-</ol>
-<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
       </tags>
   </entry>
   <entry>
@@ -3353,6 +3367,81 @@
       </tags>
   </entry>
   <entry>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+<span id="more"></span>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>字符集</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>理解linux中的file descriptor(文件描述符)</title>
     <url>/post/1e8930fb/</url>
     <content><![CDATA[<p>file descriptor（以下简称fd）又叫文件描述符，它是一个抽象的指示符，用一个整数表示（非负整数）。它指向了由系统内核维护的一个file table中的某个条目（entry）。这个解释可能过于抽象，不过在正式详细介绍fd之前，有必要先了解用户程序和系统内核之间的工作过程。</p>
@@ -3477,161 +3566,6 @@
       </tags>
   </entry>
   <entry>
-    <title>模拟</title>
-    <url>/post/d1f7904c/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
-<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
-<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
-<span id="more"></span>
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
-<ul>
-<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
-<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
-<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
-<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
-<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
-</ul>
-<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>模拟</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>红黑树</title>
-    <url>/post/f89cb603/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207175122084.png" style="zoom:80%;" />
-
-<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>学过二叉查找树的同学都知道，普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。为了避免这种情况，就出现了一些<strong>自平衡的查找树</strong>，比如 AVL，红黑树等。这些自平衡的查找树通过定义一些性质，<strong>将任意节点的左右子树高度差控制在规定范围内，以达到平衡状态</strong>。以红黑树为例，红黑树通过如下的性质定义实现自平衡：</p>
-<ol>
-<li>节点是红色或黑色。</li>
-<li>根是黑色。</li>
-<li>所有叶子都是黑色（叶子是NIL节点）。</li>
-<li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
-<li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点（简称黑高）。</li>
-</ol>
-<p>有了上面的几个性质作为限制，即可避免二叉查找树退化成单链表的情况。但是，仅仅避免这种情况还不够，这里还要考虑某个节点到其每个叶子节点路径长度的问题。如果某些路径长度过长，那么，在对这些路径上的节点进行增删查操作时，效率也会大大降低。这个时候性质4和性质5用途就凸显了，有了这两个性质作为约束，即可保证<strong>任意节点到其每个叶子节点路径最长不会超过最短路径的2倍</strong>。原因如下：</p>
-<p>当某条路径最短时，这条路径必然都是由黑色节点构成。当某条路径长度最长时，这条路径必然是由红色和黑色节点相间构成（性质4限定了不能出现两个连续的红色节点）。而性质5又限定了从任一节点到其每个叶子节点的所有路径必须包含相同数量的黑色节点。此时，在路径最长的情况下，路径上红色节点数量 = 黑色节点数量。该路径长度为两倍黑色节点数量，也就是最短路径长度的2倍。举例说明一下，请看下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207180835565.png" style="zoom:80%;" />
-
-<p>上图画出了从根节点 M 出发的到其叶子节点的最长和最短路径。这里偷懒只画出了两条最长路径，实际上最长路径有4条，分别为：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">M -&gt; Q -&gt; O -&gt; N</span><br><span class="line">M -&gt; Q -&gt; O -&gt; p</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; X</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; Z</span><br></pre></td></tr></table></figure>
-
-<p>长度为4，最短路径为 <code>M -&gt; E</code>，长度为2。最长路径的长度正好为最短路径长度的2倍。</p>
-<p>前面说了关于红黑树的一些性质，这里还需要补充一些其他方面的东西。在红黑树简介一节中说到红黑树被发明出来的时候并不叫 <code>红黑树</code>，而是叫做 <code>对称二叉 B 树</code>，从名字中可发现红黑树和 B 树（这里指的是<strong>2-3树</strong>）或许有一定的关联，事实也正是如此。如果对红黑树的性质稍加修改，就能让红黑树和B树形成一一对应的关系。关于红黑树和 B 树关系的细节这里不展开说明了，有兴趣的同学可以参考<a href="https://book.douban.com/subject/19952400/">《算法》</a>第4版，那本书上讲的很透彻。</p>
-<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>红黑树的基本操作和其他树形结构一样，一般都包括查找、插入、删除等操作。前面说到，红黑树是一种自平衡的二叉查找树，既然是二叉查找树的一种，那么查找过程和二叉查找树一样，比较简单，这里不再赘述。相对于查找操作，红黑树的插入和删除操作就要复杂的多。尤其是删除操作，要处理的情况比较多，不过大家如果静下心来去看，会发现其实也没想的那么难。</p>
-<h3 id="旋转操作"><a href="#旋转操作" class="headerlink" title="旋转操作"></a>旋转操作</h3><p>在分析插入和删除操作前，这里需要插个队，先说明一下旋转操作，这个操作在后续操作中都会用得到。旋转操作分为左旋和右旋，<strong>左旋是将某个节点旋转为其右孩子的左孩子</strong>，而<strong>右旋是节点旋转为其左孩子的右孩子</strong>。这话听起来有点绕，所以还是请看下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182356324.png" style="zoom:80%;" />
-
-<p>上图包含了左旋和右旋的示意图，这里以右旋为例进行说明，右旋节点 M 的步骤如下：</p>
-<ol>
-<li>将节点 M 的左孩子引用指向节点 E 的右孩子</li>
-<li>将节点 E 的右孩子引用指向节点 M，完成旋转</li>
-</ol>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182602018.png" style="zoom:80%;" />
-
-<p>上面分析了右旋操作，左旋操作与此类似，大家有兴趣自己画图试试吧，这里不再赘述了。旋转操作本身并不复杂，这里先分析到这吧。</p>
-<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入过程和二叉查找树插入过程基本类似，不同的地方在于，红黑树插入新节点后，需要进行调整，以满足红黑树的性质。性质1规定红黑树节点的颜色要么是红色要么是黑色，那么在插入新节点时，这个节点应该是红色还是黑色呢？答案是红色，原因也不难理解。如果插入的节点是黑色，那么这个节点所在路径比其他路径多出一个黑色节点，这个调整起来会比较麻烦（参考红黑树的删除操作，就知道为啥多一个或少一个黑色节点时，调整起来这么麻烦了）。如果插入的节点是红色，此时所有路径上的黑色节点数量不变，仅可能会出现两个连续的红色节点的情况。这种情况下，通过变色和旋转进行调整即可，比之前的简单多了。</p>
-<p>接下来，将分析插入红色节点后红黑树的情况。这里假设要插入的节点为 N，N 的父节点为 P，祖父节点为 G，叔叔节点为 U。插入红色节点后，会出现5种情况，分别如下：</p>
-<h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>插入的新节点 N 是红黑树的根节点，这种情况下，我们把节点 N 的颜色由红色变为黑色，性质2（根是黑色）被满足。同时 N 被染成黑色后，红黑树所有路径上的黑色节点数量增加一个，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍然被满足。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182903027.png" style="zoom:80%;" />
-
-<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>N 的父节点是黑色，这种情况下，性质4（每个红色节点必须有两个黑色的子节点）和性质5没有受到影响，不需要调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207183215154.png" style="zoom:80%;" />
-
-<h4 id="情况三"><a href="#情况三" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。这种情况下，先将 P 和 U 的颜色染成黑色，再将 G 的颜色染成红色。此时经过 G 的路径上的黑色节点数量不变，性质5仍然满足。但需要注意的是 G 被染成红色后，可能会和它的父节点形成连续的红色节点，此时需要递归向上调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152056319752.jpg" style="zoom:80%;" />
-
-<h4 id="情况四"><a href="#情况四" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，叔叔节点为黑色。节点 N 是 P 的右孩子，且节点 P 是 G 的左孩子。此时先对节点 P 进行左旋，调整 N 与 P 的位置。接下来按照情况五进行处理，以恢复性质4。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057064115.jpg" style="zoom:80%;" />
-
-<h4 id="情况五"><a href="#情况五" class="headerlink" title="情况五"></a>情况五</h4><p>N 的父节点为红色，叔叔节点为黑色。N 是 P 的左孩子，且节点 P 是 G 的左孩子。此时对 G 进行右旋，调整 P 和 G 的位置，并互换颜色。经过这样的调整后，性质4被恢复，同时也未破坏性质5。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057476644.jpg" style="zoom:80%;" />
-
-<h4 id="插入总结"><a href="#插入总结" class="headerlink" title="插入总结"></a>插入总结</h4><p>上面五种情况中，情况一和情况二比较简单，情况三、四、五稍复杂。但如果细心观察，会发现这三种情况的区别在于叔叔节点的颜色，如果<strong>叔叔节点为红色，直接变色</strong>即可。如果<strong>叔叔节点为黑色，则需要旋转，再交换颜色</strong>。当把这三种情况的图画在一起就区别就比较容易观察了，如下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152052502152.jpg" style="zoom:80%;" />
-
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>相较于插入操作，红黑树的删除操作则要更为复杂一些。删除操作首先要确定待删除节点有几个孩子，如果有两个孩子，不能直接删除该节点。而是要先找到该节点的<strong>前驱（该节点左子树中最大的节点）</strong>或者<strong>后继（该节点右子树中最小的节点）</strong>，然后将前驱或者后继的值复制到要删除的节点中，最后再将前驱或后继删除。由于前驱和后继至多只有一个孩子节点，这样我们就把原来要删除的节点有两个孩子的问题转化为只有一个孩子节点的问题，问题被简化了一些。我们并不关心最终被删除的节点是否是我们开始想要删除的那个节点，只要节点里的值最终被删除就行了，至于树结构如何变化，这个并不重要。</p>
-<p>红黑树删除操作的复杂度在于删除节点的颜色，当删除的节点是红色时，直接拿其孩子节点补空位即可。因为删除红色节点，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍能够被满足。当删除的节点是黑色时，那么所有经过该节点的路径上的黑节点数量少了一个，破坏了性质5。如果该节点的孩子为红色，直接拿孩子节点替换被删除的节点，并将孩子节点染成黑色，即可恢复性质5。但如果孩子节点为黑色，处理起来就要复杂的多。分为6种情况，下面会展开说明。</p>
-<p>在展开说明之前，我们先做一些假设，方便说明。这里假设最终被删除的节点为 <code>X</code>（至多只有一个孩子节点），其孩子节点为 <code>N</code>，<code>X</code> 的兄弟节点为 <code>S</code>，<code>S</code> 的左节点为 SL，右节点为 SR。接下来讨论是建立在节点 <code>X</code> 被删除，节点 <code>N</code> 替换 <code>X</code> 的基础上进行的。这里说明把被删除的节点 <code>X</code> 特地拎出来说一下的原因是防止大家误以为节点 <code>N</code> 会被删除，不然后面就会看不明白。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15272593488180.jpg" style="zoom:80%;" />
-
-<p>在上面的基础上，接下来就可以展开讨论了。红黑树删除有6种情况，分别是：</p>
-<h4 id="情况一-1"><a href="#情况一-1" class="headerlink" title="情况一"></a>情况一</h4><blockquote>
-<p>N 是新的根。在这种情形下，我们就做完了。我们从所有路径去除了一个黑色节点，而新根是黑色的，所以性质都保持着。</p>
-</blockquote>
-<p>上面是维基百科中关于红黑树删除的情况一说明，由于没有配图，看的有点晕。经过思考，我觉得可能会是下面这种情形：</p>
-<p>要删除的节点 X 是根节点，且左右孩子节点均为空节点，此时将节点 X 用空节点替换完成删除操作。</p>
-<p>可能还有其他情形，大家如果知道，烦请告知。</p>
-<h4 id="情况二-1"><a href="#情况二-1" class="headerlink" title="情况二"></a>情况二</h4><p>S 为红色，其他节点为黑色。这种情况下可以对 N 的父节点进行左旋操作，然后互换 P 与 S 颜色。但这并未结束，经过节点 P 和 N 的路径删除前有3个黑色节点（<code>P -&gt; X -&gt; N</code>），现在只剩两个了（<code>P -&gt; N</code>）。比未经过 N 的路径少一个黑色节点，性质5仍不满足，还需要继续调整。不过此时可以按照情况四、五、六进行调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097130545.jpg" style="zoom:80%;" />
-
-<h4 id="情况三-1"><a href="#情况三-1" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以简单的把 S 染成红色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致了。但经过 P 的路径比不经过 P 的路径少一个黑色节点，此时需要从情况一开始对 P 进行平衡处理。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097574115.jpg" style="zoom:80%;" />
-
-<h4 id="情况四-1"><a href="#情况四-1" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以把 S 染成红色，把P染成黑色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致且经过 P 的路径黑色节点数不变。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207194653272.png" style="zoom:80%;" />
-
-<h4 id="情况五-1"><a href="#情况五-1" class="headerlink" title="情况五"></a>情况五</h4><p>S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 SL 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 SL，而 SL 的右孩子变为红色。接下来我们到情况六继续分析。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098446251.jpg" style="zoom:80%;" />
-
-<h4 id="情况六"><a href="#情况六" class="headerlink" title="情况六"></a>情况六</h4><p>S 为黑色，S 的右孩子为红色。N 的父节点颜色可红可黑，且 N 是其父节点左孩子。这种情况下，我们对 P 进行左旋操作，并互换 P 和 S 的颜色，并将 SR 变为黑色。因为 P 变为黑色，所以经过 N 的路径多了一个黑色节点，经过 N 的路径上的黑色节点与删除前的数量一致。对于不经过 N 的路径，则有以下两种情况：</p>
-<ol>
-<li>该路径经过 N 新的兄弟节点 SL ，那它之前必然经过 S 和 P。而 S 和 P 现在只是交换颜色，对于经过 SL 的路径不影响。</li>
-<li>该路径经过 N 新的叔叔节点 SR，那它之前必然经过 P、 S 和 SR，而现在它只经过 S 和 SR。在对 P 进行左旋，并与 S 换色后，经过 SR 的路径少了一个黑色节点，性质5被打破。另外，由于 S 的颜色可红可黑，如果 S 是红色的话，会与 SR 形成连续的红色节点，打破性质4（每个红色节点必须有两个黑色的子节点）。此时仅需将 SR 由红色变为黑色即可同时恢复性质4和性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。）。</li>
-</ol>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098765266.jpg" style="zoom:80%;" />
-
-<h4 id="删除总结"><a href="#删除总结" class="headerlink" title="删除总结"></a>删除总结</h4><p>红黑树删除的情况比较多，大家刚开始看的时候可能会比较晕。可能会产生这样的疑问，为啥红黑树会有这种删除情况，为啥又会有另一种情况，它们之间有什么联系和区别？和大家一样，我刚开始看的时候也有这样的困惑，直到我把所有情况对应的图形画在一起时，拨云见日，一切都明了了。此时天空中出现了4个字，原来如此、原来如此、原来如此。所以，请看图吧：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152095299211.jpg" style="zoom:80%;" />
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>红黑树是一种重要的二叉树，应用广泛，但在很多数据结构相关的书本中出现的次数并不多。很多书中要么不说，要么就一笔带过，并不会进行详细的分析，这可能是因为红黑树比较复杂的缘故。我在学习红黑树的时候也找了很多资料，但总体感觉讲的都不太好。尤其是在我学习删除操作的时候，很多资料是实在人看不下去，看的我很痛苦。直到我看到维基百科上关于<a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树</a>的分析时，很是欣喜。这篇文章分析的很有条理，言简意赅，比很多资料好了太多。本文对红黑树的分析也主要参考了维基百科中的红黑树分析，并对维基百科中容易让人产生疑问和误解的地方进行了说明。同时维基百科中文版红黑树文中的图片较为模糊，这里我重新进行了绘制。需要说明的是，维基百科中文版无法打开了，文中关于维基百科的链接都是英文版的。另外在给大家推荐一个数据结构可视化的网站，里面包含常见数据结构可视化过程，地址为：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">t.cn/RZFgryr</a>。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://book.douban.com/subject/19952400/">《算法》第四版</a></li>
-<li> <a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树 – 维基百科</a></li>
-</ul>
-<p>文章转载来源：<a href="https://www.tianxiaobo.com/2018/01/11/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90/">红黑树详细分析</a></p>
-<p>推荐阅读：</p>
-<p><a href="https://zhuanlan.zhihu.com/p/24367771">红黑树深入剖析及Java实现</a></p>
-<p><a href="https://brianway.github.io/2016/10/14/algorithms-data-structures-2/">常见数据结构(二)-树(二叉树，红黑树，B树)</a></p>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>自平衡树</tag>
-        <tag>查找树</tag>
-        <tag>二叉树</tag>
-        <tag>树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记忆化搜索</title>
     <url>/post/cb5e0eb8/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
@@ -3680,78 +3614,48 @@
       </tags>
   </entry>
   <entry>
-    <title>阿里Java开发手册</title>
-    <url>/post/a5aab1c5/</url>
-    <content><![CDATA[<span id="more"></span>
-]]></content>
-  </entry>
-  <entry>
-    <title>面试规则</title>
-    <url>/post/d13fc60c/</url>
-    <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
-<ul>
-<li>知识密集型岗位（需要共鸣）</li>
-</ul>
-<p><strong>规则二：问题之间是可以转化的</strong></p>
-<blockquote>
-<p>可以将面试官问的问题转化为对应的具体的知识点，例如：</p>
-<p>有没有高并发经验？ -&gt; 分库分表、缓冲区的使用、高并发网络IO如何处理</p>
-</blockquote>
+    <title>模拟</title>
+    <url>/post/d1f7904c/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
+<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
+<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
 <span id="more"></span>
-<p><strong>规则三：问题是可以被拆解的</strong></p>
-<blockquote>
-<p>有没有做过大项目？</p>
-<p>拆解：什么样的大项目？</p>
-<p>项目大在哪里？</p>
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
 <ul>
-<li>需求特别多？排期特别长？</li>
-<li>沟通复杂？团队多？</li>
-<li>技术特别难？</li>
+<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
+<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
+<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
+<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
+<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
 </ul>
-</blockquote>
-<blockquote>
-<p>类似的问题：</p>
-<ul>
-<li>Java做过几年？</li>
-<li>有没有大项目经验？</li>
-<li>有没有高并发经验？</li>
-<li>有没有XXX方向的经验？</li>
-</ul>
-<p>应对方法：学会拆解问题，避虛就实，用硬核知识突破面试</p>
-</blockquote>
-<p><strong>规则四：永远不要被面试官牵着鼻子走</strong></p>
-<blockquote>
-<p>应对方法：“引导”面试官提问自己熟悉的知识，从而展示自己学习能力和对知识的学习深度（是否透彻）。</p>
-</blockquote>
-<p><strong>规则五：给面试官有思想深度的回答</strong></p>
-<blockquote>
-<p>如何说？<br>正着说、反着说、折中说、避免「背诵」</p>
-<p>例如：</p>
-<p>面试官：给我解释下高并发?</p>
-<ul>
-<li>高并发的核心是开发成本和硬件成本之间找到一个折中可行的方案</li>
-<li>简单点说解决高并发是在延迟和丢包率可控的情况下，追求吞吐量</li>
-<li>解决高并发要关注线程和I/O模型、数据库选型、缓存优化、缓冲区设计、解耦和消息队列、分布式服务设计等等方面的设计</li>
-</ul>
-<p>应对方法：只有自己<strong>对知识理解透彻</strong>的情况下，才能用自己的语言正确的表述出来。</p>
-</blockquote>
-<blockquote>
-<p><strong>非官方、简短而本质的回答</strong></p>
-<ul>
-<li>LinkedHashMap是一个元素间用链表相连的哈希表</li>
-<li>HashMap就是哈希表实现的Map，TreeMap是用树实现的Map，Map是一种映射关系</li>
-<li>AQS解决Java语言没有实现同步元语底层框架的问题</li>
-<li>B+树是一棵支持区间查找的B树</li>
-<li>DNS是一个经典的分布式设计、BigTable是另一个</li>
-<li>元编程是程序改写程序</li>
-</ul>
-</blockquote>
+<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
-        <category>面试</category>
+        <category>算法</category>
       </categories>
       <tags>
-        <tag>面试软技能</tag>
+        <tag>模拟</tag>
       </tags>
   </entry>
   <entry>
@@ -3873,5 +3777,190 @@
         <tag>双向链表</tag>
         <tag>链表</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>红黑树</title>
+    <url>/post/f89cb603/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207175122084.png" style="zoom:80%;" />
+
+<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>学过二叉查找树的同学都知道，普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。为了避免这种情况，就出现了一些<strong>自平衡的查找树</strong>，比如 AVL，红黑树等。这些自平衡的查找树通过定义一些性质，<strong>将任意节点的左右子树高度差控制在规定范围内，以达到平衡状态</strong>。以红黑树为例，红黑树通过如下的性质定义实现自平衡：</p>
+<ol>
+<li>节点是红色或黑色。</li>
+<li>根是黑色。</li>
+<li>所有叶子都是黑色（叶子是NIL节点）。</li>
+<li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
+<li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点（简称黑高）。</li>
+</ol>
+<p>有了上面的几个性质作为限制，即可避免二叉查找树退化成单链表的情况。但是，仅仅避免这种情况还不够，这里还要考虑某个节点到其每个叶子节点路径长度的问题。如果某些路径长度过长，那么，在对这些路径上的节点进行增删查操作时，效率也会大大降低。这个时候性质4和性质5用途就凸显了，有了这两个性质作为约束，即可保证<strong>任意节点到其每个叶子节点路径最长不会超过最短路径的2倍</strong>。原因如下：</p>
+<p>当某条路径最短时，这条路径必然都是由黑色节点构成。当某条路径长度最长时，这条路径必然是由红色和黑色节点相间构成（性质4限定了不能出现两个连续的红色节点）。而性质5又限定了从任一节点到其每个叶子节点的所有路径必须包含相同数量的黑色节点。此时，在路径最长的情况下，路径上红色节点数量 = 黑色节点数量。该路径长度为两倍黑色节点数量，也就是最短路径长度的2倍。举例说明一下，请看下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207180835565.png" style="zoom:80%;" />
+
+<p>上图画出了从根节点 M 出发的到其叶子节点的最长和最短路径。这里偷懒只画出了两条最长路径，实际上最长路径有4条，分别为：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">M -&gt; Q -&gt; O -&gt; N</span><br><span class="line">M -&gt; Q -&gt; O -&gt; p</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; X</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; Z</span><br></pre></td></tr></table></figure>
+
+<p>长度为4，最短路径为 <code>M -&gt; E</code>，长度为2。最长路径的长度正好为最短路径长度的2倍。</p>
+<p>前面说了关于红黑树的一些性质，这里还需要补充一些其他方面的东西。在红黑树简介一节中说到红黑树被发明出来的时候并不叫 <code>红黑树</code>，而是叫做 <code>对称二叉 B 树</code>，从名字中可发现红黑树和 B 树（这里指的是<strong>2-3树</strong>）或许有一定的关联，事实也正是如此。如果对红黑树的性质稍加修改，就能让红黑树和B树形成一一对应的关系。关于红黑树和 B 树关系的细节这里不展开说明了，有兴趣的同学可以参考<a href="https://book.douban.com/subject/19952400/">《算法》</a>第4版，那本书上讲的很透彻。</p>
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>红黑树的基本操作和其他树形结构一样，一般都包括查找、插入、删除等操作。前面说到，红黑树是一种自平衡的二叉查找树，既然是二叉查找树的一种，那么查找过程和二叉查找树一样，比较简单，这里不再赘述。相对于查找操作，红黑树的插入和删除操作就要复杂的多。尤其是删除操作，要处理的情况比较多，不过大家如果静下心来去看，会发现其实也没想的那么难。</p>
+<h3 id="旋转操作"><a href="#旋转操作" class="headerlink" title="旋转操作"></a>旋转操作</h3><p>在分析插入和删除操作前，这里需要插个队，先说明一下旋转操作，这个操作在后续操作中都会用得到。旋转操作分为左旋和右旋，<strong>左旋是将某个节点旋转为其右孩子的左孩子</strong>，而<strong>右旋是节点旋转为其左孩子的右孩子</strong>。这话听起来有点绕，所以还是请看下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182356324.png" style="zoom:80%;" />
+
+<p>上图包含了左旋和右旋的示意图，这里以右旋为例进行说明，右旋节点 M 的步骤如下：</p>
+<ol>
+<li>将节点 M 的左孩子引用指向节点 E 的右孩子</li>
+<li>将节点 E 的右孩子引用指向节点 M，完成旋转</li>
+</ol>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182602018.png" style="zoom:80%;" />
+
+<p>上面分析了右旋操作，左旋操作与此类似，大家有兴趣自己画图试试吧，这里不再赘述了。旋转操作本身并不复杂，这里先分析到这吧。</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入过程和二叉查找树插入过程基本类似，不同的地方在于，红黑树插入新节点后，需要进行调整，以满足红黑树的性质。性质1规定红黑树节点的颜色要么是红色要么是黑色，那么在插入新节点时，这个节点应该是红色还是黑色呢？答案是红色，原因也不难理解。如果插入的节点是黑色，那么这个节点所在路径比其他路径多出一个黑色节点，这个调整起来会比较麻烦（参考红黑树的删除操作，就知道为啥多一个或少一个黑色节点时，调整起来这么麻烦了）。如果插入的节点是红色，此时所有路径上的黑色节点数量不变，仅可能会出现两个连续的红色节点的情况。这种情况下，通过变色和旋转进行调整即可，比之前的简单多了。</p>
+<p>接下来，将分析插入红色节点后红黑树的情况。这里假设要插入的节点为 N，N 的父节点为 P，祖父节点为 G，叔叔节点为 U。插入红色节点后，会出现5种情况，分别如下：</p>
+<h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>插入的新节点 N 是红黑树的根节点，这种情况下，我们把节点 N 的颜色由红色变为黑色，性质2（根是黑色）被满足。同时 N 被染成黑色后，红黑树所有路径上的黑色节点数量增加一个，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍然被满足。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182903027.png" style="zoom:80%;" />
+
+<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>N 的父节点是黑色，这种情况下，性质4（每个红色节点必须有两个黑色的子节点）和性质5没有受到影响，不需要调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207183215154.png" style="zoom:80%;" />
+
+<h4 id="情况三"><a href="#情况三" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。这种情况下，先将 P 和 U 的颜色染成黑色，再将 G 的颜色染成红色。此时经过 G 的路径上的黑色节点数量不变，性质5仍然满足。但需要注意的是 G 被染成红色后，可能会和它的父节点形成连续的红色节点，此时需要递归向上调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152056319752.jpg" style="zoom:80%;" />
+
+<h4 id="情况四"><a href="#情况四" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，叔叔节点为黑色。节点 N 是 P 的右孩子，且节点 P 是 G 的左孩子。此时先对节点 P 进行左旋，调整 N 与 P 的位置。接下来按照情况五进行处理，以恢复性质4。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057064115.jpg" style="zoom:80%;" />
+
+<h4 id="情况五"><a href="#情况五" class="headerlink" title="情况五"></a>情况五</h4><p>N 的父节点为红色，叔叔节点为黑色。N 是 P 的左孩子，且节点 P 是 G 的左孩子。此时对 G 进行右旋，调整 P 和 G 的位置，并互换颜色。经过这样的调整后，性质4被恢复，同时也未破坏性质5。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057476644.jpg" style="zoom:80%;" />
+
+<h4 id="插入总结"><a href="#插入总结" class="headerlink" title="插入总结"></a>插入总结</h4><p>上面五种情况中，情况一和情况二比较简单，情况三、四、五稍复杂。但如果细心观察，会发现这三种情况的区别在于叔叔节点的颜色，如果<strong>叔叔节点为红色，直接变色</strong>即可。如果<strong>叔叔节点为黑色，则需要旋转，再交换颜色</strong>。当把这三种情况的图画在一起就区别就比较容易观察了，如下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152052502152.jpg" style="zoom:80%;" />
+
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>相较于插入操作，红黑树的删除操作则要更为复杂一些。删除操作首先要确定待删除节点有几个孩子，如果有两个孩子，不能直接删除该节点。而是要先找到该节点的<strong>前驱（该节点左子树中最大的节点）</strong>或者<strong>后继（该节点右子树中最小的节点）</strong>，然后将前驱或者后继的值复制到要删除的节点中，最后再将前驱或后继删除。由于前驱和后继至多只有一个孩子节点，这样我们就把原来要删除的节点有两个孩子的问题转化为只有一个孩子节点的问题，问题被简化了一些。我们并不关心最终被删除的节点是否是我们开始想要删除的那个节点，只要节点里的值最终被删除就行了，至于树结构如何变化，这个并不重要。</p>
+<p>红黑树删除操作的复杂度在于删除节点的颜色，当删除的节点是红色时，直接拿其孩子节点补空位即可。因为删除红色节点，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍能够被满足。当删除的节点是黑色时，那么所有经过该节点的路径上的黑节点数量少了一个，破坏了性质5。如果该节点的孩子为红色，直接拿孩子节点替换被删除的节点，并将孩子节点染成黑色，即可恢复性质5。但如果孩子节点为黑色，处理起来就要复杂的多。分为6种情况，下面会展开说明。</p>
+<p>在展开说明之前，我们先做一些假设，方便说明。这里假设最终被删除的节点为 <code>X</code>（至多只有一个孩子节点），其孩子节点为 <code>N</code>，<code>X</code> 的兄弟节点为 <code>S</code>，<code>S</code> 的左节点为 SL，右节点为 SR。接下来讨论是建立在节点 <code>X</code> 被删除，节点 <code>N</code> 替换 <code>X</code> 的基础上进行的。这里说明把被删除的节点 <code>X</code> 特地拎出来说一下的原因是防止大家误以为节点 <code>N</code> 会被删除，不然后面就会看不明白。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15272593488180.jpg" style="zoom:80%;" />
+
+<p>在上面的基础上，接下来就可以展开讨论了。红黑树删除有6种情况，分别是：</p>
+<h4 id="情况一-1"><a href="#情况一-1" class="headerlink" title="情况一"></a>情况一</h4><blockquote>
+<p>N 是新的根。在这种情形下，我们就做完了。我们从所有路径去除了一个黑色节点，而新根是黑色的，所以性质都保持着。</p>
+</blockquote>
+<p>上面是维基百科中关于红黑树删除的情况一说明，由于没有配图，看的有点晕。经过思考，我觉得可能会是下面这种情形：</p>
+<p>要删除的节点 X 是根节点，且左右孩子节点均为空节点，此时将节点 X 用空节点替换完成删除操作。</p>
+<p>可能还有其他情形，大家如果知道，烦请告知。</p>
+<h4 id="情况二-1"><a href="#情况二-1" class="headerlink" title="情况二"></a>情况二</h4><p>S 为红色，其他节点为黑色。这种情况下可以对 N 的父节点进行左旋操作，然后互换 P 与 S 颜色。但这并未结束，经过节点 P 和 N 的路径删除前有3个黑色节点（<code>P -&gt; X -&gt; N</code>），现在只剩两个了（<code>P -&gt; N</code>）。比未经过 N 的路径少一个黑色节点，性质5仍不满足，还需要继续调整。不过此时可以按照情况四、五、六进行调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097130545.jpg" style="zoom:80%;" />
+
+<h4 id="情况三-1"><a href="#情况三-1" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以简单的把 S 染成红色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致了。但经过 P 的路径比不经过 P 的路径少一个黑色节点，此时需要从情况一开始对 P 进行平衡处理。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097574115.jpg" style="zoom:80%;" />
+
+<h4 id="情况四-1"><a href="#情况四-1" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以把 S 染成红色，把P染成黑色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致且经过 P 的路径黑色节点数不变。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207194653272.png" style="zoom:80%;" />
+
+<h4 id="情况五-1"><a href="#情况五-1" class="headerlink" title="情况五"></a>情况五</h4><p>S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 SL 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 SL，而 SL 的右孩子变为红色。接下来我们到情况六继续分析。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098446251.jpg" style="zoom:80%;" />
+
+<h4 id="情况六"><a href="#情况六" class="headerlink" title="情况六"></a>情况六</h4><p>S 为黑色，S 的右孩子为红色。N 的父节点颜色可红可黑，且 N 是其父节点左孩子。这种情况下，我们对 P 进行左旋操作，并互换 P 和 S 的颜色，并将 SR 变为黑色。因为 P 变为黑色，所以经过 N 的路径多了一个黑色节点，经过 N 的路径上的黑色节点与删除前的数量一致。对于不经过 N 的路径，则有以下两种情况：</p>
+<ol>
+<li>该路径经过 N 新的兄弟节点 SL ，那它之前必然经过 S 和 P。而 S 和 P 现在只是交换颜色，对于经过 SL 的路径不影响。</li>
+<li>该路径经过 N 新的叔叔节点 SR，那它之前必然经过 P、 S 和 SR，而现在它只经过 S 和 SR。在对 P 进行左旋，并与 S 换色后，经过 SR 的路径少了一个黑色节点，性质5被打破。另外，由于 S 的颜色可红可黑，如果 S 是红色的话，会与 SR 形成连续的红色节点，打破性质4（每个红色节点必须有两个黑色的子节点）。此时仅需将 SR 由红色变为黑色即可同时恢复性质4和性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。）。</li>
+</ol>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098765266.jpg" style="zoom:80%;" />
+
+<h4 id="删除总结"><a href="#删除总结" class="headerlink" title="删除总结"></a>删除总结</h4><p>红黑树删除的情况比较多，大家刚开始看的时候可能会比较晕。可能会产生这样的疑问，为啥红黑树会有这种删除情况，为啥又会有另一种情况，它们之间有什么联系和区别？和大家一样，我刚开始看的时候也有这样的困惑，直到我把所有情况对应的图形画在一起时，拨云见日，一切都明了了。此时天空中出现了4个字，原来如此、原来如此、原来如此。所以，请看图吧：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152095299211.jpg" style="zoom:80%;" />
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>红黑树是一种重要的二叉树，应用广泛，但在很多数据结构相关的书本中出现的次数并不多。很多书中要么不说，要么就一笔带过，并不会进行详细的分析，这可能是因为红黑树比较复杂的缘故。我在学习红黑树的时候也找了很多资料，但总体感觉讲的都不太好。尤其是在我学习删除操作的时候，很多资料是实在人看不下去，看的我很痛苦。直到我看到维基百科上关于<a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树</a>的分析时，很是欣喜。这篇文章分析的很有条理，言简意赅，比很多资料好了太多。本文对红黑树的分析也主要参考了维基百科中的红黑树分析，并对维基百科中容易让人产生疑问和误解的地方进行了说明。同时维基百科中文版红黑树文中的图片较为模糊，这里我重新进行了绘制。需要说明的是，维基百科中文版无法打开了，文中关于维基百科的链接都是英文版的。另外在给大家推荐一个数据结构可视化的网站，里面包含常见数据结构可视化过程，地址为：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">t.cn/RZFgryr</a>。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://book.douban.com/subject/19952400/">《算法》第四版</a></li>
+<li> <a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树 – 维基百科</a></li>
+</ul>
+<p>文章转载来源：<a href="https://www.tianxiaobo.com/2018/01/11/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90/">红黑树详细分析</a></p>
+<p>推荐阅读：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/24367771">红黑树深入剖析及Java实现</a></p>
+<p><a href="https://brianway.github.io/2016/10/14/algorithms-data-structures-2/">常见数据结构(二)-树(二叉树，红黑树，B树)</a></p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>自平衡树</tag>
+        <tag>查找树</tag>
+        <tag>二叉树</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>面试规则</title>
+    <url>/post/d13fc60c/</url>
+    <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
+<ul>
+<li>知识密集型岗位（需要共鸣）</li>
+</ul>
+<p><strong>规则二：问题之间是可以转化的</strong></p>
+<blockquote>
+<p>可以将面试官问的问题转化为对应的具体的知识点，例如：</p>
+<p>有没有高并发经验？ -&gt; 分库分表、缓冲区的使用、高并发网络IO如何处理</p>
+</blockquote>
+<span id="more"></span>
+<p><strong>规则三：问题是可以被拆解的</strong></p>
+<blockquote>
+<p>有没有做过大项目？</p>
+<p>拆解：什么样的大项目？</p>
+<p>项目大在哪里？</p>
+<ul>
+<li>需求特别多？排期特别长？</li>
+<li>沟通复杂？团队多？</li>
+<li>技术特别难？</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>类似的问题：</p>
+<ul>
+<li>Java做过几年？</li>
+<li>有没有大项目经验？</li>
+<li>有没有高并发经验？</li>
+<li>有没有XXX方向的经验？</li>
+</ul>
+<p>应对方法：学会拆解问题，避虛就实，用硬核知识突破面试</p>
+</blockquote>
+<p><strong>规则四：永远不要被面试官牵着鼻子走</strong></p>
+<blockquote>
+<p>应对方法：“引导”面试官提问自己熟悉的知识，从而展示自己学习能力和对知识的学习深度（是否透彻）。</p>
+</blockquote>
+<p><strong>规则五：给面试官有思想深度的回答</strong></p>
+<blockquote>
+<p>如何说？<br>正着说、反着说、折中说、避免「背诵」</p>
+<p>例如：</p>
+<p>面试官：给我解释下高并发?</p>
+<ul>
+<li>高并发的核心是开发成本和硬件成本之间找到一个折中可行的方案</li>
+<li>简单点说解决高并发是在延迟和丢包率可控的情况下，追求吞吐量</li>
+<li>解决高并发要关注线程和I/O模型、数据库选型、缓存优化、缓冲区设计、解耦和消息队列、分布式服务设计等等方面的设计</li>
+</ul>
+<p>应对方法：只有自己<strong>对知识理解透彻</strong>的情况下，才能用自己的语言正确的表述出来。</p>
+</blockquote>
+<blockquote>
+<p><strong>非官方、简短而本质的回答</strong></p>
+<ul>
+<li>LinkedHashMap是一个元素间用链表相连的哈希表</li>
+<li>HashMap就是哈希表实现的Map，TreeMap是用树实现的Map，Map是一种映射关系</li>
+<li>AQS解决Java语言没有实现同步元语底层框架的问题</li>
+<li>B+树是一棵支持区间查找的B树</li>
+<li>DNS是一个经典的分布式设计、BigTable是另一个</li>
+<li>元编程是程序改写程序</li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>面试</category>
+      </categories>
+      <tags>
+        <tag>面试软技能</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里Java开发手册</title>
+    <url>/post/a5aab1c5/</url>
+    <content><![CDATA[<span id="more"></span>
+]]></content>
   </entry>
 </search>
