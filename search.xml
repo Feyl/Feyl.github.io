@@ -1,6 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>HashMap 的 7 种遍历方式与性能分析</title>
+    <url>/post/844a20bd/</url>
+    <content><![CDATA[<p>随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。</p>
+<p>本文<strong>先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足</strong>，本文主要内容如下图所示：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203232307417.png" style="zoom:75%;" />
+
+<h2 id="HashMap-遍历"><a href="#HashMap-遍历" class="headerlink" title="HashMap 遍历"></a>HashMap 遍历</h2><p>HashMap <strong>遍历从大的方向来说，可分为以下 4 类</strong>：</p>
+<ol>
+<li><p>迭代器（Iterator）方式遍历；</p>
+</li>
+<li><p>For Each 方式遍历；</p>
+</li>
+<li><p>Lambda 表达式遍历（JDK 1.8+）；</p>
+</li>
+<li><p>Streams API 遍历（JDK 1.8+）。</p>
+<span id="more"></span>
+<p>但每种类型下又有不同的实现方式，因此具体的遍历方式又可以分为以下 7 种：</p>
+</li>
+<li><p>使用迭代器（Iterator）EntrySet 的方式进行遍历；</p>
+</li>
+<li><p>使用迭代器（Iterator）KeySet 的方式进行遍历；</p>
+</li>
+<li><p>使用 For Each EntrySet 的方式进行遍历；</p>
+</li>
+<li><p>使用 For Each KeySet 的方式进行遍历；</p>
+</li>
+<li><p>使用 Lambda 表达式的方式进行遍历；</p>
+</li>
+<li><p>使用 Streams API 单线程的方式进行遍历；</p>
+</li>
+<li><p>使用 Streams API 多线程的方式进行遍历。</p>
+</li>
+</ol>
+<p>接下来我们来看每种遍历方式的具体实现代码。</p>
+<h3 id="迭代器-EntrySet"><a href="#迭代器-EntrySet" class="headerlink" title="迭代器 EntrySet"></a>迭代器 EntrySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果为：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">Java</span><br><span class="line">2</span><br><span class="line">JDK</span><br><span class="line">3</span><br><span class="line">Spring Framework</span><br><span class="line">4</span><br><span class="line">MyBatis Framework</span><br><span class="line">5</span><br><span class="line">Java中文社群</span><br></pre></td></tr></table></figure>
+
+<h3 id="迭代器-KeySet"><a href="#迭代器-KeySet" class="headerlink" title="迭代器 KeySet"></a>迭代器 KeySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Integer&gt; iterator = map.keySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Integer key = iterator.next();</span><br><span class="line">            System.out.println(key);</span><br><span class="line">            System.out.println(map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果同上。</p>
+<h3 id="ForEach-EntrySet"><a href="#ForEach-EntrySet" class="headerlink" title="ForEach EntrySet"></a>ForEach EntrySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果同上。</p>
+<h3 id="ForEach-KeySet"><a href="#ForEach-KeySet" class="headerlink" title="ForEach KeySet"></a>ForEach KeySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Integer key : map.keySet()) &#123;</span><br><span class="line">            System.out.println(key);</span><br><span class="line">            System.out.println(map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果同上。</p>
+<h3 id="Lambda"><a href="#Lambda" class="headerlink" title="Lambda"></a>Lambda</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.forEach((key, value) -&gt; &#123;</span><br><span class="line">            System.out.println(key);</span><br><span class="line">            System.out.println(value);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果同上。</p>
+<h3 id="Streams-API-单线程"><a href="#Streams-API-单线程" class="headerlink" title="Streams API 单线程"></a>Streams API 单线程</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.entrySet().stream().forEach((entry) -&gt; &#123;</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果同上。</p>
+<h3 id="Streams-API-多线程"><a href="#Streams-API-多线程" class="headerlink" title="Streams API 多线程"></a>Streams API 多线程</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.entrySet().parallelStream().forEach((entry) -&gt; &#123;</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>接下来使用 Oracle 官方提供的性能测试工具 <strong>JMH（Java Microbenchmark Harness，JAVA 微基准测试套件）</strong>来测试一下这 7 种循环的性能。</p>
+<p>首先，先要引入 JMH 框架，在 <code>pom.xml</code> 文件中添加如下配置：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.openjdk.jmh/jmh-core --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jmh<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jmh-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.23<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.openjdk.jmh/jmh-generator-annprocess --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jmh<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jmh-generator-annprocess<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.23<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后编写测试代码，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@BenchmarkMode(Mode.AverageTime)</span> <span class="comment">// 测试完成时间</span></span><br><span class="line"><span class="meta">@OutputTimeUnit(TimeUnit.NANOSECONDS)</span></span><br><span class="line"><span class="meta">@Warmup(iterations = 2, time = 1, timeUnit = TimeUnit.SECONDS)</span> <span class="comment">// 预热 2 轮，每次 1s</span></span><br><span class="line"><span class="meta">@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)</span> <span class="comment">// 测试 5 轮，每次 1s</span></span><br><span class="line"><span class="meta">@Fork(1)</span> <span class="comment">// fork 1 个线程</span></span><br><span class="line"><span class="meta">@State(Scope.Thread)</span> <span class="comment">// 每个测试线程一个实例</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapCycleTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap() &#123;&#123;</span><br><span class="line">        <span class="comment">// 添加数据</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            put(i, <span class="string">&quot;val:&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RunnerException </span>&#123;</span><br><span class="line">        <span class="comment">// 启动基准测试</span></span><br><span class="line">        Options opt = <span class="keyword">new</span> OptionsBuilder()</span><br><span class="line">                .include(HashMapCycle.class.getSimpleName()) <span class="comment">// 要导入的测试类</span></span><br><span class="line">                .output(<span class="string">&quot;/Users/admin/Desktop/jmh-map.log&quot;</span>) <span class="comment">// 输出测试结果的文件</span></span><br><span class="line">                .build();</span><br><span class="line">        <span class="keyword">new</span> Runner(opt).run(); <span class="comment">// 执行测试</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">entrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEachEntrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Integer&gt; iterator = map.keySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Integer k = iterator.next();</span><br><span class="line">            String v = map.get(k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEachKeySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Integer key : map.keySet()) &#123;</span><br><span class="line">            Integer k = key;</span><br><span class="line">            String v = map.get(k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lambda</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.forEach((key, value) -&gt; &#123;</span><br><span class="line">            Integer k = key;</span><br><span class="line">            String v = value;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">streamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 单线程遍历</span></span><br><span class="line">        map.entrySet().stream().forEach((entry) -&gt; &#123;</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">parallelStreamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 多线程遍历</span></span><br><span class="line">        map.entrySet().parallelStream().forEach((entry) -&gt; &#123;</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所有被添加了 <code>@Benchmark</code> 注解的方法都会被测试，因为 parallelStream 为多线程版本性能一定是最好的，所以就不参与测试了，其他 6 个方法的测试结果如下：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203233203211.png"></p>
+<p>其中 Units 为 <code>ns/op</code> 意思是执行完成时间（单位为纳秒），而 Score 列为平均执行时间， <code>±</code> 符号表示误差。从以上结果可以看出，两个 <code>entrySet</code> 的性能相近，并且执行速度最快，接下来是 <code>stream</code> ，然后是两个 <code>keySet</code>，性能最差的是 <code>lambda</code> 。</p>
+<blockquote>
+<p>注：以上结果基于测试环境：JDK 1.8 / Mac mini (2018) / Idea 2020.1</p>
+</blockquote>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p><strong>从以上结果可以看出 entrySet 的性能比 keySet 的性能高出了一倍之多，因此我们应该尽量使用 entrySet 来实现 Map 集合的遍历</strong>。</p>
+<h2 id="字节码分析"><a href="#字节码分析" class="headerlink" title="字节码分析"></a>字节码分析</h2><p>要理解以上的测试结果，我们需要把所有遍历代码通过 <code>javac</code> 编译成字节码来看具体的原因。</p>
+<p>编译后，我们使用 Idea 打开字节码，内容如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Source code recreated from a .class file by IntelliJ IDEA</span></span><br><span class="line"><span class="comment">// (powered by Fernflower decompiler)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Map.Entry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap() &#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> var1 = <span class="number">0</span>; var1 &lt; <span class="number">2</span>; ++var1) &#123;</span><br><span class="line">                <span class="keyword">this</span>.put(var1, <span class="string">&quot;val:&quot;</span> + var1);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashMapTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] var0)</span> </span>&#123;</span><br><span class="line">        entrySet();</span><br><span class="line">        keySet();</span><br><span class="line">        forEachEntrySet();</span><br><span class="line">        forEachKeySet();</span><br><span class="line">        lambda();</span><br><span class="line">        streamApi();</span><br><span class="line">        parallelStreamApi();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Entry var1 = (Entry)var0.next();</span><br><span class="line">            System.out.println(var1.getKey());</span><br><span class="line">            System.out.println((String)var1.getValue());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.keySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Integer var1 = (Integer)var0.next();</span><br><span class="line">            System.out.println(var1);</span><br><span class="line">            System.out.println((String)map.get(var1));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachEntrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Entry var1 = (Entry)var0.next();</span><br><span class="line">            System.out.println(var1.getKey());</span><br><span class="line">            System.out.println((String)var1.getValue());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachKeySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.keySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Integer var1 = (Integer)var0.next();</span><br><span class="line">            System.out.println(var1);</span><br><span class="line">            System.out.println((String)map.get(var1));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">lambda</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map.forEach((var0, var1) -&gt; &#123;</span><br><span class="line">            System.out.println(var0);</span><br><span class="line">            System.out.println(var1);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">streamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map.entrySet().stream().forEach((var0) -&gt; &#123;</span><br><span class="line">            System.out.println(var0.getKey());</span><br><span class="line">            System.out.println((String)var0.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parallelStreamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map.entrySet().parallelStream().forEach((var0) -&gt; &#123;</span><br><span class="line">            System.out.println(var0.getKey());</span><br><span class="line">            System.out.println((String)var0.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从结果可以看出，除了 Lambda 和 Streams API 之外，通过迭代器循环和 <code>for</code> 循环的遍历的 <code>EntrySet</code> 最终生成的代码是一样的，他们都是在循环中创建了一个遍历对象 <code>Entry</code> ，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.entrySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Entry var1 = (Entry)var0.next();</span><br><span class="line">        System.out.println(var1.getKey());</span><br><span class="line">        System.out.println((String)var1.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachEntrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.entrySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Entry var1 = (Entry)var0.next();</span><br><span class="line">        System.out.println(var1.getKey());</span><br><span class="line">        System.out.println((String)var1.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而 <code>KeySet</code> 的代码也是类似的，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.keySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Integer var1 = (Integer)var0.next();</span><br><span class="line">        System.out.println(var1);</span><br><span class="line">        System.out.println((String)map.get(var1));</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachKeySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.keySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Integer var1 = (Integer)var0.next();</span><br><span class="line">        System.out.println(var1);</span><br><span class="line">        System.out.println((String)map.get(var1));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以我们在使用迭代器或是 <code>for</code> 循环 <code>EntrySet</code> 时，他们的性能都是相同的，因为他们最终生成的字节码基本都是一样的；同理 <code>KeySet</code> 的两种遍历方式也是类似的。</p>
+<h2 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h2><p><code>EntrySet</code> 之所以比 <code>KeySet</code> 的性能高是因为，<code>KeySet</code> 在循环时使用了 <code>map.get(key)</code>，而 <code>map.get(key)</code> 相当于又遍历了一遍 Map 集合去查询 <code>key</code> 所对应的值。为什么要用“又”这个词？那是因为<strong>在使用迭代器或者 for 循环时，其实已经遍历了一遍 Map 集合了，因此再使用 <code>map.get(key)</code> 查询时，相当于遍历了两遍</strong>。</p>
+<p>而 <code>EntrySet</code> 只遍历了一遍 Map 集合，之后通过代码“<code>Entry&lt;Integer, String&gt; entry = iterator.next()</code>”把对象的 <code>key</code> 和 <code>value</code> 值都放入到了 <code>Entry</code> 对象中，因此再获取 <code>key</code> 和 <code>value</code> 值时就无需再遍历 Map 集合，只需要从 <code>Entry</code> 对象中取值就可以了。</p>
+<p>所以，**<code>EntrySet</code> 的性能比 <code>KeySet</code> 的性能高出了一倍，因为 <code>KeySet</code> 相当于循环了两遍 Map 集合，而 <code>EntrySet</code> 只循环了一遍**。</p>
+<h2 id="安全性测试"><a href="#安全性测试" class="headerlink" title="安全性测试"></a>安全性测试</h2><p>从上面的性能测试结果和原理分析，我想大家应该选用哪种遍历方式，已经心中有数的，而接下来从「安全」的角度入手，来分析哪种遍历方式更安全。</p>
+<p>把以上遍历划分为四类进行测试：迭代器方式、For 循环方式、Lambda 方式和 Stream 方式，测试代码如下。</p>
+<h3 id="迭代器方式"><a href="#迭代器方式" class="headerlink" title="迭代器方式"></a>迭代器方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">    Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 删除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">        iterator.remove();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">show:0</span><br><span class="line">del:1</span><br><span class="line">show:2</span><br></pre></td></tr></table></figure>
+
+<p>测试结果：<strong>迭代器中循环删除数据安全</strong>。</p>
+<h3 id="For-循环方式"><a href="#For-循环方式" class="headerlink" title="For 循环方式"></a>For 循环方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 删除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">        map.remove(entry.getKey());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204114938065.png" style="zoom:80%;" />
+
+<p>测试结果：<strong>For 循环中删除数据非安全</strong>。</p>
+<h3 id="Lambda-方式"><a href="#Lambda-方式" class="headerlink" title="Lambda 方式"></a>Lambda 方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.forEach((key, value) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="number">1</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + key);</span><br><span class="line">        map.remove(key);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204115254456.png" style="zoom:80%;" />
+
+<p>测试结果：<strong>Lambda 循环中删除数据非安全</strong>。</p>
+<p><strong>Lambda 删除的正确方式</strong>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 根据 map 中的 key 去判断删除</span></span><br><span class="line">map.keySet().removeIf(key -&gt; key == <span class="number">1</span>);</span><br><span class="line">map.forEach((key, value) -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;show:&quot;</span> + key);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">show:0</span><br><span class="line">show:2</span><br></pre></td></tr></table></figure>
+
+<p>从上面的代码可以看出，可以先使用 <code>Lambda</code> 的 <code>removeIf</code> 删除多余的数据，再进行循环是一种正确操作集合的方式。</p>
+<h3 id="Stream-方式"><a href="#Stream-方式" class="headerlink" title="Stream 方式"></a>Stream 方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.entrySet().stream().forEach((entry) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">        map.remove(entry.getKey());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204115422219.png" style="zoom:80%;" />
+
+<p>image.png</p>
+<p>测试结果：<strong>Stream 循环中删除数据非安全</strong>。</p>
+<p><strong>Stream 循环的正确方式</strong>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.entrySet().stream().filter(m -&gt; <span class="number">1</span> != m.getKey()).forEach((entry) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>以上程序的执行结果：同上。</p>
+<p>从上面的代码可以看出，可以使用 <code>Stream</code> 中的 <code>filter</code> 过滤掉无用的数据，再进行遍历也是一种安全的操作集合的方式。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>我们不能在遍历中使用集合 <code>map.remove()</code> 来删除数据，这是非安全的操作方式，但我们可以使用迭代器的 <code>iterator.remove()</code> 的方法来删除数据，这是安全的删除集合的方式。同样的我们也可以使用 Lambda 中的 <code>removeIf</code> 来提前删除数据，或者是使用 Stream 中的 <code>filter</code> 过滤掉要删除的数据进行循环，这样都是安全的，当然我们也可以在 <code>for</code> 循环前删除数据在遍历也是线程安全的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文我们讲了 HashMap 4 种遍历方式：迭代器、for、lambda、stream，以及具体的 7 种遍历方法，综合性能和安全性来看，<strong>我们应该尽量使用迭代器（Iterator）来遍历 <code>EntrySet</code> 的遍历方式来操作 Map 集合</strong>，这样就会既安全又高效了。</p>
+<p>文章来源：<a href="https://mp.weixin.qq.com/s/zQBN3UvJDhRTKP6SzcZFKw">HashMap 的 7 种遍历方式与性能分析</a></p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>容器</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>CAP &amp; BASE理论</title>
     <url>/post/4d60196d/</url>
     <content><![CDATA[<h2 id="从集中式到分布式"><a href="#从集中式到分布式" class="headerlink" title="从集中式到分布式"></a>从集中式到分布式</h2><p>ACID 是数据库事务完整性的理论，CAP 是分布式系统设计理论，BASE 是 CAP 理论中 AP 方案的延伸。</p>
@@ -240,141 +375,6 @@
       </categories>
       <tags>
         <tag>理论</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>HashMap 的 7 种遍历方式与性能分析</title>
-    <url>/post/844a20bd/</url>
-    <content><![CDATA[<p>随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。</p>
-<p>本文<strong>先从 HashMap 的遍历方法讲起，然后再从性能、原理以及安全性等方面，来分析 HashMap 各种遍历方式的优势与不足</strong>，本文主要内容如下图所示：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203232307417.png" style="zoom:75%;" />
-
-<h2 id="HashMap-遍历"><a href="#HashMap-遍历" class="headerlink" title="HashMap 遍历"></a>HashMap 遍历</h2><p>HashMap <strong>遍历从大的方向来说，可分为以下 4 类</strong>：</p>
-<ol>
-<li><p>迭代器（Iterator）方式遍历；</p>
-</li>
-<li><p>For Each 方式遍历；</p>
-</li>
-<li><p>Lambda 表达式遍历（JDK 1.8+）；</p>
-</li>
-<li><p>Streams API 遍历（JDK 1.8+）。</p>
-<span id="more"></span>
-<p>但每种类型下又有不同的实现方式，因此具体的遍历方式又可以分为以下 7 种：</p>
-</li>
-<li><p>使用迭代器（Iterator）EntrySet 的方式进行遍历；</p>
-</li>
-<li><p>使用迭代器（Iterator）KeySet 的方式进行遍历；</p>
-</li>
-<li><p>使用 For Each EntrySet 的方式进行遍历；</p>
-</li>
-<li><p>使用 For Each KeySet 的方式进行遍历；</p>
-</li>
-<li><p>使用 Lambda 表达式的方式进行遍历；</p>
-</li>
-<li><p>使用 Streams API 单线程的方式进行遍历；</p>
-</li>
-<li><p>使用 Streams API 多线程的方式进行遍历。</p>
-</li>
-</ol>
-<p>接下来我们来看每种遍历方式的具体实现代码。</p>
-<h3 id="迭代器-EntrySet"><a href="#迭代器-EntrySet" class="headerlink" title="迭代器 EntrySet"></a>迭代器 EntrySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果为：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">Java</span><br><span class="line">2</span><br><span class="line">JDK</span><br><span class="line">3</span><br><span class="line">Spring Framework</span><br><span class="line">4</span><br><span class="line">MyBatis Framework</span><br><span class="line">5</span><br><span class="line">Java中文社群</span><br></pre></td></tr></table></figure>
-
-<h3 id="迭代器-KeySet"><a href="#迭代器-KeySet" class="headerlink" title="迭代器 KeySet"></a>迭代器 KeySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Integer&gt; iterator = map.keySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Integer key = iterator.next();</span><br><span class="line">            System.out.println(key);</span><br><span class="line">            System.out.println(map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果同上。</p>
-<h3 id="ForEach-EntrySet"><a href="#ForEach-EntrySet" class="headerlink" title="ForEach EntrySet"></a>ForEach EntrySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果同上。</p>
-<h3 id="ForEach-KeySet"><a href="#ForEach-KeySet" class="headerlink" title="ForEach KeySet"></a>ForEach KeySet</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Integer key : map.keySet()) &#123;</span><br><span class="line">            System.out.println(key);</span><br><span class="line">            System.out.println(map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果同上。</p>
-<h3 id="Lambda"><a href="#Lambda" class="headerlink" title="Lambda"></a>Lambda</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.forEach((key, value) -&gt; &#123;</span><br><span class="line">            System.out.println(key);</span><br><span class="line">            System.out.println(value);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果同上。</p>
-<h3 id="Streams-API-单线程"><a href="#Streams-API-单线程" class="headerlink" title="Streams API 单线程"></a>Streams API 单线程</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.entrySet().stream().forEach((entry) -&gt; &#123;</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果同上。</p>
-<h3 id="Streams-API-多线程"><a href="#Streams-API-多线程" class="headerlink" title="Streams API 多线程"></a>Streams API 多线程</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建并赋值 HashMap</span></span><br><span class="line">        Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap();</span><br><span class="line">        map.put(<span class="number">1</span>, <span class="string">&quot;Java&quot;</span>);</span><br><span class="line">        map.put(<span class="number">2</span>, <span class="string">&quot;JDK&quot;</span>);</span><br><span class="line">        map.put(<span class="number">3</span>, <span class="string">&quot;Spring Framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">4</span>, <span class="string">&quot;MyBatis framework&quot;</span>);</span><br><span class="line">        map.put(<span class="number">5</span>, <span class="string">&quot;Java中文社群&quot;</span>);</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.entrySet().parallelStream().forEach((entry) -&gt; &#123;</span><br><span class="line">            System.out.println(entry.getKey());</span><br><span class="line">            System.out.println(entry.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><p>接下来使用 Oracle 官方提供的性能测试工具 <strong>JMH（Java Microbenchmark Harness，JAVA 微基准测试套件）</strong>来测试一下这 7 种循环的性能。</p>
-<p>首先，先要引入 JMH 框架，在 <code>pom.xml</code> 文件中添加如下配置：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.openjdk.jmh/jmh-core --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jmh<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jmh-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.23<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.openjdk.jmh/jmh-generator-annprocess --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jmh<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jmh-generator-annprocess<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.23<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>然后编写测试代码，如下所示：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@BenchmarkMode(Mode.AverageTime)</span> <span class="comment">// 测试完成时间</span></span><br><span class="line"><span class="meta">@OutputTimeUnit(TimeUnit.NANOSECONDS)</span></span><br><span class="line"><span class="meta">@Warmup(iterations = 2, time = 1, timeUnit = TimeUnit.SECONDS)</span> <span class="comment">// 预热 2 轮，每次 1s</span></span><br><span class="line"><span class="meta">@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)</span> <span class="comment">// 测试 5 轮，每次 1s</span></span><br><span class="line"><span class="meta">@Fork(1)</span> <span class="comment">// fork 1 个线程</span></span><br><span class="line"><span class="meta">@State(Scope.Thread)</span> <span class="comment">// 每个测试线程一个实例</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapCycleTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap() &#123;&#123;</span><br><span class="line">        <span class="comment">// 添加数据</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">            put(i, <span class="string">&quot;val:&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> RunnerException </span>&#123;</span><br><span class="line">        <span class="comment">// 启动基准测试</span></span><br><span class="line">        Options opt = <span class="keyword">new</span> OptionsBuilder()</span><br><span class="line">                .include(HashMapCycle.class.getSimpleName()) <span class="comment">// 要导入的测试类</span></span><br><span class="line">                .output(<span class="string">&quot;/Users/admin/Desktop/jmh-map.log&quot;</span>) <span class="comment">// 输出测试结果的文件</span></span><br><span class="line">                .build();</span><br><span class="line">        <span class="keyword">new</span> Runner(opt).run(); <span class="comment">// 执行测试</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">entrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEachEntrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        Iterator&lt;Integer&gt; iterator = map.keySet().iterator();</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            Integer k = iterator.next();</span><br><span class="line">            String v = map.get(k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEachKeySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        <span class="keyword">for</span> (Integer key : map.keySet()) &#123;</span><br><span class="line">            Integer k = key;</span><br><span class="line">            String v = map.get(k);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lambda</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历</span></span><br><span class="line">        map.forEach((key, value) -&gt; &#123;</span><br><span class="line">            Integer k = key;</span><br><span class="line">            String v = value;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Benchmark</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">streamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 单线程遍历</span></span><br><span class="line">        map.entrySet().stream().forEach((entry) -&gt; &#123;</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">parallelStreamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 多线程遍历</span></span><br><span class="line">        map.entrySet().parallelStream().forEach((entry) -&gt; &#123;</span><br><span class="line">            Integer k = entry.getKey();</span><br><span class="line">            String v = entry.getValue();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>所有被添加了 <code>@Benchmark</code> 注解的方法都会被测试，因为 parallelStream 为多线程版本性能一定是最好的，所以就不参与测试了，其他 6 个方法的测试结果如下：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220203233203211.png"></p>
-<p>其中 Units 为 <code>ns/op</code> 意思是执行完成时间（单位为纳秒），而 Score 列为平均执行时间， <code>±</code> 符号表示误差。从以上结果可以看出，两个 <code>entrySet</code> 的性能相近，并且执行速度最快，接下来是 <code>stream</code> ，然后是两个 <code>keySet</code>，性能最差的是 <code>lambda</code> 。</p>
-<blockquote>
-<p>注：以上结果基于测试环境：JDK 1.8 / Mac mini (2018) / Idea 2020.1</p>
-</blockquote>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p><strong>从以上结果可以看出 entrySet 的性能比 keySet 的性能高出了一倍之多，因此我们应该尽量使用 entrySet 来实现 Map 集合的遍历</strong>。</p>
-<h2 id="字节码分析"><a href="#字节码分析" class="headerlink" title="字节码分析"></a>字节码分析</h2><p>要理解以上的测试结果，我们需要把所有遍历代码通过 <code>javac</code> 编译成字节码来看具体的原因。</p>
-<p>编译后，我们使用 Idea 打开字节码，内容如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Source code recreated from a .class file by IntelliJ IDEA</span></span><br><span class="line"><span class="comment">// (powered by Fernflower decompiler)</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.example;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.Map.Entry;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HashMapTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Map&lt;Integer, String&gt; map = <span class="keyword">new</span> HashMap() &#123;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> var1 = <span class="number">0</span>; var1 &lt; <span class="number">2</span>; ++var1) &#123;</span><br><span class="line">                <span class="keyword">this</span>.put(var1, <span class="string">&quot;val:&quot;</span> + var1);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HashMapTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] var0)</span> </span>&#123;</span><br><span class="line">        entrySet();</span><br><span class="line">        keySet();</span><br><span class="line">        forEachEntrySet();</span><br><span class="line">        forEachKeySet();</span><br><span class="line">        lambda();</span><br><span class="line">        streamApi();</span><br><span class="line">        parallelStreamApi();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Entry var1 = (Entry)var0.next();</span><br><span class="line">            System.out.println(var1.getKey());</span><br><span class="line">            System.out.println((String)var1.getValue());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.keySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Integer var1 = (Integer)var0.next();</span><br><span class="line">            System.out.println(var1);</span><br><span class="line">            System.out.println((String)map.get(var1));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachEntrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.entrySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Entry var1 = (Entry)var0.next();</span><br><span class="line">            System.out.println(var1.getKey());</span><br><span class="line">            System.out.println((String)var1.getValue());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachKeySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Iterator var0 = map.keySet().iterator();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">            Integer var1 = (Integer)var0.next();</span><br><span class="line">            System.out.println(var1);</span><br><span class="line">            System.out.println((String)map.get(var1));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">lambda</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map.forEach((var0, var1) -&gt; &#123;</span><br><span class="line">            System.out.println(var0);</span><br><span class="line">            System.out.println(var1);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">streamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map.entrySet().stream().forEach((var0) -&gt; &#123;</span><br><span class="line">            System.out.println(var0.getKey());</span><br><span class="line">            System.out.println((String)var0.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">parallelStreamApi</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        map.entrySet().parallelStream().forEach((var0) -&gt; &#123;</span><br><span class="line">            System.out.println(var0.getKey());</span><br><span class="line">            System.out.println((String)var0.getValue());</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>从结果可以看出，除了 Lambda 和 Streams API 之外，通过迭代器循环和 <code>for</code> 循环的遍历的 <code>EntrySet</code> 最终生成的代码是一样的，他们都是在循环中创建了一个遍历对象 <code>Entry</code> ，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">entrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.entrySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Entry var1 = (Entry)var0.next();</span><br><span class="line">        System.out.println(var1.getKey());</span><br><span class="line">        System.out.println((String)var1.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachEntrySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.entrySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Entry var1 = (Entry)var0.next();</span><br><span class="line">        System.out.println(var1.getKey());</span><br><span class="line">        System.out.println((String)var1.getValue());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>而 <code>KeySet</code> 的代码也是类似的，如下所示：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">keySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.keySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Integer var1 = (Integer)var0.next();</span><br><span class="line">        System.out.println(var1);</span><br><span class="line">        System.out.println((String)map.get(var1));</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forEachKeySet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator var0 = map.keySet().iterator();</span><br><span class="line">    <span class="keyword">while</span>(var0.hasNext()) &#123;</span><br><span class="line">        Integer var1 = (Integer)var0.next();</span><br><span class="line">        System.out.println(var1);</span><br><span class="line">        System.out.println((String)map.get(var1));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>所以我们在使用迭代器或是 <code>for</code> 循环 <code>EntrySet</code> 时，他们的性能都是相同的，因为他们最终生成的字节码基本都是一样的；同理 <code>KeySet</code> 的两种遍历方式也是类似的。</p>
-<h2 id="性能分析"><a href="#性能分析" class="headerlink" title="性能分析"></a>性能分析</h2><p><code>EntrySet</code> 之所以比 <code>KeySet</code> 的性能高是因为，<code>KeySet</code> 在循环时使用了 <code>map.get(key)</code>，而 <code>map.get(key)</code> 相当于又遍历了一遍 Map 集合去查询 <code>key</code> 所对应的值。为什么要用“又”这个词？那是因为<strong>在使用迭代器或者 for 循环时，其实已经遍历了一遍 Map 集合了，因此再使用 <code>map.get(key)</code> 查询时，相当于遍历了两遍</strong>。</p>
-<p>而 <code>EntrySet</code> 只遍历了一遍 Map 集合，之后通过代码“<code>Entry&lt;Integer, String&gt; entry = iterator.next()</code>”把对象的 <code>key</code> 和 <code>value</code> 值都放入到了 <code>Entry</code> 对象中，因此再获取 <code>key</code> 和 <code>value</code> 值时就无需再遍历 Map 集合，只需要从 <code>Entry</code> 对象中取值就可以了。</p>
-<p>所以，**<code>EntrySet</code> 的性能比 <code>KeySet</code> 的性能高出了一倍，因为 <code>KeySet</code> 相当于循环了两遍 Map 集合，而 <code>EntrySet</code> 只循环了一遍**。</p>
-<h2 id="安全性测试"><a href="#安全性测试" class="headerlink" title="安全性测试"></a>安全性测试</h2><p>从上面的性能测试结果和原理分析，我想大家应该选用哪种遍历方式，已经心中有数的，而接下来从「安全」的角度入手，来分析哪种遍历方式更安全。</p>
-<p>把以上遍历划分为四类进行测试：迭代器方式、For 循环方式、Lambda 方式和 Stream 方式，测试代码如下。</p>
-<h3 id="迭代器方式"><a href="#迭代器方式" class="headerlink" title="迭代器方式"></a>迭代器方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Iterator&lt;Map.Entry&lt;Integer, String&gt;&gt; iterator = map.entrySet().iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">    Map.Entry&lt;Integer, String&gt; entry = iterator.next();</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 删除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">        iterator.remove();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">show:0</span><br><span class="line">del:1</span><br><span class="line">show:2</span><br></pre></td></tr></table></figure>
-
-<p>测试结果：<strong>迭代器中循环删除数据安全</strong>。</p>
-<h3 id="For-循环方式"><a href="#For-循环方式" class="headerlink" title="For 循环方式"></a>For 循环方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// 删除</span></span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">        map.remove(entry.getKey());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204114938065.png" style="zoom:80%;" />
-
-<p>测试结果：<strong>For 循环中删除数据非安全</strong>。</p>
-<h3 id="Lambda-方式"><a href="#Lambda-方式" class="headerlink" title="Lambda 方式"></a>Lambda 方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.forEach((key, value) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (key == <span class="number">1</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + key);</span><br><span class="line">        map.remove(key);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204115254456.png" style="zoom:80%;" />
-
-<p>测试结果：<strong>Lambda 循环中删除数据非安全</strong>。</p>
-<p><strong>Lambda 删除的正确方式</strong>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 根据 map 中的 key 去判断删除</span></span><br><span class="line">map.keySet().removeIf(key -&gt; key == <span class="number">1</span>);</span><br><span class="line">map.forEach((key, value) -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;show:&quot;</span> + key);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">show:0</span><br><span class="line">show:2</span><br></pre></td></tr></table></figure>
-
-<p>从上面的代码可以看出，可以先使用 <code>Lambda</code> 的 <code>removeIf</code> 删除多余的数据，再进行循环是一种正确操作集合的方式。</p>
-<h3 id="Stream-方式"><a href="#Stream-方式" class="headerlink" title="Stream 方式"></a>Stream 方式</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.entrySet().stream().forEach((entry) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">        map.remove(entry.getKey());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220204115422219.png" style="zoom:80%;" />
-
-<p>image.png</p>
-<p>测试结果：<strong>Stream 循环中删除数据非安全</strong>。</p>
-<p><strong>Stream 循环的正确方式</strong>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">map.entrySet().stream().filter(m -&gt; <span class="number">1</span> != m.getKey()).forEach((entry) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (entry.getKey() == <span class="number">1</span>) &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;del:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;show:&quot;</span> + entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-
-<p>以上程序的执行结果：同上。</p>
-<p>从上面的代码可以看出，可以使用 <code>Stream</code> 中的 <code>filter</code> 过滤掉无用的数据，再进行遍历也是一种安全的操作集合的方式。</p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>我们不能在遍历中使用集合 <code>map.remove()</code> 来删除数据，这是非安全的操作方式，但我们可以使用迭代器的 <code>iterator.remove()</code> 的方法来删除数据，这是安全的删除集合的方式。同样的我们也可以使用 Lambda 中的 <code>removeIf</code> 来提前删除数据，或者是使用 Stream 中的 <code>filter</code> 过滤掉要删除的数据进行循环，这样都是安全的，当然我们也可以在 <code>for</code> 循环前删除数据在遍历也是线程安全的。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文我们讲了 HashMap 4 种遍历方式：迭代器、for、lambda、stream，以及具体的 7 种遍历方法，综合性能和安全性来看，<strong>我们应该尽量使用迭代器（Iterator）来遍历 <code>EntrySet</code> 的遍历方式来操作 Map 集合</strong>，这样就会既安全又高效了。</p>
-<p>文章来源：<a href="https://mp.weixin.qq.com/s/zQBN3UvJDhRTKP6SzcZFKw">HashMap 的 7 种遍历方式与性能分析</a></p>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>容器</tag>
       </tags>
   </entry>
   <entry>
@@ -3769,72 +3769,6 @@
       </tags>
   </entry>
   <entry>
-    <title>双指针</title>
-    <url>/post/91a7e4d1/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
-<p>双指针是一种简单而又灵活的技巧和思想，单独使用可以轻松解决一些特定问题，和其他算法结合也能发挥多样的用处。</p>
-<span id="more"></span>
-
-
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="对撞指针"><a href="#对撞指针" class="headerlink" title="对撞指针"></a>对撞指针</h3><p><strong>对撞指针</strong>是指在有序数组中，将指向最左侧的索引定义为**左指针(left)<strong>，最右侧的定义为</strong>右指针(right)**，然后从两头向中间进行数组遍历。</p>
-<blockquote>
-<p>对撞指针适用于<strong>有序数组</strong>，也就是说当你遇到题目给定有序数组时，应该第一时间想到用对撞指针解题。</p>
-</blockquote>
-<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></td>
-<td><a href="https://leetcode-cn.com/problems/3sum/solution/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/">画解算法：15. 三数之和</a><br/><a href="https://leetcode-cn.com/problems/3sum/solution/san-shu-zhi-he-by-leetcode-solution/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></td>
-<td><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/">下一个排列算法详解：思路+推导+步骤，看不懂算我输！</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/sort-colors/">75. 颜色分类</a></td>
-<td><a href="https://leetcode-cn.com/problems/sort-colors/solution/yan-se-fen-lei-by-leetcode-solution/">颜色分类</a><br/><a href="https://leetcode-cn.com/problems/sort-colors/solution/kuai-su-pai-xu-partition-guo-cheng-she-ji-xun-huan/">快速排序的子过程 partition（重点在设计循环不变量）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">581. 最短无序连续子数组</a></td>
-<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/">思路清晰明了，看不懂？？不存在的！！</a><br/><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/zui-duan-wu-xu-lian-xu-zi-shu-zu-by-leet-yhlf/">官方题解</a></td>
-</tr>
-</tbody></table>
-<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p><strong>快慢指针</strong>也是双指针，但是两个指针从同一侧开始遍历数组，将这两个指针分别定义为<strong>快指针(fast)</strong> 和**慢指针(slow)**，两个指针以不同的策略移动，直到两个指针的值相等（或其他特殊条件）为止，如 <code>fast</code> 每次增长两个，<code>slow</code> 每次增长一个。</p>
-<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-<th>技巧</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></td>
-<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/">160. 相交链表（双指针，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/xiang-jiao-lian-biao-by-leetcode-solutio-a8jn/">官方题解</a></td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/sort-list/">148. 排序链表</a></td>
-<td><a href="https://leetcode-cn.com/problems/sort-list/solution/sort-list-gui-bing-pai-xu-lian-biao-by-jyd/">Sort List （归并排序链表）</a><br/><a href="https://leetcode-cn.com/problems/sort-list/solution/pai-xu-lian-biao-by-leetcode-solution/">官方题解</a></td>
-<td>链表等长拆分、归并排序</td>
-</tr>
-</tbody></table>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当遇到有序数组时，应该优先想到<strong>双指针</strong>来解决问题，因两个指针的同时遍历会减少空间复杂度和时间复杂度。</p>
-<p><strong>对撞指针</strong>主要解决数组（或者字符串）中的问题，比如二分查找；<strong>快慢指针</strong>主要解决链表中的问题，比如典型的判定链表中是否包含环。</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>双指针</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>回溯</title>
     <url>/post/f92eff5d/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
@@ -3891,6 +3825,35 @@
       </categories>
       <tags>
         <tag>回溯</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
@@ -5984,32 +5947,144 @@
       </tags>
   </entry>
   <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
 <span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
 
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
 ]]></content>
       <categories>
-        <category>Java</category>
+        <category>数据库</category>
       </categories>
       <tags>
-        <tag>字符串</tag>
+        <tag>字符集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>双指针</title>
+    <url>/post/91a7e4d1/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
+<p>双指针是一种简单而又灵活的技巧和思想，单独使用可以轻松解决一些特定问题，和其他算法结合也能发挥多样的用处。</p>
+<span id="more"></span>
+
+
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="对撞指针"><a href="#对撞指针" class="headerlink" title="对撞指针"></a>对撞指针</h3><p><strong>对撞指针</strong>是指在有序数组中，将指向最左侧的索引定义为**左指针(left)<strong>，最右侧的定义为</strong>右指针(right)**，然后从两头向中间进行数组遍历。</p>
+<blockquote>
+<p>对撞指针适用于<strong>有序数组</strong>，也就是说当你遇到题目给定有序数组时，应该第一时间想到用对撞指针解题。</p>
+</blockquote>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></td>
+<td><a href="https://leetcode-cn.com/problems/3sum/solution/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/">画解算法：15. 三数之和</a><br/><a href="https://leetcode-cn.com/problems/3sum/solution/san-shu-zhi-he-by-leetcode-solution/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></td>
+<td><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/">下一个排列算法详解：思路+推导+步骤，看不懂算我输！</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/sort-colors/">75. 颜色分类</a></td>
+<td><a href="https://leetcode-cn.com/problems/sort-colors/solution/yan-se-fen-lei-by-leetcode-solution/">颜色分类</a><br/><a href="https://leetcode-cn.com/problems/sort-colors/solution/kuai-su-pai-xu-partition-guo-cheng-she-ji-xun-huan/">快速排序的子过程 partition（重点在设计循环不变量）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">581. 最短无序连续子数组</a></td>
+<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/">思路清晰明了，看不懂？？不存在的！！</a><br/><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/zui-duan-wu-xu-lian-xu-zi-shu-zu-by-leet-yhlf/">官方题解</a></td>
+</tr>
+</tbody></table>
+<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p><strong>快慢指针</strong>也是双指针，但是两个指针从同一侧开始遍历数组，将这两个指针分别定义为<strong>快指针(fast)</strong> 和**慢指针(slow)**，两个指针以不同的策略移动，直到两个指针的值相等（或其他特殊条件）为止，如 <code>fast</code> 每次增长两个，<code>slow</code> 每次增长一个。</p>
+<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+<th>技巧</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></td>
+<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/">160. 相交链表（双指针，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/xiang-jiao-lian-biao-by-leetcode-solutio-a8jn/">官方题解</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/sort-list/">148. 排序链表</a></td>
+<td><a href="https://leetcode-cn.com/problems/sort-list/solution/sort-list-gui-bing-pai-xu-lian-biao-by-jyd/">Sort List （归并排序链表）</a><br/><a href="https://leetcode-cn.com/problems/sort-list/solution/pai-xu-lian-biao-by-leetcode-solution/">官方题解</a></td>
+<td>链表等长拆分、归并排序</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当遇到有序数组时，应该优先想到<strong>双指针</strong>来解决问题，因两个指针的同时遍历会减少空间复杂度和时间复杂度。</p>
+<p><strong>对撞指针</strong>主要解决数组（或者字符串）中的问题，比如二分查找；<strong>快慢指针</strong>主要解决链表中的问题，比如典型的判定链表中是否包含环。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>双指针</tag>
       </tags>
   </entry>
   <entry>
@@ -6126,78 +6201,201 @@
       </tags>
   </entry>
   <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+    <title>模拟</title>
+    <url>/post/d1f7904c/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
+<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
+<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
 <span id="more"></span>
 
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
 <ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
+<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
+<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
+<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
+<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
+<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
 </ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据库基础知识</title>
+    <url>/post/1ad06ab1/</url>
+    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
+<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
+<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
+<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
+<span id="more"></span>
+<p>数据库系统基本构成如下图所示：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
+<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
+<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
+<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
 <blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
 </blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
+<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
+<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
+<blockquote>
+<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
+</blockquote>
+<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
+<blockquote>
+<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
+</blockquote>
+<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
+<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
+<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
 </ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p>文章转载自：<a href="https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/">https://javaguide.cn/database/%E5%AD%97%E7%AC%A6%E9%9B%86/</a></p>
+<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
+<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
+<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
+<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
+<ol>
+<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
+<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
+<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
+<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
+<li>……</li>
+</ol>
+<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
+<ol>
+<li>保证了数据库数据的一致性和完整性；</li>
+<li>级联操作方便，减轻了程序代码量；</li>
+<li>……</li>
+</ol>
+<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
+<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
+<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
+<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
+<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
+<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
+<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
+<blockquote>
+<p>表：学号、课程号、姓名、学分</p>
+</blockquote>
+<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
+<p><strong>可能会存在问题：</strong></p>
+<ul>
+<li>数据冗余：每条记录都含有相同信息；</li>
+<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
+<li>插入异常：学生未选课，无法记录进数据库；</li>
+<li>更新异常：调整课程学分，所有行都调整。</li>
+</ul>
+<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
+<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
+<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
+<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
+</blockquote>
+<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
+</blockquote>
+<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
+<blockquote>
+<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
+</blockquote>
+<p><strong>3NF(第三范式)</strong></p>
+<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
+<p><strong>总结</strong></p>
+<ul>
+<li>1NF：属性不可再分。</li>
+<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
+<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
+</ul>
+<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
+<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
+<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
+<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以尽量的减少数据冗余</li>
+<li>数据表更新快体积小</li>
+<li>范式化的更新操作比反范式化更快</li>
+<li>范式化的表通常比反范式化更小</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对于查询需要对多个表进行关联导致性能降低</li>
+<li>更难进行索引优化</li>
+</ul>
+<p><strong>反范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以减少表的关联</li>
+<li>可以更好的进行索引优化</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>存在数据冗余及数据维护异常</li>
+<li>对数据的修改需要更多的成本</li>
+</ul>
+<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
+<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
+<blockquote>
+<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
+<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
+</blockquote>
+<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
+<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
+<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
+<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
+<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
+<p><strong>DML 语句和 DDL 语句区别：</strong></p>
+<ul>
+<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
+<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
+</ul>
+<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
+<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
+<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
+<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
+<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
+<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
+<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
+<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
+</ol>
+<p>文章总结来源：</p>
+<p><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></p>
+<p><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></p>
 ]]></content>
       <categories>
         <category>数据库</category>
       </categories>
       <tags>
-        <tag>字符集</tag>
+        <tag>基础知识</tag>
       </tags>
   </entry>
   <entry>
@@ -6531,204 +6729,6 @@
       </tags>
   </entry>
   <entry>
-    <title>数据库基础知识</title>
-    <url>/post/1ad06ab1/</url>
-    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
-<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
-<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
-<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
-<span id="more"></span>
-<p>数据库系统基本构成如下图所示：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
-<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
-<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
-<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
-<blockquote>
-<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
-</blockquote>
-<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
-<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
-<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
-<blockquote>
-<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
-</blockquote>
-<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
-<blockquote>
-<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
-</blockquote>
-<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
-<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
-<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
-</ul>
-<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
-<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
-<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
-<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
-<ol>
-<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
-<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
-<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
-<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
-<li>……</li>
-</ol>
-<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
-<ol>
-<li>保证了数据库数据的一致性和完整性；</li>
-<li>级联操作方便，减轻了程序代码量；</li>
-<li>……</li>
-</ol>
-<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
-<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
-<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
-<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
-<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
-<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
-<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
-<blockquote>
-<p>表：学号、课程号、姓名、学分</p>
-</blockquote>
-<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
-<p><strong>可能会存在问题：</strong></p>
-<ul>
-<li>数据冗余：每条记录都含有相同信息；</li>
-<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
-<li>插入异常：学生未选课，无法记录进数据库；</li>
-<li>更新异常：调整课程学分，所有行都调整。</li>
-</ul>
-<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
-<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
-<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
-<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
-</blockquote>
-<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
-</blockquote>
-<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
-<blockquote>
-<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
-</blockquote>
-<p><strong>3NF(第三范式)</strong></p>
-<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
-<p><strong>总结</strong></p>
-<ul>
-<li>1NF：属性不可再分。</li>
-<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
-<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
-</ul>
-<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
-<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
-<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
-<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以尽量的减少数据冗余</li>
-<li>数据表更新快体积小</li>
-<li>范式化的更新操作比反范式化更快</li>
-<li>范式化的表通常比反范式化更小</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>对于查询需要对多个表进行关联导致性能降低</li>
-<li>更难进行索引优化</li>
-</ul>
-<p><strong>反范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以减少表的关联</li>
-<li>可以更好的进行索引优化</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>存在数据冗余及数据维护异常</li>
-<li>对数据的修改需要更多的成本</li>
-</ul>
-<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
-<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
-<blockquote>
-<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
-<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
-</blockquote>
-<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
-<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
-<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
-<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
-<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
-<p><strong>DML 语句和 DDL 语句区别：</strong></p>
-<ul>
-<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
-<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
-</ul>
-<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
-<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
-<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
-<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
-<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
-<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
-<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
-<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
-</ol>
-<p>文章总结来源：</p>
-<p><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></p>
-<p><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>基础知识</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>模拟</title>
-    <url>/post/d1f7904c/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
-<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
-<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
-<span id="more"></span>
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
-<ul>
-<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
-<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
-<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
-<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
-<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
-</ul>
-<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>模拟</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>滑动窗口</title>
     <url>/post/50cab45/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>滑动窗口算法是较为入门题目的算法，一般是一些有规律数组问题的最优解，也就是说，如果一个数组问题可以用动态规划解，但又可以使用滑动窗口解决，那么往往滑动窗口的效率更高。</p>
@@ -6911,120 +6911,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>红黑树</title>
-    <url>/post/f89cb603/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207175122084.png" style="zoom:80%;" />
-
-<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>学过二叉查找树的同学都知道，普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。为了避免这种情况，就出现了一些<strong>自平衡的查找树</strong>，比如 AVL，红黑树等。这些自平衡的查找树通过定义一些性质，<strong>将任意节点的左右子树高度差控制在规定范围内，以达到平衡状态</strong>。以红黑树为例，红黑树通过如下的性质定义实现自平衡：</p>
-<ol>
-<li>节点是红色或黑色。</li>
-<li>根是黑色。</li>
-<li>所有叶子都是黑色（叶子是NIL节点）。</li>
-<li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
-<li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点（简称黑高）。</li>
-</ol>
-<p>有了上面的几个性质作为限制，即可避免二叉查找树退化成单链表的情况。但是，仅仅避免这种情况还不够，这里还要考虑某个节点到其每个叶子节点路径长度的问题。如果某些路径长度过长，那么，在对这些路径上的节点进行增删查操作时，效率也会大大降低。这个时候性质4和性质5用途就凸显了，有了这两个性质作为约束，即可保证<strong>任意节点到其每个叶子节点路径最长不会超过最短路径的2倍</strong>。原因如下：</p>
-<p>当某条路径最短时，这条路径必然都是由黑色节点构成。当某条路径长度最长时，这条路径必然是由红色和黑色节点相间构成（性质4限定了不能出现两个连续的红色节点）。而性质5又限定了从任一节点到其每个叶子节点的所有路径必须包含相同数量的黑色节点。此时，在路径最长的情况下，路径上红色节点数量 = 黑色节点数量。该路径长度为两倍黑色节点数量，也就是最短路径长度的2倍。举例说明一下，请看下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207180835565.png" style="zoom:80%;" />
-
-<p>上图画出了从根节点 M 出发的到其叶子节点的最长和最短路径。这里偷懒只画出了两条最长路径，实际上最长路径有4条，分别为：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">M -&gt; Q -&gt; O -&gt; N</span><br><span class="line">M -&gt; Q -&gt; O -&gt; p</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; X</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; Z</span><br></pre></td></tr></table></figure>
-
-<p>长度为4，最短路径为 <code>M -&gt; E</code>，长度为2。最长路径的长度正好为最短路径长度的2倍。</p>
-<p>前面说了关于红黑树的一些性质，这里还需要补充一些其他方面的东西。在红黑树简介一节中说到红黑树被发明出来的时候并不叫 <code>红黑树</code>，而是叫做 <code>对称二叉 B 树</code>，从名字中可发现红黑树和 B 树（这里指的是<strong>2-3树</strong>）或许有一定的关联，事实也正是如此。如果对红黑树的性质稍加修改，就能让红黑树和B树形成一一对应的关系。关于红黑树和 B 树关系的细节这里不展开说明了，有兴趣的同学可以参考<a href="https://book.douban.com/subject/19952400/">《算法》</a>第4版，那本书上讲的很透彻。</p>
-<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>红黑树的基本操作和其他树形结构一样，一般都包括查找、插入、删除等操作。前面说到，红黑树是一种自平衡的二叉查找树，既然是二叉查找树的一种，那么查找过程和二叉查找树一样，比较简单，这里不再赘述。相对于查找操作，红黑树的插入和删除操作就要复杂的多。尤其是删除操作，要处理的情况比较多，不过大家如果静下心来去看，会发现其实也没想的那么难。</p>
-<h3 id="旋转操作"><a href="#旋转操作" class="headerlink" title="旋转操作"></a>旋转操作</h3><p>在分析插入和删除操作前，这里需要插个队，先说明一下旋转操作，这个操作在后续操作中都会用得到。旋转操作分为左旋和右旋，<strong>左旋是将某个节点旋转为其右孩子的左孩子</strong>，而<strong>右旋是节点旋转为其左孩子的右孩子</strong>。这话听起来有点绕，所以还是请看下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182356324.png" style="zoom:80%;" />
-
-<p>上图包含了左旋和右旋的示意图，这里以右旋为例进行说明，右旋节点 M 的步骤如下：</p>
-<ol>
-<li>将节点 M 的左孩子引用指向节点 E 的右孩子</li>
-<li>将节点 E 的右孩子引用指向节点 M，完成旋转</li>
-</ol>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182602018.png" style="zoom:80%;" />
-
-<p>上面分析了右旋操作，左旋操作与此类似，大家有兴趣自己画图试试吧，这里不再赘述了。旋转操作本身并不复杂，这里先分析到这吧。</p>
-<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入过程和二叉查找树插入过程基本类似，不同的地方在于，红黑树插入新节点后，需要进行调整，以满足红黑树的性质。性质1规定红黑树节点的颜色要么是红色要么是黑色，那么在插入新节点时，这个节点应该是红色还是黑色呢？答案是红色，原因也不难理解。如果插入的节点是黑色，那么这个节点所在路径比其他路径多出一个黑色节点，这个调整起来会比较麻烦（参考红黑树的删除操作，就知道为啥多一个或少一个黑色节点时，调整起来这么麻烦了）。如果插入的节点是红色，此时所有路径上的黑色节点数量不变，仅可能会出现两个连续的红色节点的情况。这种情况下，通过变色和旋转进行调整即可，比之前的简单多了。</p>
-<p>接下来，将分析插入红色节点后红黑树的情况。这里假设要插入的节点为 N，N 的父节点为 P，祖父节点为 G，叔叔节点为 U。插入红色节点后，会出现5种情况，分别如下：</p>
-<h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>插入的新节点 N 是红黑树的根节点，这种情况下，我们把节点 N 的颜色由红色变为黑色，性质2（根是黑色）被满足。同时 N 被染成黑色后，红黑树所有路径上的黑色节点数量增加一个，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍然被满足。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182903027.png" style="zoom:80%;" />
-
-<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>N 的父节点是黑色，这种情况下，性质4（每个红色节点必须有两个黑色的子节点）和性质5没有受到影响，不需要调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207183215154.png" style="zoom:80%;" />
-
-<h4 id="情况三"><a href="#情况三" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。这种情况下，先将 P 和 U 的颜色染成黑色，再将 G 的颜色染成红色。此时经过 G 的路径上的黑色节点数量不变，性质5仍然满足。但需要注意的是 G 被染成红色后，可能会和它的父节点形成连续的红色节点，此时需要递归向上调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152056319752.jpg" style="zoom:80%;" />
-
-<h4 id="情况四"><a href="#情况四" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，叔叔节点为黑色。节点 N 是 P 的右孩子，且节点 P 是 G 的左孩子。此时先对节点 P 进行左旋，调整 N 与 P 的位置。接下来按照情况五进行处理，以恢复性质4。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057064115.jpg" style="zoom:80%;" />
-
-<h4 id="情况五"><a href="#情况五" class="headerlink" title="情况五"></a>情况五</h4><p>N 的父节点为红色，叔叔节点为黑色。N 是 P 的左孩子，且节点 P 是 G 的左孩子。此时对 G 进行右旋，调整 P 和 G 的位置，并互换颜色。经过这样的调整后，性质4被恢复，同时也未破坏性质5。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057476644.jpg" style="zoom:80%;" />
-
-<h4 id="插入总结"><a href="#插入总结" class="headerlink" title="插入总结"></a>插入总结</h4><p>上面五种情况中，情况一和情况二比较简单，情况三、四、五稍复杂。但如果细心观察，会发现这三种情况的区别在于叔叔节点的颜色，如果<strong>叔叔节点为红色，直接变色</strong>即可。如果<strong>叔叔节点为黑色，则需要旋转，再交换颜色</strong>。当把这三种情况的图画在一起就区别就比较容易观察了，如下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152052502152.jpg" style="zoom:80%;" />
-
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>相较于插入操作，红黑树的删除操作则要更为复杂一些。删除操作首先要确定待删除节点有几个孩子，如果有两个孩子，不能直接删除该节点。而是要先找到该节点的<strong>前驱（该节点左子树中最大的节点）</strong>或者<strong>后继（该节点右子树中最小的节点）</strong>，然后将前驱或者后继的值复制到要删除的节点中，最后再将前驱或后继删除。由于前驱和后继至多只有一个孩子节点，这样我们就把原来要删除的节点有两个孩子的问题转化为只有一个孩子节点的问题，问题被简化了一些。我们并不关心最终被删除的节点是否是我们开始想要删除的那个节点，只要节点里的值最终被删除就行了，至于树结构如何变化，这个并不重要。</p>
-<p>红黑树删除操作的复杂度在于删除节点的颜色，当删除的节点是红色时，直接拿其孩子节点补空位即可。因为删除红色节点，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍能够被满足。当删除的节点是黑色时，那么所有经过该节点的路径上的黑节点数量少了一个，破坏了性质5。如果该节点的孩子为红色，直接拿孩子节点替换被删除的节点，并将孩子节点染成黑色，即可恢复性质5。但如果孩子节点为黑色，处理起来就要复杂的多。分为6种情况，下面会展开说明。</p>
-<p>在展开说明之前，我们先做一些假设，方便说明。这里假设最终被删除的节点为 <code>X</code>（至多只有一个孩子节点），其孩子节点为 <code>N</code>，<code>X</code> 的兄弟节点为 <code>S</code>，<code>S</code> 的左节点为 SL，右节点为 SR。接下来讨论是建立在节点 <code>X</code> 被删除，节点 <code>N</code> 替换 <code>X</code> 的基础上进行的。这里说明把被删除的节点 <code>X</code> 特地拎出来说一下的原因是防止大家误以为节点 <code>N</code> 会被删除，不然后面就会看不明白。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15272593488180.jpg" style="zoom:80%;" />
-
-<p>在上面的基础上，接下来就可以展开讨论了。红黑树删除有6种情况，分别是：</p>
-<h4 id="情况一-1"><a href="#情况一-1" class="headerlink" title="情况一"></a>情况一</h4><blockquote>
-<p>N 是新的根。在这种情形下，我们就做完了。我们从所有路径去除了一个黑色节点，而新根是黑色的，所以性质都保持着。</p>
-</blockquote>
-<p>上面是维基百科中关于红黑树删除的情况一说明，由于没有配图，看的有点晕。经过思考，我觉得可能会是下面这种情形：</p>
-<p>要删除的节点 X 是根节点，且左右孩子节点均为空节点，此时将节点 X 用空节点替换完成删除操作。</p>
-<p>可能还有其他情形，大家如果知道，烦请告知。</p>
-<h4 id="情况二-1"><a href="#情况二-1" class="headerlink" title="情况二"></a>情况二</h4><p>S 为红色，其他节点为黑色。这种情况下可以对 N 的父节点进行左旋操作，然后互换 P 与 S 颜色。但这并未结束，经过节点 P 和 N 的路径删除前有3个黑色节点（<code>P -&gt; X -&gt; N</code>），现在只剩两个了（<code>P -&gt; N</code>）。比未经过 N 的路径少一个黑色节点，性质5仍不满足，还需要继续调整。不过此时可以按照情况四、五、六进行调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097130545.jpg" style="zoom:80%;" />
-
-<h4 id="情况三-1"><a href="#情况三-1" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以简单的把 S 染成红色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致了。但经过 P 的路径比不经过 P 的路径少一个黑色节点，此时需要从情况一开始对 P 进行平衡处理。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097574115.jpg" style="zoom:80%;" />
-
-<h4 id="情况四-1"><a href="#情况四-1" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以把 S 染成红色，把P染成黑色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致且经过 P 的路径黑色节点数不变。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207194653272.png" style="zoom:80%;" />
-
-<h4 id="情况五-1"><a href="#情况五-1" class="headerlink" title="情况五"></a>情况五</h4><p>S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 SL 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 SL，而 SL 的右孩子变为红色。接下来我们到情况六继续分析。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098446251.jpg" style="zoom:80%;" />
-
-<h4 id="情况六"><a href="#情况六" class="headerlink" title="情况六"></a>情况六</h4><p>S 为黑色，S 的右孩子为红色。N 的父节点颜色可红可黑，且 N 是其父节点左孩子。这种情况下，我们对 P 进行左旋操作，并互换 P 和 S 的颜色，并将 SR 变为黑色。因为 P 变为黑色，所以经过 N 的路径多了一个黑色节点，经过 N 的路径上的黑色节点与删除前的数量一致。对于不经过 N 的路径，则有以下两种情况：</p>
-<ol>
-<li>该路径经过 N 新的兄弟节点 SL ，那它之前必然经过 S 和 P。而 S 和 P 现在只是交换颜色，对于经过 SL 的路径不影响。</li>
-<li>该路径经过 N 新的叔叔节点 SR，那它之前必然经过 P、 S 和 SR，而现在它只经过 S 和 SR。在对 P 进行左旋，并与 S 换色后，经过 SR 的路径少了一个黑色节点，性质5被打破。另外，由于 S 的颜色可红可黑，如果 S 是红色的话，会与 SR 形成连续的红色节点，打破性质4（每个红色节点必须有两个黑色的子节点）。此时仅需将 SR 由红色变为黑色即可同时恢复性质4和性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。）。</li>
-</ol>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098765266.jpg" style="zoom:80%;" />
-
-<h4 id="删除总结"><a href="#删除总结" class="headerlink" title="删除总结"></a>删除总结</h4><p>红黑树删除的情况比较多，大家刚开始看的时候可能会比较晕。可能会产生这样的疑问，为啥红黑树会有这种删除情况，为啥又会有另一种情况，它们之间有什么联系和区别？和大家一样，我刚开始看的时候也有这样的困惑，直到我把所有情况对应的图形画在一起时，拨云见日，一切都明了了。此时天空中出现了4个字，原来如此、原来如此、原来如此。所以，请看图吧：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152095299211.jpg" style="zoom:80%;" />
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>红黑树是一种重要的二叉树，应用广泛，但在很多数据结构相关的书本中出现的次数并不多。很多书中要么不说，要么就一笔带过，并不会进行详细的分析，这可能是因为红黑树比较复杂的缘故。我在学习红黑树的时候也找了很多资料，但总体感觉讲的都不太好。尤其是在我学习删除操作的时候，很多资料是实在人看不下去，看的我很痛苦。直到我看到维基百科上关于<a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树</a>的分析时，很是欣喜。这篇文章分析的很有条理，言简意赅，比很多资料好了太多。本文对红黑树的分析也主要参考了维基百科中的红黑树分析，并对维基百科中容易让人产生疑问和误解的地方进行了说明。同时维基百科中文版红黑树文中的图片较为模糊，这里我重新进行了绘制。需要说明的是，维基百科中文版无法打开了，文中关于维基百科的链接都是英文版的。另外在给大家推荐一个数据结构可视化的网站，里面包含常见数据结构可视化过程，地址为：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">t.cn/RZFgryr</a>。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://book.douban.com/subject/19952400/">《算法》第四版</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树 – 维基百科</a></li>
-</ul>
-<p>推荐阅读：</p>
-<ul>
-<li><p><a href="https://zhuanlan.zhihu.com/p/24367771">红黑树深入剖析及Java实现</a></p>
-</li>
-<li><p><a href="https://brianway.github.io/2016/10/14/algorithms-data-structures-2/">常见数据结构(二)-树(二叉树，红黑树，B树)</a></p>
-</li>
-</ul>
-<p>文章转载来源：<a href="https://www.tianxiaobo.com/2018/01/11/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90/">红黑树详细分析</a></p>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>自平衡树</tag>
-        <tag>查找树</tag>
-        <tag>二叉树</tag>
-        <tag>树</tag>
       </tags>
   </entry>
   <entry>
@@ -7221,6 +7107,195 @@
       </tags>
   </entry>
   <entry>
+    <title>红黑树</title>
+    <url>/post/f89cb603/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207175122084.png" style="zoom:80%;" />
+
+<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>学过二叉查找树的同学都知道，普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。为了避免这种情况，就出现了一些<strong>自平衡的查找树</strong>，比如 AVL，红黑树等。这些自平衡的查找树通过定义一些性质，<strong>将任意节点的左右子树高度差控制在规定范围内，以达到平衡状态</strong>。以红黑树为例，红黑树通过如下的性质定义实现自平衡：</p>
+<ol>
+<li>节点是红色或黑色。</li>
+<li>根是黑色。</li>
+<li>所有叶子都是黑色（叶子是NIL节点）。</li>
+<li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
+<li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点（简称黑高）。</li>
+</ol>
+<p>有了上面的几个性质作为限制，即可避免二叉查找树退化成单链表的情况。但是，仅仅避免这种情况还不够，这里还要考虑某个节点到其每个叶子节点路径长度的问题。如果某些路径长度过长，那么，在对这些路径上的节点进行增删查操作时，效率也会大大降低。这个时候性质4和性质5用途就凸显了，有了这两个性质作为约束，即可保证<strong>任意节点到其每个叶子节点路径最长不会超过最短路径的2倍</strong>。原因如下：</p>
+<p>当某条路径最短时，这条路径必然都是由黑色节点构成。当某条路径长度最长时，这条路径必然是由红色和黑色节点相间构成（性质4限定了不能出现两个连续的红色节点）。而性质5又限定了从任一节点到其每个叶子节点的所有路径必须包含相同数量的黑色节点。此时，在路径最长的情况下，路径上红色节点数量 = 黑色节点数量。该路径长度为两倍黑色节点数量，也就是最短路径长度的2倍。举例说明一下，请看下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207180835565.png" style="zoom:80%;" />
+
+<p>上图画出了从根节点 M 出发的到其叶子节点的最长和最短路径。这里偷懒只画出了两条最长路径，实际上最长路径有4条，分别为：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">M -&gt; Q -&gt; O -&gt; N</span><br><span class="line">M -&gt; Q -&gt; O -&gt; p</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; X</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; Z</span><br></pre></td></tr></table></figure>
+
+<p>长度为4，最短路径为 <code>M -&gt; E</code>，长度为2。最长路径的长度正好为最短路径长度的2倍。</p>
+<p>前面说了关于红黑树的一些性质，这里还需要补充一些其他方面的东西。在红黑树简介一节中说到红黑树被发明出来的时候并不叫 <code>红黑树</code>，而是叫做 <code>对称二叉 B 树</code>，从名字中可发现红黑树和 B 树（这里指的是<strong>2-3树</strong>）或许有一定的关联，事实也正是如此。如果对红黑树的性质稍加修改，就能让红黑树和B树形成一一对应的关系。关于红黑树和 B 树关系的细节这里不展开说明了，有兴趣的同学可以参考<a href="https://book.douban.com/subject/19952400/">《算法》</a>第4版，那本书上讲的很透彻。</p>
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>红黑树的基本操作和其他树形结构一样，一般都包括查找、插入、删除等操作。前面说到，红黑树是一种自平衡的二叉查找树，既然是二叉查找树的一种，那么查找过程和二叉查找树一样，比较简单，这里不再赘述。相对于查找操作，红黑树的插入和删除操作就要复杂的多。尤其是删除操作，要处理的情况比较多，不过大家如果静下心来去看，会发现其实也没想的那么难。</p>
+<h3 id="旋转操作"><a href="#旋转操作" class="headerlink" title="旋转操作"></a>旋转操作</h3><p>在分析插入和删除操作前，这里需要插个队，先说明一下旋转操作，这个操作在后续操作中都会用得到。旋转操作分为左旋和右旋，<strong>左旋是将某个节点旋转为其右孩子的左孩子</strong>，而<strong>右旋是节点旋转为其左孩子的右孩子</strong>。这话听起来有点绕，所以还是请看下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182356324.png" style="zoom:80%;" />
+
+<p>上图包含了左旋和右旋的示意图，这里以右旋为例进行说明，右旋节点 M 的步骤如下：</p>
+<ol>
+<li>将节点 M 的左孩子引用指向节点 E 的右孩子</li>
+<li>将节点 E 的右孩子引用指向节点 M，完成旋转</li>
+</ol>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182602018.png" style="zoom:80%;" />
+
+<p>上面分析了右旋操作，左旋操作与此类似，大家有兴趣自己画图试试吧，这里不再赘述了。旋转操作本身并不复杂，这里先分析到这吧。</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入过程和二叉查找树插入过程基本类似，不同的地方在于，红黑树插入新节点后，需要进行调整，以满足红黑树的性质。性质1规定红黑树节点的颜色要么是红色要么是黑色，那么在插入新节点时，这个节点应该是红色还是黑色呢？答案是红色，原因也不难理解。如果插入的节点是黑色，那么这个节点所在路径比其他路径多出一个黑色节点，这个调整起来会比较麻烦（参考红黑树的删除操作，就知道为啥多一个或少一个黑色节点时，调整起来这么麻烦了）。如果插入的节点是红色，此时所有路径上的黑色节点数量不变，仅可能会出现两个连续的红色节点的情况。这种情况下，通过变色和旋转进行调整即可，比之前的简单多了。</p>
+<p>接下来，将分析插入红色节点后红黑树的情况。这里假设要插入的节点为 N，N 的父节点为 P，祖父节点为 G，叔叔节点为 U。插入红色节点后，会出现5种情况，分别如下：</p>
+<h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>插入的新节点 N 是红黑树的根节点，这种情况下，我们把节点 N 的颜色由红色变为黑色，性质2（根是黑色）被满足。同时 N 被染成黑色后，红黑树所有路径上的黑色节点数量增加一个，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍然被满足。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182903027.png" style="zoom:80%;" />
+
+<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>N 的父节点是黑色，这种情况下，性质4（每个红色节点必须有两个黑色的子节点）和性质5没有受到影响，不需要调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207183215154.png" style="zoom:80%;" />
+
+<h4 id="情况三"><a href="#情况三" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。这种情况下，先将 P 和 U 的颜色染成黑色，再将 G 的颜色染成红色。此时经过 G 的路径上的黑色节点数量不变，性质5仍然满足。但需要注意的是 G 被染成红色后，可能会和它的父节点形成连续的红色节点，此时需要递归向上调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152056319752.jpg" style="zoom:80%;" />
+
+<h4 id="情况四"><a href="#情况四" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，叔叔节点为黑色。节点 N 是 P 的右孩子，且节点 P 是 G 的左孩子。此时先对节点 P 进行左旋，调整 N 与 P 的位置。接下来按照情况五进行处理，以恢复性质4。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057064115.jpg" style="zoom:80%;" />
+
+<h4 id="情况五"><a href="#情况五" class="headerlink" title="情况五"></a>情况五</h4><p>N 的父节点为红色，叔叔节点为黑色。N 是 P 的左孩子，且节点 P 是 G 的左孩子。此时对 G 进行右旋，调整 P 和 G 的位置，并互换颜色。经过这样的调整后，性质4被恢复，同时也未破坏性质5。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057476644.jpg" style="zoom:80%;" />
+
+<h4 id="插入总结"><a href="#插入总结" class="headerlink" title="插入总结"></a>插入总结</h4><p>上面五种情况中，情况一和情况二比较简单，情况三、四、五稍复杂。但如果细心观察，会发现这三种情况的区别在于叔叔节点的颜色，如果<strong>叔叔节点为红色，直接变色</strong>即可。如果<strong>叔叔节点为黑色，则需要旋转，再交换颜色</strong>。当把这三种情况的图画在一起就区别就比较容易观察了，如下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152052502152.jpg" style="zoom:80%;" />
+
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>相较于插入操作，红黑树的删除操作则要更为复杂一些。删除操作首先要确定待删除节点有几个孩子，如果有两个孩子，不能直接删除该节点。而是要先找到该节点的<strong>前驱（该节点左子树中最大的节点）</strong>或者<strong>后继（该节点右子树中最小的节点）</strong>，然后将前驱或者后继的值复制到要删除的节点中，最后再将前驱或后继删除。由于前驱和后继至多只有一个孩子节点，这样我们就把原来要删除的节点有两个孩子的问题转化为只有一个孩子节点的问题，问题被简化了一些。我们并不关心最终被删除的节点是否是我们开始想要删除的那个节点，只要节点里的值最终被删除就行了，至于树结构如何变化，这个并不重要。</p>
+<p>红黑树删除操作的复杂度在于删除节点的颜色，当删除的节点是红色时，直接拿其孩子节点补空位即可。因为删除红色节点，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍能够被满足。当删除的节点是黑色时，那么所有经过该节点的路径上的黑节点数量少了一个，破坏了性质5。如果该节点的孩子为红色，直接拿孩子节点替换被删除的节点，并将孩子节点染成黑色，即可恢复性质5。但如果孩子节点为黑色，处理起来就要复杂的多。分为6种情况，下面会展开说明。</p>
+<p>在展开说明之前，我们先做一些假设，方便说明。这里假设最终被删除的节点为 <code>X</code>（至多只有一个孩子节点），其孩子节点为 <code>N</code>，<code>X</code> 的兄弟节点为 <code>S</code>，<code>S</code> 的左节点为 SL，右节点为 SR。接下来讨论是建立在节点 <code>X</code> 被删除，节点 <code>N</code> 替换 <code>X</code> 的基础上进行的。这里说明把被删除的节点 <code>X</code> 特地拎出来说一下的原因是防止大家误以为节点 <code>N</code> 会被删除，不然后面就会看不明白。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15272593488180.jpg" style="zoom:80%;" />
+
+<p>在上面的基础上，接下来就可以展开讨论了。红黑树删除有6种情况，分别是：</p>
+<h4 id="情况一-1"><a href="#情况一-1" class="headerlink" title="情况一"></a>情况一</h4><blockquote>
+<p>N 是新的根。在这种情形下，我们就做完了。我们从所有路径去除了一个黑色节点，而新根是黑色的，所以性质都保持着。</p>
+</blockquote>
+<p>上面是维基百科中关于红黑树删除的情况一说明，由于没有配图，看的有点晕。经过思考，我觉得可能会是下面这种情形：</p>
+<p>要删除的节点 X 是根节点，且左右孩子节点均为空节点，此时将节点 X 用空节点替换完成删除操作。</p>
+<p>可能还有其他情形，大家如果知道，烦请告知。</p>
+<h4 id="情况二-1"><a href="#情况二-1" class="headerlink" title="情况二"></a>情况二</h4><p>S 为红色，其他节点为黑色。这种情况下可以对 N 的父节点进行左旋操作，然后互换 P 与 S 颜色。但这并未结束，经过节点 P 和 N 的路径删除前有3个黑色节点（<code>P -&gt; X -&gt; N</code>），现在只剩两个了（<code>P -&gt; N</code>）。比未经过 N 的路径少一个黑色节点，性质5仍不满足，还需要继续调整。不过此时可以按照情况四、五、六进行调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097130545.jpg" style="zoom:80%;" />
+
+<h4 id="情况三-1"><a href="#情况三-1" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以简单的把 S 染成红色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致了。但经过 P 的路径比不经过 P 的路径少一个黑色节点，此时需要从情况一开始对 P 进行平衡处理。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097574115.jpg" style="zoom:80%;" />
+
+<h4 id="情况四-1"><a href="#情况四-1" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以把 S 染成红色，把P染成黑色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致且经过 P 的路径黑色节点数不变。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207194653272.png" style="zoom:80%;" />
+
+<h4 id="情况五-1"><a href="#情况五-1" class="headerlink" title="情况五"></a>情况五</h4><p>S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 SL 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 SL，而 SL 的右孩子变为红色。接下来我们到情况六继续分析。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098446251.jpg" style="zoom:80%;" />
+
+<h4 id="情况六"><a href="#情况六" class="headerlink" title="情况六"></a>情况六</h4><p>S 为黑色，S 的右孩子为红色。N 的父节点颜色可红可黑，且 N 是其父节点左孩子。这种情况下，我们对 P 进行左旋操作，并互换 P 和 S 的颜色，并将 SR 变为黑色。因为 P 变为黑色，所以经过 N 的路径多了一个黑色节点，经过 N 的路径上的黑色节点与删除前的数量一致。对于不经过 N 的路径，则有以下两种情况：</p>
+<ol>
+<li>该路径经过 N 新的兄弟节点 SL ，那它之前必然经过 S 和 P。而 S 和 P 现在只是交换颜色，对于经过 SL 的路径不影响。</li>
+<li>该路径经过 N 新的叔叔节点 SR，那它之前必然经过 P、 S 和 SR，而现在它只经过 S 和 SR。在对 P 进行左旋，并与 S 换色后，经过 SR 的路径少了一个黑色节点，性质5被打破。另外，由于 S 的颜色可红可黑，如果 S 是红色的话，会与 SR 形成连续的红色节点，打破性质4（每个红色节点必须有两个黑色的子节点）。此时仅需将 SR 由红色变为黑色即可同时恢复性质4和性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。）。</li>
+</ol>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098765266.jpg" style="zoom:80%;" />
+
+<h4 id="删除总结"><a href="#删除总结" class="headerlink" title="删除总结"></a>删除总结</h4><p>红黑树删除的情况比较多，大家刚开始看的时候可能会比较晕。可能会产生这样的疑问，为啥红黑树会有这种删除情况，为啥又会有另一种情况，它们之间有什么联系和区别？和大家一样，我刚开始看的时候也有这样的困惑，直到我把所有情况对应的图形画在一起时，拨云见日，一切都明了了。此时天空中出现了4个字，原来如此、原来如此、原来如此。所以，请看图吧：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152095299211.jpg" style="zoom:80%;" />
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>红黑树是一种重要的二叉树，应用广泛，但在很多数据结构相关的书本中出现的次数并不多。很多书中要么不说，要么就一笔带过，并不会进行详细的分析，这可能是因为红黑树比较复杂的缘故。我在学习红黑树的时候也找了很多资料，但总体感觉讲的都不太好。尤其是在我学习删除操作的时候，很多资料是实在人看不下去，看的我很痛苦。直到我看到维基百科上关于<a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树</a>的分析时，很是欣喜。这篇文章分析的很有条理，言简意赅，比很多资料好了太多。本文对红黑树的分析也主要参考了维基百科中的红黑树分析，并对维基百科中容易让人产生疑问和误解的地方进行了说明。同时维基百科中文版红黑树文中的图片较为模糊，这里我重新进行了绘制。需要说明的是，维基百科中文版无法打开了，文中关于维基百科的链接都是英文版的。另外在给大家推荐一个数据结构可视化的网站，里面包含常见数据结构可视化过程，地址为：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">t.cn/RZFgryr</a>。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://book.douban.com/subject/19952400/">《算法》第四版</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树 – 维基百科</a></li>
+</ul>
+<p>推荐阅读：</p>
+<ul>
+<li><p><a href="https://zhuanlan.zhihu.com/p/24367771">红黑树深入剖析及Java实现</a></p>
+</li>
+<li><p><a href="https://brianway.github.io/2016/10/14/algorithms-data-structures-2/">常见数据结构(二)-树(二叉树，红黑树，B树)</a></p>
+</li>
+</ul>
+<p>文章转载来源：<a href="https://www.tianxiaobo.com/2018/01/11/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90/">红黑树详细分析</a></p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>自平衡树</tag>
+        <tag>查找树</tag>
+        <tag>二叉树</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>面试规则</title>
+    <url>/post/d13fc60c/</url>
+    <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
+<ul>
+<li>知识密集型岗位（需要共鸣）</li>
+</ul>
+<p><strong>规则二：问题之间是可以转化的</strong></p>
+<blockquote>
+<p>可以将面试官问的问题转化为对应的具体的知识点，例如：</p>
+<p>有没有高并发经验？ -&gt; 分库分表、缓冲区的使用、高并发网络IO如何处理</p>
+</blockquote>
+<span id="more"></span>
+<p><strong>规则三：问题是可以被拆解的</strong></p>
+<blockquote>
+<p>有没有做过大项目？</p>
+<p>拆解：什么样的大项目？</p>
+<p>项目大在哪里？</p>
+<ul>
+<li>需求特别多？排期特别长？</li>
+<li>沟通复杂？团队多？</li>
+<li>技术特别难？</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>类似的问题：</p>
+<ul>
+<li>Java做过几年？</li>
+<li>有没有大项目经验？</li>
+<li>有没有高并发经验？</li>
+<li>有没有XXX方向的经验？</li>
+</ul>
+<p>应对方法：学会拆解问题，避虛就实，用硬核知识突破面试</p>
+</blockquote>
+<p><strong>规则四：永远不要被面试官牵着鼻子走</strong></p>
+<blockquote>
+<p>应对方法：“引导”面试官提问自己熟悉的知识，从而展示自己学习能力和对知识的学习深度（是否透彻）。</p>
+</blockquote>
+<p><strong>规则五：给面试官有思想深度的回答</strong></p>
+<blockquote>
+<p>如何说？<br>正着说、反着说、折中说、避免「背诵」</p>
+<p>例如：</p>
+<p>面试官：给我解释下高并发?</p>
+<ul>
+<li>高并发的核心是开发成本和硬件成本之间找到一个折中可行的方案</li>
+<li>简单点说解决高并发是在延迟和丢包率可控的情况下，追求吞吐量</li>
+<li>解决高并发要关注线程和I/O模型、数据库选型、缓存优化、缓冲区设计、解耦和消息队列、分布式服务设计等等方面的设计</li>
+</ul>
+<p>应对方法：只有自己<strong>对知识理解透彻</strong>的情况下，才能用自己的语言正确的表述出来。</p>
+</blockquote>
+<blockquote>
+<p><strong>非官方、简短而本质的回答</strong></p>
+<ul>
+<li>LinkedHashMap是一个元素间用链表相连的哈希表</li>
+<li>HashMap就是哈希表实现的Map，TreeMap是用树实现的Map，Map是一种映射关系</li>
+<li>AQS解决Java语言没有实现同步元语底层框架的问题</li>
+<li>B+树是一棵支持区间查找的B树</li>
+<li>DNS是一个经典的分布式设计、BigTable是另一个</li>
+<li>元编程是程序改写程序</li>
+</ul>
+</blockquote>
+]]></content>
+      <categories>
+        <category>面试</category>
+      </categories>
+      <tags>
+        <tag>面试软技能</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里Java开发手册</title>
+    <url>/post/a5aab1c5/</url>
+    <content><![CDATA[<span id="more"></span>
+]]></content>
+  </entry>
+  <entry>
     <title>跳表</title>
     <url>/post/2e152a56/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E8%B7%B3%E8%B7%83%E5%88%97%E8%A1%A8">跳跃列表</a> 的查找、插入、删除的时间复杂度都是 O(logn)，而且可以按照范围区间查找元素，当工作中遇到某些场景时，需要想到可以使用跳表解决问题即可。毕竟平时的工作都是直接使用封装好的跳表，例如：java.util.concurrent 下的 ConcurrentSkipListMap()。</p>
@@ -7338,81 +7413,6 @@
         <tag>跳表</tag>
         <tag>双向链表</tag>
         <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>阿里Java开发手册</title>
-    <url>/post/a5aab1c5/</url>
-    <content><![CDATA[<span id="more"></span>
-]]></content>
-  </entry>
-  <entry>
-    <title>面试规则</title>
-    <url>/post/d13fc60c/</url>
-    <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
-<ul>
-<li>知识密集型岗位（需要共鸣）</li>
-</ul>
-<p><strong>规则二：问题之间是可以转化的</strong></p>
-<blockquote>
-<p>可以将面试官问的问题转化为对应的具体的知识点，例如：</p>
-<p>有没有高并发经验？ -&gt; 分库分表、缓冲区的使用、高并发网络IO如何处理</p>
-</blockquote>
-<span id="more"></span>
-<p><strong>规则三：问题是可以被拆解的</strong></p>
-<blockquote>
-<p>有没有做过大项目？</p>
-<p>拆解：什么样的大项目？</p>
-<p>项目大在哪里？</p>
-<ul>
-<li>需求特别多？排期特别长？</li>
-<li>沟通复杂？团队多？</li>
-<li>技术特别难？</li>
-</ul>
-</blockquote>
-<blockquote>
-<p>类似的问题：</p>
-<ul>
-<li>Java做过几年？</li>
-<li>有没有大项目经验？</li>
-<li>有没有高并发经验？</li>
-<li>有没有XXX方向的经验？</li>
-</ul>
-<p>应对方法：学会拆解问题，避虛就实，用硬核知识突破面试</p>
-</blockquote>
-<p><strong>规则四：永远不要被面试官牵着鼻子走</strong></p>
-<blockquote>
-<p>应对方法：“引导”面试官提问自己熟悉的知识，从而展示自己学习能力和对知识的学习深度（是否透彻）。</p>
-</blockquote>
-<p><strong>规则五：给面试官有思想深度的回答</strong></p>
-<blockquote>
-<p>如何说？<br>正着说、反着说、折中说、避免「背诵」</p>
-<p>例如：</p>
-<p>面试官：给我解释下高并发?</p>
-<ul>
-<li>高并发的核心是开发成本和硬件成本之间找到一个折中可行的方案</li>
-<li>简单点说解决高并发是在延迟和丢包率可控的情况下，追求吞吐量</li>
-<li>解决高并发要关注线程和I/O模型、数据库选型、缓存优化、缓冲区设计、解耦和消息队列、分布式服务设计等等方面的设计</li>
-</ul>
-<p>应对方法：只有自己<strong>对知识理解透彻</strong>的情况下，才能用自己的语言正确的表述出来。</p>
-</blockquote>
-<blockquote>
-<p><strong>非官方、简短而本质的回答</strong></p>
-<ul>
-<li>LinkedHashMap是一个元素间用链表相连的哈希表</li>
-<li>HashMap就是哈希表实现的Map，TreeMap是用树实现的Map，Map是一种映射关系</li>
-<li>AQS解决Java语言没有实现同步元语底层框架的问题</li>
-<li>B+树是一棵支持区间查找的B树</li>
-<li>DNS是一个经典的分布式设计、BigTable是另一个</li>
-<li>元编程是程序改写程序</li>
-</ul>
-</blockquote>
-]]></content>
-      <categories>
-        <category>面试</category>
-      </categories>
-      <tags>
-        <tag>面试软技能</tag>
       </tags>
   </entry>
 </search>
