@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315194850633.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315195037359.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315195253382.png">
-<meta property="og:image" content="e:/Typora/images/image-20220315195513469.png">
+<meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315195513469.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315195630470.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315200112469.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315200220746.png">
@@ -52,7 +52,7 @@
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315214050132.png">
 <meta property="og:image" content="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315214154565.png">
 <meta property="article:published_time" content="2022-03-15T14:42:48.000Z">
-<meta property="article:modified_time" content="2022-03-15T14:49:45.633Z">
+<meta property="article:modified_time" content="2022-03-16T01:17:10.043Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="并发控制">
 <meta property="article:tag" content="锁">
@@ -253,10 +253,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-03-15 22:42:48 / Modified: 22:49:45" itemprop="dateCreated datePublished" datetime="2022-03-15T22:42:48+08:00">2022-03-15</time>
+              <time title="Created: 2022-03-15 22:42:48" itemprop="dateCreated datePublished" datetime="2022-03-15T22:42:48+08:00">2022-03-15</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-16 09:17:10" itemprop="dateModified" datetime="2022-03-16T09:17:10+08:00">2022-03-16</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -315,7 +321,7 @@
 
 <p>如果当前事务没有办法获取该行数据对应的锁时就会陷入等待的状态，直到其他事务将当前数据对应的锁释放才可以获得锁并执行相应的操作。</p>
 <h3 id="两阶段锁协议"><a href="#两阶段锁协议" class="headerlink" title="两阶段锁协议"></a>两阶段锁协议</h3><p>两阶段锁协议（<strong>2PL</strong>）是一种能够<strong>保证事务可串行化</strong>的协议，它将事务的获取锁和释放锁划分成了<strong>增长（Growing）</strong>和<strong>缩减（Shrinking）</strong>两个不同的阶段。</p>
-<img src="E:\Typora\images\image-20220315195513469.png" style="zoom:80%;" />
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220315195513469.png" style="zoom:80%;" />
 
 <p>在增长阶段，一个事务可以获得锁但是不能释放锁；而在缩减阶段事务只可以释放锁，并不能获得新的锁，如果只看 2PL 的定义，那么到这里就已经介绍完了，但是它还有两个变种：</p>
 <ol>
@@ -411,7 +417,7 @@
 <li><a target="_blank" rel="noopener" href="https://www.cs.unc.edu/~dewan/242/s01/notes/trans/node3.html">Serializability</a></li>
 <li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Race_condition">Race condition</a></li>
 </ul>
-<p>文章转载来源：**<a target="_blank" rel="noopener" href="https://draveness.me/database-concurrency-control/">浅谈数据库并发控制 - 锁和 MVCC</a>**</p>
+<p>文章转载来源：<br><strong><a target="_blank" rel="noopener" href="https://draveness.me/database-concurrency-control/">浅谈数据库并发控制 - 锁和 MVCC</a></strong></p>
 
     </div>
 
