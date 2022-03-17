@@ -385,28 +385,6 @@
       </tags>
   </entry>
   <entry>
-    <title>IDEA .properties 文件中文乱码</title>
-    <url>/post/5816ad50/</url>
-    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
-
-<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
-<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
-
-<p>最后中文乱码问题解决：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>properties</tag>
-        <tag>配置文件</tag>
-        <tag>IntelliJ IDEA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Java 并发编程（基础）</title>
     <url>/post/7f164aae/</url>
     <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
@@ -529,6 +507,28 @@
       </categories>
       <tags>
         <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IDEA .properties 文件中文乱码</title>
+    <url>/post/5816ad50/</url>
+    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
+
+<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
+<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
+
+<p>最后中文乱码问题解决：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>properties</tag>
+        <tag>配置文件</tag>
+        <tag>IntelliJ IDEA</tag>
       </tags>
   </entry>
   <entry>
@@ -3113,49 +3113,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Xftp</title>
-    <url>/post/78f1820d/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>Xftp</strong>是一个基于 MS windows 平台的SFTP、FTP 文件传输软件。使用Xftp，MS windows 用户能安全地在 UNIX/Linux 和 Windows PC 之间传输文件。Xftp能同时适应初级用户和高级用户的需要。它采用了标准的Windows风格的向导，它简单的界面能与其他 Windows应用程序紧密地协同工作，此外它还为高级用户提供了众多功能特性。</p>
-<span id="more"></span>
-<p><a href="https://www.netsarang.com/en/xftp-download/">官网下载地址</a></p>
-<h2 id="使用教程"><a href="#使用教程" class="headerlink" title="使用教程"></a>使用教程</h2><ol>
-<li><p>下载Xftp并安装后出现如下界面</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215552716.png"></p>
-</li>
-<li><p><strong>点击文件 -&gt; 新建</strong> 或者 如下图所示的<strong>图标</strong></p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220445527.png"></p>
-</li>
-<li><p>输入相关信息</p>
-<p>说明： 为了创建一个新的会话交换文件，应该输入会话名称、主机IP地址、选择适当的协议、输入远程服务器使用的端口号、用户帐户和密码。</p>
-<ul>
-<li>名称：随便填写即可</li>
-<li>主机：填写Linux的IP地址</li>
-<li>协议：选择SFTP</li>
-<li>方法：password，输入与Linux相同的用户名与密码</li>
-</ul>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215759908.png" style="zoom:80%;" /></li>
-<li><p>第一次进入后出现SSH安全警告弹框，可以选择“一次性接受”或者“接受并保存”；若之前选择过“接受并保存”选项则直接出现会话选择框提供用户选择之前创建的会话。点击连接即可。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215957097.png" style="zoom:80%;" />
-
-<p>成功创建会话后界面如下所示</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220134528.png"></p>
-</li>
-<li><p>此时就可以使用Xftp工具来完成windows系统和linux系统的文件传输了。可以从本地文件夹窗口选择要转移的文件或直接将其拖拽到主窗口。 可以使用超过两个窗格。每个窗格都可能包含多个选项卡，因此多个会话可以在单个Xftp窗口打开，方便多任务同时处理。</p>
-<blockquote>
-<p>备注：Linux的<strong>IP</strong>地址的<strong>查询方法</strong>为在Linux终端输入 <code>ifconfig</code> 命令并回车即可。</p>
-</blockquote>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220257354.png" style="zoom:80%;" /></li>
-</ol>
-<p><strong>文章转载来源</strong>：**<a href="https://www.jianshu.com/p/6fa90b84c4b7">Xftp使用方法</a>**</p>
-]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>Xftp</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Xshell</title>
     <url>/post/d2af6ed9/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>Xshell</strong>是<a href="https://zh.wikipedia.org/w/index.php?title=Netsarang_Computer&action=edit&redlink=1">Netsarang Computer</a>推出的<a href="https://zh.wikipedia.org/wiki/Secure_Shell">Secure Shell</a>、<a href="https://zh.wikipedia.org/wiki/Telnet">Telnet</a>和<a href="https://zh.wikipedia.org/w/index.php?title=Rlogin&action=edit&redlink=1">Rlogin</a><a href="https://zh.wikipedia.org/wiki/%E8%99%9A%E6%8B%9F%E7%BB%88%E7%AB%AF">虚拟终端</a>。Xshell可以为每个<a href="https://zh.wikipedia.org/wiki/%E4%B8%BB%E6%A9%9F">主机</a>创建单独的<a href="https://zh.wikipedia.org/wiki/%E4%BC%9A%E8%AF%9D_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6)">会话</a>，用户可以通过标签查看每个会话，方便同时操作和管理与主机的会话。</p>
@@ -3259,6 +3216,49 @@
         <tag>Java</tag>
         <tag>Spring</tag>
         <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Xftp</title>
+    <url>/post/78f1820d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>Xftp</strong>是一个基于 MS windows 平台的SFTP、FTP 文件传输软件。使用Xftp，MS windows 用户能安全地在 UNIX/Linux 和 Windows PC 之间传输文件。Xftp能同时适应初级用户和高级用户的需要。它采用了标准的Windows风格的向导，它简单的界面能与其他 Windows应用程序紧密地协同工作，此外它还为高级用户提供了众多功能特性。</p>
+<span id="more"></span>
+<p><a href="https://www.netsarang.com/en/xftp-download/">官网下载地址</a></p>
+<h2 id="使用教程"><a href="#使用教程" class="headerlink" title="使用教程"></a>使用教程</h2><ol>
+<li><p>下载Xftp并安装后出现如下界面</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215552716.png"></p>
+</li>
+<li><p><strong>点击文件 -&gt; 新建</strong> 或者 如下图所示的<strong>图标</strong></p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220445527.png"></p>
+</li>
+<li><p>输入相关信息</p>
+<p>说明： 为了创建一个新的会话交换文件，应该输入会话名称、主机IP地址、选择适当的协议、输入远程服务器使用的端口号、用户帐户和密码。</p>
+<ul>
+<li>名称：随便填写即可</li>
+<li>主机：填写Linux的IP地址</li>
+<li>协议：选择SFTP</li>
+<li>方法：password，输入与Linux相同的用户名与密码</li>
+</ul>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215759908.png" style="zoom:80%;" /></li>
+<li><p>第一次进入后出现SSH安全警告弹框，可以选择“一次性接受”或者“接受并保存”；若之前选择过“接受并保存”选项则直接出现会话选择框提供用户选择之前创建的会话。点击连接即可。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213215957097.png" style="zoom:80%;" />
+
+<p>成功创建会话后界面如下所示</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220134528.png"></p>
+</li>
+<li><p>此时就可以使用Xftp工具来完成windows系统和linux系统的文件传输了。可以从本地文件夹窗口选择要转移的文件或直接将其拖拽到主窗口。 可以使用超过两个窗格。每个窗格都可能包含多个选项卡，因此多个会话可以在单个Xftp窗口打开，方便多任务同时处理。</p>
+<blockquote>
+<p>备注：Linux的<strong>IP</strong>地址的<strong>查询方法</strong>为在Linux终端输入 <code>ifconfig</code> 命令并回车即可。</p>
+</blockquote>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220213220257354.png" style="zoom:80%;" /></li>
+</ol>
+<p><strong>文章转载来源</strong>：**<a href="https://www.jianshu.com/p/6fa90b84c4b7">Xftp使用方法</a>**</p>
+]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>Xftp</tag>
       </tags>
   </entry>
   <entry>
@@ -3546,46 +3546,6 @@
       </tags>
   </entry>
   <entry>
-    <title>位运算</title>
-    <url>/post/2633a26/</url>
-    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
-<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
-</li>
-<li><p><strong>判断两个数是否异号</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
-</li>
-<li><p><strong>不用临时变量交换两个数</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>加一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>减一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
-</blockquote>
-</li>
-</ol>
-<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>二分</title>
     <url>/post/9947c71c/</url>
     <content><![CDATA[<h2 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>二分查找（英语：binary search），也称折半搜索（英语：half-interval search）、对数搜索（英语：logarithmic search），是用来在一个有序数组中查找某一元素的算法。</p>
@@ -3866,6 +3826,46 @@
       </tags>
   </entry>
   <entry>
+    <title>位运算</title>
+    <url>/post/2633a26/</url>
+    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>回溯</title>
     <url>/post/f92eff5d/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
@@ -3922,6 +3922,226 @@
       </categories>
       <tags>
         <tag>回溯</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
+<span id="more"></span>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>文章转载来源</strong>：**<a href="https://javaguide.cn/database/character-set.html">字符集</a>**</p>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>字符集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>布隆过滤器</title>
+    <url>/post/9a0369ec/</url>
+    <content><![CDATA[<h2 id="什么是布隆过滤器？"><a href="#什么是布隆过滤器？" class="headerlink" title="什么是布隆过滤器？"></a>什么是布隆过滤器？</h2><p>首先，我们需要了解布隆过滤器的概念。</p>
+<p>布隆过滤器（<strong>Bloom Filter</strong>）是一个叫做 Bloom 的老哥于 1970 年提出的。我们<strong>可以把它看作由二进制向量（或者说位数组）和一系列随机映射函数（哈希函数）两部分组成的数据结构</strong>。相比于我们平时常用的的 List、Map 、Set 等数据结构，它占用空间更少并且效率更高，但是缺点是其返回的结果是概率性的，而不是非常准确的。理论情况下添加到集合中的元素越多，误报的可能性就越大。并且，存放在布隆过滤器的数据不容易删除。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002507111.png" style="zoom:80%;" />
+
+<p>位数组中的每个元素都只占用 1 bit ，并且每个元素只能是 0 或者 1。这样申请一个 100w 个元素的位数组只占用 1000000Bit / 8 = 125000 Byte = 125000/1024 kb ≈ 122kb 的空间。</p>
+<p>总结：<strong>一个名叫 Bloom 的人提出了一种来检索元素是否在给定大集合中的数据结构，这种数据结构是高效且性能很好的，但缺点是具有一定的错误识别率和删除难度。并且，理论情况下，添加到集合中的元素越多，误报的可能性就越大。</strong></p>
+<h2 id="布隆过滤器的原理介绍"><a href="#布隆过滤器的原理介绍" class="headerlink" title="布隆过滤器的原理介绍"></a>布隆过滤器的原理介绍</h2><p><strong>当一个元素加入布隆过滤器中的时候，会进行如下操作：</strong></p>
+<ol>
+<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
+<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
+</ol>
+<p><strong>当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：</strong></p>
+<ol>
+<li>对给定元素再次进行相同的哈希计算；</li>
+<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
+</ol>
+<p>举个简单的例子：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002716080.png" style="zoom:80%;" />
+
+<p>如图所示，当字符串存储要加入到布隆过滤器中时，该字符串首先由多个哈希函数生成不同的哈希值，然后将对应的位数组的下标设置为 1（当位数组初始化时，所有位置均为 0）。当第二次存储相同字符串时，因为先前的对应位置已设置为 1，所以很容易知道此值已经存在（去重非常方便）。</p>
+<p>如果我们需要判断某个字符串是否在布隆过滤器中时，只需要对给定字符串再次进行相同的哈希计算，得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</p>
+<p><strong>不同的字符串可能哈希出来的位置相同，这种情况我们可以适当增加位数组大小或者调整我们的哈希函数。</strong></p>
+<p>综上，我们可以得出：<strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在。</strong></p>
+<h2 id="布隆过滤器使用场景"><a href="#布隆过滤器使用场景" class="headerlink" title="布隆过滤器使用场景"></a>布隆过滤器使用场景</h2><p><strong>判断给定数据是否存在：</strong>比如判断一个数字是否存在于包含大量数字的数字集中（数字集很大，5 亿以上！）、 防止缓存穿透（判断请求的数据是否有效避免直接绕过缓存请求数据库）、邮箱的垃圾邮件过滤、黑名单功能等等。</p>
+<p><strong>去重：</strong>比如爬给定网址的时候对已经爬取过的 URL 去重。</p>
+<h2 id="编码实战"><a href="#编码实战" class="headerlink" title="编码实战"></a>编码实战</h2><h3 id="通过-Java-编程手动实现布隆过滤器"><a href="#通过-Java-编程手动实现布隆过滤器" class="headerlink" title="通过 Java 编程手动实现布隆过滤器"></a>通过 Java 编程手动实现布隆过滤器</h3><p>我们上面已经说了布隆过滤器的原理，知道了布隆过滤器的原理之后就可以自己手动实现一个了。</p>
+<p>如果你想要手动实现一个的话，你需要：</p>
+<ol>
+<li>一个合适大小的位数组保存数据</li>
+<li>几个不同的哈希函数</li>
+<li>添加元素到位数组（布隆过滤器）的方法实现</li>
+<li>判断给定元素是否存在于位数组（布隆过滤器）的方法实现。</li>
+</ol>
+<p>下面给出一个我觉得写的还算不错的代码（参考网上已有代码改进得到，对于所有类型对象皆适用）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.BitSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBloomFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组的大小</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_SIZE = <span class="number">2</span> &lt;&lt; <span class="number">24</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通过这个数组可以创建 6 个不同的哈希函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] SEEDS = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">3</span>, <span class="number">13</span>, <span class="number">46</span>, <span class="number">71</span>, <span class="number">91</span>, <span class="number">134</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组。数组中的元素只能是 0 或者 1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> BitSet bits = <span class="keyword">new</span> BitSet(DEFAULT_SIZE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 存放包含 hash 函数的类的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> SimpleHash[] func = <span class="keyword">new</span> SimpleHash[SEEDS.length];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化多个包含 hash 函数的类的数组，每个类中的 hash 函数都不一样</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBloomFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 初始化多个不同的 Hash 函数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SEEDS.length; i++) &#123;</span><br><span class="line">            func[i] = <span class="keyword">new</span> SimpleHash(DEFAULT_SIZE, SEEDS[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加元素到位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            bits.set(f.hash(value), <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断指定元素是否存在于位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> ret = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            ret = ret &amp;&amp; bits.get(f.hash(value));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态内部类。用于 hash 操作！</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleHash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> cap;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> seed;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SimpleHash</span><span class="params">(<span class="keyword">int</span> cap, <span class="keyword">int</span> seed)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.cap = cap;</span><br><span class="line">            <span class="keyword">this</span>.seed = seed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 计算 hash 值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> h;</span><br><span class="line">            <span class="keyword">return</span> (value == <span class="keyword">null</span>) ? <span class="number">0</span> : Math.abs(seed * (cap - <span class="number">1</span>) &amp; ((h = value.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>)));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String value1 = <span class="string">&quot;https://javaguide.cn/&quot;</span>;</span><br><span class="line">	String value2 = <span class="string">&quot;https://github.com/Snailclimb&quot;</span>;</span><br><span class="line">	MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">	filter.add(value1);</span><br><span class="line">	filter.add(value2);</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Integer value1 = <span class="number">13423</span>;</span><br><span class="line">    Integer value2 = <span class="number">22131</span>;</span><br><span class="line">    MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">    filter.add(value1);</span><br><span class="line">    filter.add(value2);</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="利用-Google-开源的-Guava-中自带的布隆过滤器"><a href="#利用-Google-开源的-Guava-中自带的布隆过滤器" class="headerlink" title="利用 Google 开源的 Guava 中自带的布隆过滤器"></a>利用 Google 开源的 Guava 中自带的布隆过滤器</h3><p>自己实现的目的主要是为了让自己搞懂布隆过滤器的原理，Guava 中布隆过滤器的实现算是比较权威的，所以实际项目中我们不需要手动实现一个布隆过滤器。</p>
+<p>首先我们需要在项目中引入 Guava 的依赖：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>28.0-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>实际使用如下：</p>
+<p>我们创建了一个最多存放 最多 1500 个整数的布隆过滤器，并且我们可以容忍误判的概率为百分之（0.01）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 创建布隆过滤器对象</span></span><br><span class="line">    BloomFilter&lt;Integer&gt; filter = BloomFilter.create(</span><br><span class="line">        Funnels.integerFunnel(),</span><br><span class="line">        <span class="number">1500</span>,</span><br><span class="line">        <span class="number">0.01</span>);</span><br><span class="line">    <span class="comment">// 判断指定元素是否存在</span></span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">    <span class="comment">// 将元素添加进布隆过滤器</span></span><br><span class="line">    filter.put(<span class="number">1</span>);</span><br><span class="line">    filter.put(<span class="number">2</span>);</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在我们的示例中，当 <code>mightContain()</code> 方法返回 <em>true</em> 时，我们可以 99％确定该元素在过滤器中，当过滤器返回 <em>false</em> 时，我们可以 100％确定该元素不存在于过滤器中。</p>
+<p><strong>Guava 提供的布隆过滤器的实现还是很不错的（想要详细了解的可以看一下它的源码实现），但是它有一个重大的缺陷就是只能单机使用（另外，容量扩展也不容易），而现在互联网一般都是分布式的场景。为了解决这个问题，我们就需要用到 Redis 中的布隆过滤器了。</strong></p>
+<h2 id="Redis-中的布隆过滤器"><a href="#Redis-中的布隆过滤器" class="headerlink" title="Redis 中的布隆过滤器"></a>Redis 中的布隆过滤器</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Redis v4.0 之后有了 Module（模块/插件） 功能，Redis Modules 让 Redis 可以使用外部模块扩展其功能 。布隆过滤器就是其中的 Module。详情可以查看 Redis 官方对 Redis Modules 的介绍 ：<a href="https://redis.io/modules">https://redis.io/modules</a></p>
+<p>另外，官网推荐了一个 RedisBloom 作为 Redis 布隆过滤器的 Module，地址：<a href="https://github.com/RedisBloom/RedisBloom">https://github.com/RedisBloom/RedisBloom</a> 其他还有：</p>
+<ul>
+<li><a href="https://github.com/erikdubbelboer/redis-lua-scaling-bloom-filter">redis-lua-scaling-bloom-filter（lua 脚本实现）</a></li>
+<li><a href="https://github.com/seomoz/pyreBloom">pyreBloom（Python 中的快速 Redis 布隆过滤器）</a></li>
+<li>……</li>
+</ul>
+<p>RedisBloom 提供了多种语言的客户端支持，包括：Python、Java、JavaScript 和 PHP。</p>
+<h3 id="使用-Docker-安装"><a href="#使用-Docker-安装" class="headerlink" title="使用 Docker 安装"></a>使用 Docker 安装</h3><p>如果我们需要体验 Redis 中的布隆过滤器非常简单，通过 Docker 就可以了！直接在 Google 搜索 <strong>docker redis bloomfilter</strong> 然后在排除广告的第一条搜素结果就找到了我们想要的答案，具体地址：<a href="https://hub.docker.com/r/redislabs/rebloom/">https://hub.docker.com/r/redislabs/rebloom/</a> 。</p>
+<p><strong>具体操作如下：</strong></p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">➜  ~ docker <span class="keyword">run</span><span class="bash"> -p 6379:6379 --name redis-redisbloom redislabs/rebloom:latest</span></span><br><span class="line">➜  ~ docker exec -it redis-redisbloom bash</span><br><span class="line">root@<span class="number">21396</span>d02c252:/data<span class="comment"># redis-cli</span></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用命令一览"><a href="#常用命令一览" class="headerlink" title="常用命令一览"></a>常用命令一览</h3><blockquote>
+<p>注意： key：布隆过滤器的名称，item：添加的元素。</p>
+</blockquote>
+<ol>
+<li><code>BF.ADD</code>：将元素添加到布隆过滤器中，如果该过滤器尚不存在，则创建该过滤器。格式：<code>BF.ADD &#123;key&#125; &#123;item&#125;</code>。</li>
+<li><code>BF.MADD</code>：将一个或多个元素添加到“布隆过滤器”中，并创建一个尚不存在的过滤器。该命令的操作方式<code>BF.ADD</code>与之相同，只不过它允许多个输入并返回多个值。格式：<code>BF.MADD &#123;key&#125; &#123;item&#125; [item ...]</code> 。</li>
+<li><code>BF.EXISTS</code>：确定元素是否在布隆过滤器中存在。格式：<code>BF.EXISTS &#123;key&#125; &#123;item&#125;</code>。</li>
+<li><code>BF.MEXISTS</code> ：确定一个或者多个元素是否在布隆过滤器中存在格式：<code>BF.MEXISTS &#123;key&#125; &#123;item&#125; [item ...]</code>。</li>
+</ol>
+<p>另外， <code>BF.RESERVE</code> 命令需要单独介绍一下：</p>
+<p>这个命令的格式如下：</p>
+<p><code>BF.RESERVE &#123;key&#125; &#123;error_rate&#125; &#123;capacity&#125; [EXPANSION expansion]</code> 。</p>
+<p>下面简单介绍一下每个参数的具体含义：</p>
+<ul>
+<li>key：布隆过滤器的名称</li>
+<li>error_rate：期望的误报率。该值必须介于 0 到 1 之间。例如，对于期望的误报率 0.1％（1000 中为 1），error_rate 应该设置为 0.001。该数字越接近零，则每个项目的内存消耗越大，并且每个操作的 CPU 使用率越高。</li>
+<li>capacity：过滤器的容量。当实际存储的元素个数超过这个值之后，性能将开始下降。实际的降级将取决于超出限制的程度。随着过滤器元素数量呈指数增长，性能将线性下降。</li>
+</ul>
+<p>可选参数：</p>
+<ul>
+<li>expansion：如果创建了一个新的子过滤器，则其大小将是当前过滤器的大小乘以<code>expansion</code>。默认扩展值为 2。这意味着每个后续子过滤器将是前一个子过滤器的两倍。</li>
+</ul>
+<h3 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter github</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>文章总结来源：</p>
+<ul>
+<li><strong><a href="https://javaguide.cn/cs-basics/data-structure/bloom-filter/">布隆过滤器</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>布隆过滤器</tag>
+        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -6046,226 +6266,6 @@
       </tags>
   </entry>
   <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>布隆过滤器</title>
-    <url>/post/9a0369ec/</url>
-    <content><![CDATA[<h2 id="什么是布隆过滤器？"><a href="#什么是布隆过滤器？" class="headerlink" title="什么是布隆过滤器？"></a>什么是布隆过滤器？</h2><p>首先，我们需要了解布隆过滤器的概念。</p>
-<p>布隆过滤器（<strong>Bloom Filter</strong>）是一个叫做 Bloom 的老哥于 1970 年提出的。我们<strong>可以把它看作由二进制向量（或者说位数组）和一系列随机映射函数（哈希函数）两部分组成的数据结构</strong>。相比于我们平时常用的的 List、Map 、Set 等数据结构，它占用空间更少并且效率更高，但是缺点是其返回的结果是概率性的，而不是非常准确的。理论情况下添加到集合中的元素越多，误报的可能性就越大。并且，存放在布隆过滤器的数据不容易删除。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002507111.png" style="zoom:80%;" />
-
-<p>位数组中的每个元素都只占用 1 bit ，并且每个元素只能是 0 或者 1。这样申请一个 100w 个元素的位数组只占用 1000000Bit / 8 = 125000 Byte = 125000/1024 kb ≈ 122kb 的空间。</p>
-<p>总结：<strong>一个名叫 Bloom 的人提出了一种来检索元素是否在给定大集合中的数据结构，这种数据结构是高效且性能很好的，但缺点是具有一定的错误识别率和删除难度。并且，理论情况下，添加到集合中的元素越多，误报的可能性就越大。</strong></p>
-<h2 id="布隆过滤器的原理介绍"><a href="#布隆过滤器的原理介绍" class="headerlink" title="布隆过滤器的原理介绍"></a>布隆过滤器的原理介绍</h2><p><strong>当一个元素加入布隆过滤器中的时候，会进行如下操作：</strong></p>
-<ol>
-<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
-<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
-</ol>
-<p><strong>当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：</strong></p>
-<ol>
-<li>对给定元素再次进行相同的哈希计算；</li>
-<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
-</ol>
-<p>举个简单的例子：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002716080.png" style="zoom:80%;" />
-
-<p>如图所示，当字符串存储要加入到布隆过滤器中时，该字符串首先由多个哈希函数生成不同的哈希值，然后将对应的位数组的下标设置为 1（当位数组初始化时，所有位置均为 0）。当第二次存储相同字符串时，因为先前的对应位置已设置为 1，所以很容易知道此值已经存在（去重非常方便）。</p>
-<p>如果我们需要判断某个字符串是否在布隆过滤器中时，只需要对给定字符串再次进行相同的哈希计算，得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</p>
-<p><strong>不同的字符串可能哈希出来的位置相同，这种情况我们可以适当增加位数组大小或者调整我们的哈希函数。</strong></p>
-<p>综上，我们可以得出：<strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在。</strong></p>
-<h2 id="布隆过滤器使用场景"><a href="#布隆过滤器使用场景" class="headerlink" title="布隆过滤器使用场景"></a>布隆过滤器使用场景</h2><p><strong>判断给定数据是否存在：</strong>比如判断一个数字是否存在于包含大量数字的数字集中（数字集很大，5 亿以上！）、 防止缓存穿透（判断请求的数据是否有效避免直接绕过缓存请求数据库）、邮箱的垃圾邮件过滤、黑名单功能等等。</p>
-<p><strong>去重：</strong>比如爬给定网址的时候对已经爬取过的 URL 去重。</p>
-<h2 id="编码实战"><a href="#编码实战" class="headerlink" title="编码实战"></a>编码实战</h2><h3 id="通过-Java-编程手动实现布隆过滤器"><a href="#通过-Java-编程手动实现布隆过滤器" class="headerlink" title="通过 Java 编程手动实现布隆过滤器"></a>通过 Java 编程手动实现布隆过滤器</h3><p>我们上面已经说了布隆过滤器的原理，知道了布隆过滤器的原理之后就可以自己手动实现一个了。</p>
-<p>如果你想要手动实现一个的话，你需要：</p>
-<ol>
-<li>一个合适大小的位数组保存数据</li>
-<li>几个不同的哈希函数</li>
-<li>添加元素到位数组（布隆过滤器）的方法实现</li>
-<li>判断给定元素是否存在于位数组（布隆过滤器）的方法实现。</li>
-</ol>
-<p>下面给出一个我觉得写的还算不错的代码（参考网上已有代码改进得到，对于所有类型对象皆适用）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.BitSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBloomFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组的大小</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_SIZE = <span class="number">2</span> &lt;&lt; <span class="number">24</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通过这个数组可以创建 6 个不同的哈希函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] SEEDS = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">3</span>, <span class="number">13</span>, <span class="number">46</span>, <span class="number">71</span>, <span class="number">91</span>, <span class="number">134</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组。数组中的元素只能是 0 或者 1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> BitSet bits = <span class="keyword">new</span> BitSet(DEFAULT_SIZE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 存放包含 hash 函数的类的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> SimpleHash[] func = <span class="keyword">new</span> SimpleHash[SEEDS.length];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化多个包含 hash 函数的类的数组，每个类中的 hash 函数都不一样</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBloomFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 初始化多个不同的 Hash 函数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SEEDS.length; i++) &#123;</span><br><span class="line">            func[i] = <span class="keyword">new</span> SimpleHash(DEFAULT_SIZE, SEEDS[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加元素到位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            bits.set(f.hash(value), <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断指定元素是否存在于位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> ret = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            ret = ret &amp;&amp; bits.get(f.hash(value));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态内部类。用于 hash 操作！</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleHash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> cap;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> seed;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SimpleHash</span><span class="params">(<span class="keyword">int</span> cap, <span class="keyword">int</span> seed)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.cap = cap;</span><br><span class="line">            <span class="keyword">this</span>.seed = seed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 计算 hash 值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> h;</span><br><span class="line">            <span class="keyword">return</span> (value == <span class="keyword">null</span>) ? <span class="number">0</span> : Math.abs(seed * (cap - <span class="number">1</span>) &amp; ((h = value.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>)));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String value1 = <span class="string">&quot;https://javaguide.cn/&quot;</span>;</span><br><span class="line">	String value2 = <span class="string">&quot;https://github.com/Snailclimb&quot;</span>;</span><br><span class="line">	MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">	filter.add(value1);</span><br><span class="line">	filter.add(value2);</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
-
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Integer value1 = <span class="number">13423</span>;</span><br><span class="line">    Integer value2 = <span class="number">22131</span>;</span><br><span class="line">    MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">    filter.add(value1);</span><br><span class="line">    filter.add(value2);</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="利用-Google-开源的-Guava-中自带的布隆过滤器"><a href="#利用-Google-开源的-Guava-中自带的布隆过滤器" class="headerlink" title="利用 Google 开源的 Guava 中自带的布隆过滤器"></a>利用 Google 开源的 Guava 中自带的布隆过滤器</h3><p>自己实现的目的主要是为了让自己搞懂布隆过滤器的原理，Guava 中布隆过滤器的实现算是比较权威的，所以实际项目中我们不需要手动实现一个布隆过滤器。</p>
-<p>首先我们需要在项目中引入 Guava 的依赖：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>28.0-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>实际使用如下：</p>
-<p>我们创建了一个最多存放 最多 1500 个整数的布隆过滤器，并且我们可以容忍误判的概率为百分之（0.01）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 创建布隆过滤器对象</span></span><br><span class="line">    BloomFilter&lt;Integer&gt; filter = BloomFilter.create(</span><br><span class="line">        Funnels.integerFunnel(),</span><br><span class="line">        <span class="number">1500</span>,</span><br><span class="line">        <span class="number">0.01</span>);</span><br><span class="line">    <span class="comment">// 判断指定元素是否存在</span></span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">    <span class="comment">// 将元素添加进布隆过滤器</span></span><br><span class="line">    filter.put(<span class="number">1</span>);</span><br><span class="line">    filter.put(<span class="number">2</span>);</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在我们的示例中，当 <code>mightContain()</code> 方法返回 <em>true</em> 时，我们可以 99％确定该元素在过滤器中，当过滤器返回 <em>false</em> 时，我们可以 100％确定该元素不存在于过滤器中。</p>
-<p><strong>Guava 提供的布隆过滤器的实现还是很不错的（想要详细了解的可以看一下它的源码实现），但是它有一个重大的缺陷就是只能单机使用（另外，容量扩展也不容易），而现在互联网一般都是分布式的场景。为了解决这个问题，我们就需要用到 Redis 中的布隆过滤器了。</strong></p>
-<h2 id="Redis-中的布隆过滤器"><a href="#Redis-中的布隆过滤器" class="headerlink" title="Redis 中的布隆过滤器"></a>Redis 中的布隆过滤器</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Redis v4.0 之后有了 Module（模块/插件） 功能，Redis Modules 让 Redis 可以使用外部模块扩展其功能 。布隆过滤器就是其中的 Module。详情可以查看 Redis 官方对 Redis Modules 的介绍 ：<a href="https://redis.io/modules">https://redis.io/modules</a></p>
-<p>另外，官网推荐了一个 RedisBloom 作为 Redis 布隆过滤器的 Module，地址：<a href="https://github.com/RedisBloom/RedisBloom">https://github.com/RedisBloom/RedisBloom</a> 其他还有：</p>
-<ul>
-<li><a href="https://github.com/erikdubbelboer/redis-lua-scaling-bloom-filter">redis-lua-scaling-bloom-filter（lua 脚本实现）</a></li>
-<li><a href="https://github.com/seomoz/pyreBloom">pyreBloom（Python 中的快速 Redis 布隆过滤器）</a></li>
-<li>……</li>
-</ul>
-<p>RedisBloom 提供了多种语言的客户端支持，包括：Python、Java、JavaScript 和 PHP。</p>
-<h3 id="使用-Docker-安装"><a href="#使用-Docker-安装" class="headerlink" title="使用 Docker 安装"></a>使用 Docker 安装</h3><p>如果我们需要体验 Redis 中的布隆过滤器非常简单，通过 Docker 就可以了！直接在 Google 搜索 <strong>docker redis bloomfilter</strong> 然后在排除广告的第一条搜素结果就找到了我们想要的答案，具体地址：<a href="https://hub.docker.com/r/redislabs/rebloom/">https://hub.docker.com/r/redislabs/rebloom/</a> 。</p>
-<p><strong>具体操作如下：</strong></p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">➜  ~ docker <span class="keyword">run</span><span class="bash"> -p 6379:6379 --name redis-redisbloom redislabs/rebloom:latest</span></span><br><span class="line">➜  ~ docker exec -it redis-redisbloom bash</span><br><span class="line">root@<span class="number">21396</span>d02c252:/data<span class="comment"># redis-cli</span></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="常用命令一览"><a href="#常用命令一览" class="headerlink" title="常用命令一览"></a>常用命令一览</h3><blockquote>
-<p>注意： key：布隆过滤器的名称，item：添加的元素。</p>
-</blockquote>
-<ol>
-<li><code>BF.ADD</code>：将元素添加到布隆过滤器中，如果该过滤器尚不存在，则创建该过滤器。格式：<code>BF.ADD &#123;key&#125; &#123;item&#125;</code>。</li>
-<li><code>BF.MADD</code>：将一个或多个元素添加到“布隆过滤器”中，并创建一个尚不存在的过滤器。该命令的操作方式<code>BF.ADD</code>与之相同，只不过它允许多个输入并返回多个值。格式：<code>BF.MADD &#123;key&#125; &#123;item&#125; [item ...]</code> 。</li>
-<li><code>BF.EXISTS</code>：确定元素是否在布隆过滤器中存在。格式：<code>BF.EXISTS &#123;key&#125; &#123;item&#125;</code>。</li>
-<li><code>BF.MEXISTS</code> ：确定一个或者多个元素是否在布隆过滤器中存在格式：<code>BF.MEXISTS &#123;key&#125; &#123;item&#125; [item ...]</code>。</li>
-</ol>
-<p>另外， <code>BF.RESERVE</code> 命令需要单独介绍一下：</p>
-<p>这个命令的格式如下：</p>
-<p><code>BF.RESERVE &#123;key&#125; &#123;error_rate&#125; &#123;capacity&#125; [EXPANSION expansion]</code> 。</p>
-<p>下面简单介绍一下每个参数的具体含义：</p>
-<ul>
-<li>key：布隆过滤器的名称</li>
-<li>error_rate：期望的误报率。该值必须介于 0 到 1 之间。例如，对于期望的误报率 0.1％（1000 中为 1），error_rate 应该设置为 0.001。该数字越接近零，则每个项目的内存消耗越大，并且每个操作的 CPU 使用率越高。</li>
-<li>capacity：过滤器的容量。当实际存储的元素个数超过这个值之后，性能将开始下降。实际的降级将取决于超出限制的程度。随着过滤器元素数量呈指数增长，性能将线性下降。</li>
-</ul>
-<p>可选参数：</p>
-<ul>
-<li>expansion：如果创建了一个新的子过滤器，则其大小将是当前过滤器的大小乘以<code>expansion</code>。默认扩展值为 2。这意味着每个后续子过滤器将是前一个子过滤器的两倍。</li>
-</ul>
-<h3 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter github</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
-
-
-
-
-<p>文章总结来源：</p>
-<ul>
-<li><strong><a href="https://javaguide.cn/cs-basics/data-structure/bloom-filter/">布隆过滤器</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>布隆过滤器</tag>
-        <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<p><strong>文章转载来源</strong>：**<a href="https://javaguide.cn/database/character-set.html">字符集</a>**</p>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>并查集</title>
     <url>/post/c517589e/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/zh-hans/%E5%B9%B6%E6%9F%A5%E9%9B%86">并查集</a>（Union-Find）算法，主要是解决图论中「动态连通性」问题的。</p>
@@ -6875,6 +6875,116 @@
       </tags>
   </entry>
   <entry>
+    <title>模拟</title>
+    <url>/post/d1f7904c/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
+<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
+<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
+<span id="more"></span>
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
+<ul>
+<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
+<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
+<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
+<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
+<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
+</ul>
+<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>滑动窗口</title>
+    <url>/post/50cab45/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>滑动窗口算法是较为入门题目的算法，一般是一些有规律数组问题的最优解，也就是说，如果一个数组问题可以用动态规划解，但又可以使用滑动窗口解决，那么往往滑动窗口的效率更高。</p>
+<p>双指针也并不局限在数组问题，像链表场景的 “快慢指针” 也属于双指针的场景，其快慢指针滑动过程中本身就会产生一个窗口，比如当窗口收缩到某种程度，可以得到一些结论。</p>
+<p><strong>滑动窗口使用双指针解决问题</strong>，所以一般也叫<strong>双指针算法</strong>，因为<strong>两个指针间形成一个窗口</strong>。</p>
+<p>什么情况适合用双指针呢？一般双指针是暴力算法的优化版，所以：</p>
+<ol>
+<li>如果题目较为简单，且是<strong>数组或链表问题</strong>，往往可以尝试双指针是否可解。</li>
+<li>如果<strong>数组存在规律</strong>，可以尝试双指针。</li>
+<li>如果<strong>链表问题限制较多</strong>，比如要求 <strong>O(1) 空间复杂度解决</strong>，也许只有双指针可解。</li>
+</ol>
+<p>也就是说，当一个问题比较有规律，或者较为简单，或较为巧妙时，可以尝试双指针（滑动窗口）解法。</p>
+<span id="more"></span>
+
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>算法的大致逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (right &lt; s.size()) &#123;</span><br><span class="line">    <span class="comment">// 增大窗口</span></span><br><span class="line">    window.add(s[right]);</span><br><span class="line">    right++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">        <span class="comment">// 缩小窗口</span></span><br><span class="line">        window.remove(s[left]);</span><br><span class="line">        left++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>时间复杂度是 O(N)，比字符串暴力算法要高效得多。</p>
+</blockquote>
+<p>其实难点不是算法的思路，而是各种细节问题。比如说如何向窗口中添加新元素，如何缩小窗口，在窗口滑动的哪个阶段更新结果。</p>
+<h3 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 滑动窗口算法框架 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">slidingWindow</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">    unordered_map&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; need, window;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c : t) need[c]++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> valid = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">while</span> (right &lt; s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">        <span class="comment">// c 是将移入窗口的字符</span></span><br><span class="line">        <span class="keyword">char</span> c = s[right];</span><br><span class="line">        <span class="comment">// 右移窗口</span></span><br><span class="line">        right++;</span><br><span class="line">        <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*** debug 输出的位置 ***/</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;window: [%d, %d)\n&quot;</span>, left, right);</span><br><span class="line">        <span class="comment">/********************/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 判断左侧窗口是否要收缩</span></span><br><span class="line">        <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">            <span class="comment">// d 是将移出窗口的字符</span></span><br><span class="line">            <span class="keyword">char</span> d = s[left];</span><br><span class="line">            <span class="comment">// 左移窗口</span></span><br><span class="line">            left++;</span><br><span class="line">            <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>其中两处 <code>...</code> 表示的更新窗口数据的地方</strong>。</p>
+<p>而且，这两个 <code>...</code> 处的操作分别是右移和左移窗口更新操作，它们操作是完全对称的。</p>
+<blockquote>
+<p>C++：</p>
+<p><code>unordered_map</code> 就是哈希表（字典），它的一个方法 <code>count(key)</code> 相当于 Java 的 <code>containsKey(key)</code> 可以判断键 key 是否存在。</p>
+<p>可以使用方括号访问键对应的值 <code>map[key]</code>。需要注意的是，如果该 <code>key</code> 不存在，C++ 会自动创建这个 key，并把 <code>map[key]</code> 赋值为 0。</p>
+<p>所以代码中多次出现的 <code>map[key]++</code> 相当于 Java 的 <code>map.put(key, map.getOrDefault(key, 0) + 1)</code>。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/">剑指 Offer 48. 最长不含重复字符的子字符串</a></td>
+<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/solution/mian-shi-ti-48-zui-chang-bu-han-zhong-fu-zi-fu-d-9/">面试题48. 最长不含重复字符的子字符串（动态规划 / 双指针 + 哈希表，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetc-2/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/">395. 至少有 K 个重复字符的最长子串</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/xiang-jie-mei-ju-shuang-zhi-zhen-jie-fa-50ri1/">【宫水三叶の相信科学系列】为什么不能用「滑动窗口」？以及如何发掘题目性质</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/jie-ben-ti-bang-zhu-da-jia-li-jie-di-gui-obla/">借本题帮助大家理解递归</a></td>
+</tr>
+</tbody></table>
+<p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://segmentfault.com/a/1190000040174595">精读《算法 - 滑动窗口》</a></strong></p>
+</li>
+<li><p><strong><a href="https://labuladong.gitee.io/algo/2/21/60/">我写了首诗，把滑动窗口算法算法变成了默写题</a></strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>双指针</tag>
+        <tag>滑动窗口</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>浅谈数据库并发控制 - 锁和 MVCC</title>
     <url>/post/7881a926/</url>
     <content><![CDATA[<p>在学习几年编程之后，你会发现所有的问题都没有简单、快捷的解决方案，很多问题都需要权衡和妥协，而本文介绍的就是数据库在并发性能和可串行化之间做的权衡和妥协 - 并发控制机制。</p>
@@ -7008,51 +7118,6 @@
       </tags>
   </entry>
   <entry>
-    <title>模拟</title>
-    <url>/post/d1f7904c/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
-<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
-<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
-<span id="more"></span>
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
-<ul>
-<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
-<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
-<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
-<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
-<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
-</ul>
-<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>模拟</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>理解linux中的file descriptor(文件描述符)</title>
     <url>/post/1e8930fb/</url>
     <content><![CDATA[<p>file descriptor（以下简称fd）又叫文件描述符，它是一个抽象的指示符，用一个整数表示（非负整数）。它指向了由系统内核维护的一个file table中的某个条目（entry）。这个解释可能过于抽象，不过在正式详细介绍fd之前，有必要先了解用户程序和系统内核之间的工作过程。</p>
@@ -7177,119 +7242,6 @@
       </tags>
   </entry>
   <entry>
-    <title>记忆化搜索</title>
-    <url>/post/cb5e0eb8/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
-<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
-<span id="more"></span>
-
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>函数有返回值</li>
-<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
-<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
-</ul>
-<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
-<blockquote>
-<p>本质上是自顶向下的动态规划加备忘录。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
-<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>记忆化搜索</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>滑动窗口</title>
-    <url>/post/50cab45/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>滑动窗口算法是较为入门题目的算法，一般是一些有规律数组问题的最优解，也就是说，如果一个数组问题可以用动态规划解，但又可以使用滑动窗口解决，那么往往滑动窗口的效率更高。</p>
-<p>双指针也并不局限在数组问题，像链表场景的 “快慢指针” 也属于双指针的场景，其快慢指针滑动过程中本身就会产生一个窗口，比如当窗口收缩到某种程度，可以得到一些结论。</p>
-<p><strong>滑动窗口使用双指针解决问题</strong>，所以一般也叫<strong>双指针算法</strong>，因为<strong>两个指针间形成一个窗口</strong>。</p>
-<p>什么情况适合用双指针呢？一般双指针是暴力算法的优化版，所以：</p>
-<ol>
-<li>如果题目较为简单，且是<strong>数组或链表问题</strong>，往往可以尝试双指针是否可解。</li>
-<li>如果<strong>数组存在规律</strong>，可以尝试双指针。</li>
-<li>如果<strong>链表问题限制较多</strong>，比如要求 <strong>O(1) 空间复杂度解决</strong>，也许只有双指针可解。</li>
-</ol>
-<p>也就是说，当一个问题比较有规律，或者较为简单，或较为巧妙时，可以尝试双指针（滑动窗口）解法。</p>
-<span id="more"></span>
-
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>算法的大致逻辑如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (right &lt; s.size()) &#123;</span><br><span class="line">    <span class="comment">// 增大窗口</span></span><br><span class="line">    window.add(s[right]);</span><br><span class="line">    right++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">        <span class="comment">// 缩小窗口</span></span><br><span class="line">        window.remove(s[left]);</span><br><span class="line">        left++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>时间复杂度是 O(N)，比字符串暴力算法要高效得多。</p>
-</blockquote>
-<p>其实难点不是算法的思路，而是各种细节问题。比如说如何向窗口中添加新元素，如何缩小窗口，在窗口滑动的哪个阶段更新结果。</p>
-<h3 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 滑动窗口算法框架 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">slidingWindow</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">    unordered_map&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; need, window;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c : t) need[c]++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> valid = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">while</span> (right &lt; s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">        <span class="comment">// c 是将移入窗口的字符</span></span><br><span class="line">        <span class="keyword">char</span> c = s[right];</span><br><span class="line">        <span class="comment">// 右移窗口</span></span><br><span class="line">        right++;</span><br><span class="line">        <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*** debug 输出的位置 ***/</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;window: [%d, %d)\n&quot;</span>, left, right);</span><br><span class="line">        <span class="comment">/********************/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 判断左侧窗口是否要收缩</span></span><br><span class="line">        <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">            <span class="comment">// d 是将移出窗口的字符</span></span><br><span class="line">            <span class="keyword">char</span> d = s[left];</span><br><span class="line">            <span class="comment">// 左移窗口</span></span><br><span class="line">            left++;</span><br><span class="line">            <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>其中两处 <code>...</code> 表示的更新窗口数据的地方</strong>。</p>
-<p>而且，这两个 <code>...</code> 处的操作分别是右移和左移窗口更新操作，它们操作是完全对称的。</p>
-<blockquote>
-<p>C++：</p>
-<p><code>unordered_map</code> 就是哈希表（字典），它的一个方法 <code>count(key)</code> 相当于 Java 的 <code>containsKey(key)</code> 可以判断键 key 是否存在。</p>
-<p>可以使用方括号访问键对应的值 <code>map[key]</code>。需要注意的是，如果该 <code>key</code> 不存在，C++ 会自动创建这个 key，并把 <code>map[key]</code> 赋值为 0。</p>
-<p>所以代码中多次出现的 <code>map[key]++</code> 相当于 Java 的 <code>map.put(key, map.getOrDefault(key, 0) + 1)</code>。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/">剑指 Offer 48. 最长不含重复字符的子字符串</a></td>
-<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/solution/mian-shi-ti-48-zui-chang-bu-han-zhong-fu-zi-fu-d-9/">面试题48. 最长不含重复字符的子字符串（动态规划 / 双指针 + 哈希表，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetc-2/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/">395. 至少有 K 个重复字符的最长子串</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/xiang-jie-mei-ju-shuang-zhi-zhen-jie-fa-50ri1/">【宫水三叶の相信科学系列】为什么不能用「滑动窗口」？以及如何发掘题目性质</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/jie-ben-ti-bang-zhu-da-jia-li-jie-di-gui-obla/">借本题帮助大家理解递归</a></td>
-</tr>
-</tbody></table>
-<p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://segmentfault.com/a/1190000040174595">精读《算法 - 滑动窗口》</a></strong></p>
-</li>
-<li><p><strong><a href="https://labuladong.gitee.io/algo/2/21/60/">我写了首诗，把滑动窗口算法算法变成了默写题</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>双指针</tag>
-        <tag>滑动窗口</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>红黑树</title>
     <url>/post/f89cb603/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
@@ -7401,6 +7353,54 @@
         <tag>查找树</tag>
         <tag>二叉树</tag>
         <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记忆化搜索</title>
+    <url>/post/cb5e0eb8/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
+<span id="more"></span>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+</ul>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<blockquote>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>记忆化搜索</tag>
       </tags>
   </entry>
   <entry>
