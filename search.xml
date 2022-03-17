@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>IDEA .properties 文件中文乱码</title>
-    <url>/post/5816ad50/</url>
-    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
-
-<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
-<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
-
-<p>最后中文乱码问题解决：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>properties</tag>
-        <tag>配置文件</tag>
-        <tag>IntelliJ IDEA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CAP &amp; BASE理论</title>
     <url>/post/4d60196d/</url>
     <content><![CDATA[<h2 id="从集中式到分布式"><a href="#从集中式到分布式" class="headerlink" title="从集中式到分布式"></a>从集中式到分布式</h2><p>ACID 是数据库事务完整性的理论，CAP 是分布式系统设计理论，BASE 是 CAP 理论中 AP 方案的延伸。</p>
@@ -407,6 +385,28 @@
       </categories>
       <tags>
         <tag>容器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>IDEA .properties 文件中文乱码</title>
+    <url>/post/5816ad50/</url>
+    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
+
+<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
+<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
+
+<p>最后中文乱码问题解决：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>properties</tag>
+        <tag>配置文件</tag>
+        <tag>IntelliJ IDEA</tag>
       </tags>
   </entry>
   <entry>
@@ -3283,6 +3283,330 @@
       </tags>
   </entry>
   <entry>
+    <title>curl</title>
+    <url>/post/3e01b4d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>cURL</strong>是一个开源项目，主要的产品是curl（<strong>命令行工具</strong>）和libcurl（C语言的API库），两者功能均是：基于网络协议，对指定URL进行网络传输（发出网络请求）。curl可以得到和提取数据，显示在”标准输出”（stdout）上面。</p>
+<p>cURL涉及是任何网络协议传输，不涉及对具体数据的具体处理。（如：html的渲染等）</p>
+<p>curl 支持多种协议，下面举例讲解如何将它用于网站开发。</p>
+<span id="more"></span>
+
+<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看网页源码"><a href="#查看网页源码" class="headerlink" title="查看网页源码"></a>查看网页源码</h3><p>直接在curl命令后加上网址，就可以看到网页源码。我们以网址<a href="http://www.mi.com为例（选择该网址，主要因为它的网页代码较短）：">www.mi.com为例（选择该网址，主要因为它的网页代码较短）：</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl www.mi.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>301 Moved Permanently<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Moved Permanently<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>The document has moved <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.sina.com.cn/&quot;</span>&gt;</span>here<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="服务器的回应保存成文件"><a href="#服务器的回应保存成文件" class="headerlink" title="服务器的回应保存成文件"></a>服务器的回应保存成文件</h3><p><code>-o</code>参数将服务器的回应保存成文件，等同于<code>wget</code>命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o [文件名] www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o example.html https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将 <code>www.example.com </code>保存成 <code>example.html</code>。</p>
+<p><code>-O</code>参数将服务器回应保存成文件，并将 URL 的最后部分当作文件名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://www.example.com/foo/bar.html</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将服务器回应保存成文件，文件名为<code>bar.html</code>。</p>
+<h3 id="自动跳转（重定向）"><a href="#自动跳转（重定向）" class="headerlink" title="自动跳转（重定向）"></a>自动跳转（重定向）</h3><p><code>-L</code>参数会让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L www.sina.com</span><br></pre></td></tr></table></figure>
+
+<p>键入上面的命令，结果就自动跳转为<a href="http://www.sina.com.cn./">www.sina.com.cn。</a></p>
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="显示头信息"><a href="#显示头信息" class="headerlink" title="显示头信息"></a>显示头信息</h3><p><code>-i </code>参数可以<strong>显示http response的头信息，连同网页代码一起</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令收到服务器回应后，先输出服务器回应的标头，然后空一行，再输出网页的源码。</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">TP/1.1 302 Moved Temporarily</span><br><span class="line">Server: kngx/1.10.2</span><br><span class="line">Date: Fri, 04 Feb 2022 09:49:31 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 160</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.mi.com/</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">x-link-via: zzct010:80;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-I</code> 参数则是<strong>只显示http response的头信息</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令输出服务器对 HEAD 请求的回应。</p>
+<p><code>--head</code>参数等同于<code>-I</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --head https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="显示通信过程"><a href="#显示通信过程" class="headerlink" title="显示通信过程"></a>显示通信过程</h3><p><code>-v </code>参数可以<strong>显示一次http通信的整个过程</strong>（用于调试），包括端口连接和http request头信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v www.mi.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">  Trying 240e:93c:210:3::6:80...</span><br><span class="line">* Connected to www.mi.com (240e:93c:210:3::6) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; Host: www.mi.com</span><br><span class="line">&gt; User-Agent: curl/7.74.0</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt;</span><br><span class="line">* Mark bundle as not supporting multiuse</span><br><span class="line">&lt; HTTP/1.1 302 Moved Temporarily</span><br><span class="line">&lt; Server: kngx/1.10.2</span><br><span class="line">&lt; Date: Fri, 04 Feb 2022 09:52:02 GMT</span><br><span class="line">&lt; Content-Type: text/html</span><br><span class="line">&lt; Content-Length: 160</span><br><span class="line">&lt; Connection: keep-alive</span><br><span class="line">&lt; Location: https://www.mi.com/</span><br><span class="line">&lt; Cache-Control: max-age=0</span><br><span class="line">&lt; x-link-via: zzct010:80;</span><br><span class="line">&lt;</span><br><span class="line">&#123; [160 bytes data]</span><br><span class="line">100   160  100   160    0     0   4444      0 --:--:-- --:--:-- --:--:--  4444<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">* Connection #0 to host www.mi.com left intact</span><br></pre></td></tr></table></figure>
+
+<p>如果你觉得上面的信息还不够，那么下面的命令<strong>可以查看更详细的通信过程</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace output.txt www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace-ascii output.txt www.mi.com</span><br></pre></td></tr></table></figure>
+
+<p>运行后，请打开 output.txt文件查看。</p>
+<p><code>--trace</code>参数也可以用于调试，还会输出原始的二进制数据。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace - https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="发送表单信息"><a href="#发送表单信息" class="headerlink" title="发送表单信息"></a>发送表单信息</h3><p><strong>发送表单信息有GET和POST两种方法</strong>。GET方法相对简单，只要把数据附在网址后面就行。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl example.com/form.cgi?data=xxx</span><br></pre></td></tr></table></figure>
+
+<p><code>-G</code>参数用来构造 URL 的查询字符串。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会发出一个 GET 请求，实际请求的 URL 为<code>https://google.com/search?q=kitties&amp;count=20</code>。如果省略<code>--G</code>，会发出一个 POST 请求。</p>
+<p>如果数据需要 URL 编码，可以结合<code>--data--urlencode</code>参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="发送-POST-请求的数据体"><a href="#发送-POST-请求的数据体" class="headerlink" title="发送 POST 请求的数据体"></a>发送 POST 请求的数据体</h4><p>POST方法必须把数据和网址分开，curl就要用到 <code>--data</code>参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;data=xxx&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-d</code>参数用于发送 POST 请求的数据体。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;login=emma&#x27;</span> -d <span class="string">&#x27;password=123&#x27;</span> -X POST  https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>-d</code> 参数以后，HTTP 请求会自动加上标头<code>Content-Type : application/x-www-form-urlencoded</code>。并且会自动将请求转为 POST 方法，因此可以省略<code>-X POST</code>。</p>
+<p><code>-d</code> 参数可以读取本地文本文件的数据，向服务器发送。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;@data.txt&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令读取<code>data.txt</code>文件的内容，作为数据体向服务器发送。</p>
+<p><code>--data-urlencode</code>参数等同于<code>-d</code>，发送 POST 请求的数据体，区别在于会自动将发送的数据进行 URL 编码。</p>
+<p>如果你的数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST--data-urlencode <span class="string">&quot;date=April 1&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面代码中，发送的数据<code>hello world</code>之间有一个空格，需要进行 URL 编码。</p>
+<h3 id="HTTP-请求的代理"><a href="#HTTP-请求的代理" class="headerlink" title="HTTP 请求的代理"></a>HTTP 请求的代理</h3><p><code>-x</code>参数指定 HTTP 请求的代理。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令指定 HTTP 请求通过<code>myproxy.com:8080</code>的 socks5 代理发出。</p>
+<p>如果没有指定代理协议，默认为 HTTP。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令中，请求的代理使用 HTTP 协议。</p>
+<h3 id="HTTP动词"><a href="#HTTP动词" class="headerlink" title="HTTP动词"></a>HTTP动词</h3><p><code>-X</code>参数指定 HTTP 请求的方法。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令对<code>https://www.example.com</code>发出 POST 请求。</p>
+<p><strong>curl默认的HTTP动词是GET</strong>，<strong>使用</strong> <code>-X</code> <strong>参数可以支持其他动词</strong>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST www.example.com</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X DELETE www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>假定文件上传的表单是下面这样：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&#x27;multipart/form-data&#x27;</span> <span class="attr">action</span>=<span class="string">&quot;upload.cgi&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">file</span> <span class="attr">name</span>=<span class="string">upload</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">submit</span> <span class="attr">name</span>=<span class="string">press</span> <span class="attr">value</span>=<span class="string">&quot;OK&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以用curl这样上传文件：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --form upload=@localfilename --form press=OK [URL]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-F</code>参数用来向服务器上传二进制文件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会给 HTTP 请求加上标头<code>Content-Type: multipart/form-data</code>，然后将文件<code>photo.png</code>作为<code>file</code>字段上传。</p>
+<p><code>-F</code>参数可以指定 MIME 类型。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令指定 MIME 类型为<code>image/png</code>，否则 curl 会把 MIME 类型设为<code>application/octet-stream</code>。</p>
+<p><code>-F</code>参数也可以指定文件名。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;filename=me.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
+
+<p>上面命令中，原始文件名为<code>photo.png</code>，但是服务器接收到的文件名为<code>me.png</code>。</p>
+<h3 id="Referer字段"><a href="#Referer字段" class="headerlink" title="Referer字段"></a>Referer字段</h3><p>有时你需要在http request头信息中，提供一个referer字段，表示你是从哪里跳转过来的。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --referer http://www.example.com http://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p><code>-e</code>参数用来设置 HTTP 的标头<code>Referer</code>，表示请求的来源。</p>
+<p>例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将<code>Referer</code>标头设为<code>https://google.com?q=example</code>。</p>
+<p><code>-H</code>参数可以通过直接添加标头<code>Referer</code>，达到同样效果。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Referer: https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="User-Agent字段"><a href="#User-Agent字段" class="headerlink" title="User Agent字段"></a>User Agent字段</h3><p>这个字段是用来表示<strong>客户端的设备信息</strong>。服务器有时会根据这个字段，针对不同设备，返回不同格式的网页，比如手机版和桌面版。</p>
+<p>iPhone4的User Agent是</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Mozilla/5.0 (iPhone; U; CPU iPhone OS 4<span class="built_in">_</span>0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7</span><br></pre></td></tr></table></figure>
+
+<p>curl可以这样模拟：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user-agent <span class="string">&quot;[User Agent]&quot;</span> [URL]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-A</code>参数指定客户端的用户代理标头，即<code>User-Agent</code>。curl 的默认用户代理字符串是<code>curl/[version]</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将<code>User-Agent</code>改成 Chrome 浏览器。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会移除<code>User-Agent</code>标头。</p>
+<p>也可以通过<code>-H</code>参数直接指定标头，更改<code>User-Agent</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;User-Agent: php/1.0&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>使用 <code>--cookie</code> 参数，可以让curl发送cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --cookie <span class="string">&quot;name=xxx&quot;</span> www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>至于具体的cookie的值，可以从http response头信息的<code>Set-Cookie</code>字段中得到。</p>
+<p><code>-c cookie-file</code>可以保存服务器返回的cookie到文件，<code>-b cookie-file</code>可以使用这个文件作为cookie信息，进行后续的请求。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies http://example.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将服务器的 HTTP 回应所设置 Cookie 写入文本文件<code>cookies.txt</code>。</p>
+<p><code>-b</code>参数用来向服务器发送 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies http://example.com</span><br></pre></td></tr></table></figure>
+
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo=bar&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令会生成一个标头<code>Cookie: foo=bar</code>，向服务器发送一个名为<code>foo</code>、值为<code>bar</code>的 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo1=bar;foo2=bar2&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令发送两个 Cookie。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令读取本地文件<code>cookies.txt</code>，里面是服务器设置的 Cookie（参见<code>-c</code>参数），将其发送到服务器。</p>
+<h3 id="增加头信息"><a href="#增加头信息" class="headerlink" title="增加头信息"></a>增加头信息</h3><p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --header <span class="string">&quot;Content-Type:application/json&quot;</span> http://example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-H</code>参数添加 HTTP 请求的标头。</p>
+<p>例子：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加 HTTP 标头<code>Accept-Language: en-US</code>。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> -H <span class="string">&#x27;Secret-Message: xyzzy&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加两个 HTTP 标头。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;&#123;&quot;login&quot;: &quot;emma&quot;, &quot;pass&quot;: &quot;123&quot;&#125;&#x27;</span> -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令添加 HTTP 请求的标头是<code>Content-Type: application/json</code>，然后用<code>-d</code>参数发送 JSON 数据。</p>
+<h3 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h3><p>有些网域需要HTTP认证，这时curl需要用到 <code>--user</code> 参数。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user name:password example.com</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="跳过-SSL-检测"><a href="#跳过-SSL-检测" class="headerlink" title="跳过 SSL 检测"></a>跳过 SSL 检测</h3><p><code>-k</code>参数指定跳过 SSL 检测。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -k https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令不会检查服务器的 SSL 证书是否正确。</p>
+<h3 id="限制-HTTP-请求和回应的带宽"><a href="#限制-HTTP-请求和回应的带宽" class="headerlink" title="限制 HTTP 请求和回应的带宽"></a>限制 HTTP 请求和回应的带宽</h3><p><code>--limit-rate</code>用来限制 HTTP 请求和回应的带宽，模拟慢网速的环境。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 200k https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令将带宽限制在每秒 200K 字节。</p>
+<h3 id="错误信息的输出"><a href="#错误信息的输出" class="headerlink" title="错误信息的输出"></a>错误信息的输出</h3><p><code>-s</code> 参数将不输出错误和进度信息。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://www.example.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令一旦发生错误，不会显示错误信息。不发生错误的话，会正常显示运行结果。</p>
+<p>如果想让 curl 不产生任何输出，可以使用下面的命令。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>-S</code>参数指定只输出错误信息，通常与<code>-s</code>一起使用。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -S -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
+
+<p>上面命令没有任何输出，除非发生错误。</p>
+<h3 id="权限认证"><a href="#权限认证" class="headerlink" title="权限认证"></a>权限认证</h3><p><code>-u</code> 参数用来设置服务器认证的用户名和密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob:12345&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令设置用户名为<code>bob</code>，密码为<code>12345</code>，然后将其转为 HTTP 标头<code>Authorization: Basic Ym9iOjEyMzQ1</code>。</p>
+<p>curl 能够识别 URL 里面的用户名和密码。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://bob:12345@google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令能够识别 URL 里面的用户名和密码，将其转为上个例子里面的 HTTP 标头。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
+
+<p>上面命令只设置了用户名，执行后，curl 会提示用户输入密码。</p>
+<h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><p>​        curl命令作用 curl命令是一个功能强大的网络工具，它能够通过http、ftp等方式下载文件，也能够上传文件，同时支持HTTPS等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。其实curl远不止前面所说的那些功能，大家可以通过man curl阅读手册页获取更多的信息。类似的工具还有wget。curl命令使用了libcurl库来实现，libcurl库常用在C程序中用来处理HTTP请求，curlpp是libcurl的一个C++封装，这几个东西可以用在抓取网页、网络监控等方面的开发，而curl命令可以帮助来解决开发过程中遇到的问题。</p>
+<p>常用参数 curl命令参数很多，这里只列出我曾经用过、特别是在shell脚本中经常用到过的那些。</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">-a/--append 上传文件时，附加到目标文件</span><br><span class="line"></span><br><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line"></span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line"></span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line"></span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line"></span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line"></span><br><span class="line">    --data-ascii &lt;data&gt;	以ascii的方式post数据</span><br><span class="line">     --data-binary &lt;data&gt;	以二进制的方式post数据</span><br><span class="line">     --negotiate	使用HTTP身份验证</span><br><span class="line">     --digest	使用数字身份验证</span><br><span class="line">     --disable-eprt	禁止使用EPRT或LPRT</span><br><span class="line">     --disable-epsv	禁止使用EPSV</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line"></span><br><span class="line">     --egd-file &lt;file&gt;  为随机数据(SSL)设置EGD socket路径</span><br><span class="line"></span><br><span class="line">     --tcp-nodelay     使用TCP<span class="built_in">_</span>NODELAY选项</span><br><span class="line"></span><br><span class="line">-e/--referer &lt;URL&gt;  指定引用地址</span><br><span class="line"></span><br><span class="line">-F/--form &lt;name=content&gt;   模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">     --form-string &lt;name=string&gt; 模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">-G/--get    以get的方式来发送数据</span><br><span class="line"></span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">    --ignore-content-length  忽略的HTTP头信息的长度</span><br><span class="line"></span><br><span class="line">-i/--include     输出时包括protocol头信息</span><br><span class="line"></span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line"></span><br><span class="line">-k/--insecure  允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line">-K/--config    指定的配置文件读取</span><br><span class="line"></span><br><span class="line">-l/--list-only   列出ftp目录下的文件名称</span><br><span class="line"></span><br><span class="line">    --limit-rate &lt;rate&gt; 设置传输速度</span><br><span class="line"></span><br><span class="line">     --local-port&lt;NUM&gt;  强制使用本地端口号</span><br><span class="line"></span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line"></span><br><span class="line">     --max-redirs &lt;num&gt;    设置最大读取的目录数</span><br><span class="line"></span><br><span class="line">     --max-filesize &lt;bytes&gt;  设置最大下载的文件总量</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt;   指定输出文件名称</span><br><span class="line"></span><br><span class="line">-O/--remote-name  把输出写到该文件中，保留远程文件的文件名</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-v/--verbose  小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line"></span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line"></span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line"></span><br><span class="line">   --range-file 读取（SSL）的随机文件</span><br><span class="line"></span><br><span class="line">-R/--remote-time   在本地生成文件时，保留远程文件时间</span><br><span class="line"></span><br><span class="line">    --retry &lt;num&gt;   指定重试次数</span><br><span class="line"></span><br><span class="line">    --retry-delay &lt;seconds&gt;   传输出现问题时，设置重试间隔时间</span><br><span class="line"></span><br><span class="line">    --retry-max-time &lt;seconds&gt;  传输出现问题时，设置最大重试时间</span><br><span class="line"></span><br><span class="line">-s/--silent  静默模式。不输出任何东西</span><br><span class="line"></span><br><span class="line">-S/--show-error  显示错误</span><br><span class="line"></span><br><span class="line">    --socks4 &lt;host[:port]&gt; 用socks4代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --socks5 &lt;host[:port]&gt; 用socks5代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --stderr &lt;file&gt;</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;host[:port]&gt; 在给定的端口上使用HTTP代理</span><br><span class="line"></span><br><span class="line">-X/--request &lt;command&gt; 指定什么命令。curl默认的HTTP动词是GET，使用-X参数可以支持其他动词。</span><br><span class="line"></span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br></pre></td></tr></table></figure>
+
+
+<p>更多内容查看：</p>
+<ul>
+<li><strong><a href="https://curl.se/docs/manpage.html">curl 用户手册</a></strong></li>
+</ul>
+<p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://www.ruanyifeng.com/blog/2011/09/curl.html">curl网站开发指南</a></strong></p>
+</li>
+<li><p><strong><a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 的用法指南</a></strong></p>
+</li>
+<li><p><strong><a href="https://handerfly.github.io/linux/2019/05/26/curl%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">curl命令详解</a></strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>命令行工具</category>
+      </categories>
+      <tags>
+        <tag>计算机网络</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/post/2633a26/</url>
+    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>二分</title>
     <url>/post/9947c71c/</url>
     <content><![CDATA[<h2 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>二分查找（英语：binary search），也称折半搜索（英语：half-interval search）、对数搜索（英语：logarithmic search），是用来在一个有序数组中查找某一元素的算法。</p>
@@ -3494,6 +3818,134 @@
       <tags>
         <tag>二分</tag>
         <tag>三分</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>回溯</title>
+    <url>/post/f92eff5d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
+<p>回溯法是一种选优搜索法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。</p>
+<p>许多复杂的，规模较大的问题都可以使用回溯法，有“<strong>通用解题方法</strong>”的美称。</p>
+<span id="more"></span>
+<h3 id="与穷举的联系"><a href="#与穷举的联系" class="headerlink" title="与穷举的联系"></a>与穷举的联系</h3><p>回溯法简单来说就是按照深度优先的顺序，穷举所有可能性的算法，但是回溯算法比暴力穷举法更高明的地方就是回溯算法可以随时判断当前状态是否符合问题的条件。一旦不符合条件，那么就退回到上一个状态，省去了继续往下探索的时间。</p>
+<p>回溯法的特点是<strong>深度优先遍历</strong>，也就是该问题的遍历顺序是1-&gt;2-&gt;3，然后从子节点3返回，从子节点2返回，再到1-&gt;3-&gt;2，以此类推。</p>
+<p>状态的返回只有当前的节点不再满足问题的条件或者我们已经找到了问题的一个解时，才会返回，否则会以深度优先一直在<strong>解空间树</strong>内遍历下去。</p>
+<p>当然，对于某些问题如果其解空间过大，即使用回溯法进行计算也有很高的时间复杂度，因为回溯法会尝试解空间树中所有的分支。</p>
+<h3 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h3><p>所以根据这类问题，有一些优化剪枝策略以及启发式搜索策略。</p>
+<p><strong>优化剪枝策略</strong>：判断当前的分支树是否符合问题的条件，如果当前分支树不符合条件，那么就不再遍历这个分支里的所有路径。</p>
+<p><strong>启发式搜索策略</strong>：给回溯法搜索子节点的顺序设定一个优先级，从该子节点往下遍历更有可能找到问题的解。</p>
+<h2 id="一般步骤"><a href="#一般步骤" class="headerlink" title="一般步骤"></a>一般步骤</h2><p>回溯算法也叫<strong>试探法</strong>，它是一种系统地搜索问题的解的方法。</p>
+<p>用回溯算法解决问题的一般步骤：</p>
+<ol>
+<li><strong>针对</strong>所给<strong>问题</strong>，<strong>定义问题的解空间</strong>，它至少包含问题的一个（最优）解。</li>
+<li><strong>确定</strong>易于搜索的<strong>解空间结构</strong>，使得能用回溯法方便地搜索整个解空间 。</li>
+<li><strong>以深度优先的方式搜索解空间</strong>，并且在<strong>搜索过程中</strong>用<strong>剪枝</strong>函数避免无效搜索。</li>
+</ol>
+<h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。<br><strong>回溯算法说白了就是穷举法。不过回溯算法使用剪枝函数，剪去一些不可能到达 最终状态（即答案状态）的节点，从而减少状态空间树节点的生成。</strong></p>
+<p>回溯法是一个既带有<strong>系统性</strong>又带有<strong>跳跃性</strong>的的搜索算法。</p>
+<p>它在包含问题的所有解的解空间树中，按照深度优先的策略，从根结点出发搜索解空间树。<br>算法搜索至解空间树的任一结点时，总是先判断该结点是否肯定不包含问题的解。<br>如果肯定不包含，则跳过对以该结点为根的子树的系统搜索，逐层向其祖先结点回溯。<br>否则，进入该子树，继续按深度优先的策略进行搜索。</p>
+<p>回溯法在用来求问题的所有解时，要回溯到根，且根结点的所有子树都已被搜索遍才结束。<br>而回溯法在用来求问题的任一解时，只要搜索到问题的一个解就可以结束。</p>
+<p>这种以<strong>深度优先</strong>的方式<strong>系统地搜索</strong>问题的解的算法称为回溯法，它适用于解一些<strong>组合数较大的问题</strong>。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/">17. 电话号码的字母组合</a></td>
+<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/dian-hua-hao-ma-de-zi-mu-zu-he-by-leetcode-solutio/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/">通俗易懂+动画演示 17. 电话号码的字母组合</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/combination-sum/">39. 组合总和</a></td>
+<td><a href="https://leetcode-cn.com/problems/combination-sum/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-2/">回溯算法 + 剪枝（回溯经典例题详解）</a><br/><a href="https://leetcode-cn.com/problems/combination-sum/solution/39-zu-he-zong-he-by-feyl-lj9e/">回溯 + 剪枝</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-search/">79. 单词搜索</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-search/solution/dan-ci-sou-suo-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-search/solution/zai-er-wei-ping-mian-shang-shi-yong-hui-su-fa-pyth/">回溯算法（Java）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/">131. 分割回文串</a></td>
+<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/hui-su-you-hua-jia-liao-dong-tai-gui-hua-by-liweiw/">回溯算法、优化（使用动态规划预处理数组）</a></td>
+</tr>
+</tbody></table>
+<p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://houbb.github.io/2020/01/23/data-struct-learn-07-base-backtracking">五大基本算法之回溯算法 backtracking</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>回溯</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>双指针</title>
+    <url>/post/91a7e4d1/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
+<p>双指针是一种简单而又灵活的技巧和思想，单独使用可以轻松解决一些特定问题，和其他算法结合也能发挥多样的用处。</p>
+<span id="more"></span>
+
+
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="对撞指针"><a href="#对撞指针" class="headerlink" title="对撞指针"></a>对撞指针</h3><p><strong>对撞指针</strong>是指在有序数组中，将指向最左侧的索引定义为**左指针(left)<strong>，最右侧的定义为</strong>右指针(right)**，然后从两头向中间进行数组遍历。</p>
+<blockquote>
+<p>对撞指针适用于<strong>有序数组</strong>，也就是说当你遇到题目给定有序数组时，应该第一时间想到用对撞指针解题。</p>
+</blockquote>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></td>
+<td><a href="https://leetcode-cn.com/problems/3sum/solution/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/">画解算法：15. 三数之和</a><br/><a href="https://leetcode-cn.com/problems/3sum/solution/san-shu-zhi-he-by-leetcode-solution/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></td>
+<td><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/">下一个排列算法详解：思路+推导+步骤，看不懂算我输！</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/sort-colors/">75. 颜色分类</a></td>
+<td><a href="https://leetcode-cn.com/problems/sort-colors/solution/yan-se-fen-lei-by-leetcode-solution/">颜色分类</a><br/><a href="https://leetcode-cn.com/problems/sort-colors/solution/kuai-su-pai-xu-partition-guo-cheng-she-ji-xun-huan/">快速排序的子过程 partition（重点在设计循环不变量）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">581. 最短无序连续子数组</a></td>
+<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/">思路清晰明了，看不懂？？不存在的！！</a><br/><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/zui-duan-wu-xu-lian-xu-zi-shu-zu-by-leet-yhlf/">官方题解</a></td>
+</tr>
+</tbody></table>
+<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p><strong>快慢指针</strong>也是双指针，但是两个指针从同一侧开始遍历数组，将这两个指针分别定义为<strong>快指针(fast)</strong> 和**慢指针(slow)**，两个指针以不同的策略移动，直到两个指针的值相等（或其他特殊条件）为止，如 <code>fast</code> 每次增长两个，<code>slow</code> 每次增长一个。</p>
+<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+<th>技巧</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></td>
+<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/">160. 相交链表（双指针，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/xiang-jiao-lian-biao-by-leetcode-solutio-a8jn/">官方题解</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/sort-list/">148. 排序链表</a></td>
+<td><a href="https://leetcode-cn.com/problems/sort-list/solution/sort-list-gui-bing-pai-xu-lian-biao-by-jyd/">Sort List （归并排序链表）</a><br/><a href="https://leetcode-cn.com/problems/sort-list/solution/pai-xu-lian-biao-by-leetcode-solution/">官方题解</a></td>
+<td>链表等长拆分、归并排序</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当遇到有序数组时，应该优先想到<strong>双指针</strong>来解决问题，因两个指针的同时遍历会减少空间复杂度和时间复杂度。</p>
+<p><strong>对撞指针</strong>主要解决数组（或者字符串）中的问题，比如二分查找；<strong>快慢指针</strong>主要解决链表中的问题，比如典型的判定链表中是否包含环。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>双指针</tag>
       </tags>
   </entry>
   <entry>
@@ -5618,458 +6070,6 @@
       </tags>
   </entry>
   <entry>
-    <title>位运算</title>
-    <url>/post/2633a26/</url>
-    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
-<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
-</li>
-<li><p><strong>判断两个数是否异号</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
-</li>
-<li><p><strong>不用临时变量交换两个数</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>加一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>减一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
-</blockquote>
-</li>
-</ol>
-<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>双指针</title>
-    <url>/post/91a7e4d1/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
-<p>双指针是一种简单而又灵活的技巧和思想，单独使用可以轻松解决一些特定问题，和其他算法结合也能发挥多样的用处。</p>
-<span id="more"></span>
-
-
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="对撞指针"><a href="#对撞指针" class="headerlink" title="对撞指针"></a>对撞指针</h3><p><strong>对撞指针</strong>是指在有序数组中，将指向最左侧的索引定义为**左指针(left)<strong>，最右侧的定义为</strong>右指针(right)**，然后从两头向中间进行数组遍历。</p>
-<blockquote>
-<p>对撞指针适用于<strong>有序数组</strong>，也就是说当你遇到题目给定有序数组时，应该第一时间想到用对撞指针解题。</p>
-</blockquote>
-<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></td>
-<td><a href="https://leetcode-cn.com/problems/3sum/solution/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/">画解算法：15. 三数之和</a><br/><a href="https://leetcode-cn.com/problems/3sum/solution/san-shu-zhi-he-by-leetcode-solution/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></td>
-<td><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/">下一个排列算法详解：思路+推导+步骤，看不懂算我输！</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/sort-colors/">75. 颜色分类</a></td>
-<td><a href="https://leetcode-cn.com/problems/sort-colors/solution/yan-se-fen-lei-by-leetcode-solution/">颜色分类</a><br/><a href="https://leetcode-cn.com/problems/sort-colors/solution/kuai-su-pai-xu-partition-guo-cheng-she-ji-xun-huan/">快速排序的子过程 partition（重点在设计循环不变量）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">581. 最短无序连续子数组</a></td>
-<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/">思路清晰明了，看不懂？？不存在的！！</a><br/><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/zui-duan-wu-xu-lian-xu-zi-shu-zu-by-leet-yhlf/">官方题解</a></td>
-</tr>
-</tbody></table>
-<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p><strong>快慢指针</strong>也是双指针，但是两个指针从同一侧开始遍历数组，将这两个指针分别定义为<strong>快指针(fast)</strong> 和**慢指针(slow)**，两个指针以不同的策略移动，直到两个指针的值相等（或其他特殊条件）为止，如 <code>fast</code> 每次增长两个，<code>slow</code> 每次增长一个。</p>
-<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-<th>技巧</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></td>
-<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/">160. 相交链表（双指针，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/xiang-jiao-lian-biao-by-leetcode-solutio-a8jn/">官方题解</a></td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/sort-list/">148. 排序链表</a></td>
-<td><a href="https://leetcode-cn.com/problems/sort-list/solution/sort-list-gui-bing-pai-xu-lian-biao-by-jyd/">Sort List （归并排序链表）</a><br/><a href="https://leetcode-cn.com/problems/sort-list/solution/pai-xu-lian-biao-by-leetcode-solution/">官方题解</a></td>
-<td>链表等长拆分、归并排序</td>
-</tr>
-</tbody></table>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当遇到有序数组时，应该优先想到<strong>双指针</strong>来解决问题，因两个指针的同时遍历会减少空间复杂度和时间复杂度。</p>
-<p><strong>对撞指针</strong>主要解决数组（或者字符串）中的问题，比如二分查找；<strong>快慢指针</strong>主要解决链表中的问题，比如典型的判定链表中是否包含环。</p>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>双指针</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>curl</title>
-    <url>/post/3e01b4d/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>cURL</strong>是一个开源项目，主要的产品是curl（<strong>命令行工具</strong>）和libcurl（C语言的API库），两者功能均是：基于网络协议，对指定URL进行网络传输（发出网络请求）。curl可以得到和提取数据，显示在”标准输出”（stdout）上面。</p>
-<p>cURL涉及是任何网络协议传输，不涉及对具体数据的具体处理。（如：html的渲染等）</p>
-<p>curl 支持多种协议，下面举例讲解如何将它用于网站开发。</p>
-<span id="more"></span>
-
-<h2 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h2><h3 id="查看网页源码"><a href="#查看网页源码" class="headerlink" title="查看网页源码"></a>查看网页源码</h3><p>直接在curl命令后加上网址，就可以看到网页源码。我们以网址<a href="http://www.mi.com为例（选择该网址，主要因为它的网页代码较短）：">www.mi.com为例（选择该网址，主要因为它的网页代码较短）：</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl www.mi.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">HTML</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//IETF//DTD HTML 2.0//EN&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>301 Moved Permanently<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Moved Permanently<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>The document has moved <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://www.sina.com.cn/&quot;</span>&gt;</span>here<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="服务器的回应保存成文件"><a href="#服务器的回应保存成文件" class="headerlink" title="服务器的回应保存成文件"></a>服务器的回应保存成文件</h3><p><code>-o</code>参数将服务器的回应保存成文件，等同于<code>wget</code>命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o [文件名] www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -o example.html https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将 <code>www.example.com </code>保存成 <code>example.html</code>。</p>
-<p><code>-O</code>参数将服务器回应保存成文件，并将 URL 的最后部分当作文件名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://www.example.com/foo/bar.html</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将服务器回应保存成文件，文件名为<code>bar.html</code>。</p>
-<h3 id="自动跳转（重定向）"><a href="#自动跳转（重定向）" class="headerlink" title="自动跳转（重定向）"></a>自动跳转（重定向）</h3><p><code>-L</code>参数会让 HTTP 请求跟随服务器的重定向。curl 默认不跟随重定向。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L www.sina.com</span><br></pre></td></tr></table></figure>
-
-<p>键入上面的命令，结果就自动跳转为<a href="http://www.sina.com.cn./">www.sina.com.cn。</a></p>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -L -d <span class="string">&#x27;tweet=hi&#x27;</span> https://api.twitter.com/tweet</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="显示头信息"><a href="#显示头信息" class="headerlink" title="显示头信息"></a>显示头信息</h3><p><code>-i </code>参数可以<strong>显示http response的头信息，连同网页代码一起</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -i www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令收到服务器回应后，先输出服务器回应的标头，然后空一行，再输出网页的源码。</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">TP/1.1 302 Moved Temporarily</span><br><span class="line">Server: kngx/1.10.2</span><br><span class="line">Date: Fri, 04 Feb 2022 09:49:31 GMT</span><br><span class="line">Content-Type: text/html</span><br><span class="line">Content-Length: 160</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Location: https://www.mi.com/</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">x-link-via: zzct010:80;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-I</code> 参数则是<strong>只显示http response的头信息</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -I https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令输出服务器对 HEAD 请求的回应。</p>
-<p><code>--head</code>参数等同于<code>-I</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --head https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="显示通信过程"><a href="#显示通信过程" class="headerlink" title="显示通信过程"></a>显示通信过程</h3><p><code>-v </code>参数可以<strong>显示一次http通信的整个过程</strong>（用于调试），包括端口连接和http request头信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -v www.mi.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">  Trying 240e:93c:210:3::6:80...</span><br><span class="line">* Connected to www.mi.com (240e:93c:210:3::6) port 80 (#0)</span><br><span class="line">&gt; GET / HTTP/1.1</span><br><span class="line">&gt; Host: www.mi.com</span><br><span class="line">&gt; User-Agent: curl/7.74.0</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt;</span><br><span class="line">* Mark bundle as not supporting multiuse</span><br><span class="line">&lt; HTTP/1.1 302 Moved Temporarily</span><br><span class="line">&lt; Server: kngx/1.10.2</span><br><span class="line">&lt; Date: Fri, 04 Feb 2022 09:52:02 GMT</span><br><span class="line">&lt; Content-Type: text/html</span><br><span class="line">&lt; Content-Length: 160</span><br><span class="line">&lt; Connection: keep-alive</span><br><span class="line">&lt; Location: https://www.mi.com/</span><br><span class="line">&lt; Cache-Control: max-age=0</span><br><span class="line">&lt; x-link-via: zzct010:80;</span><br><span class="line">&lt;</span><br><span class="line">&#123; [160 bytes data]</span><br><span class="line">100   160  100   160    0     0   4444      0 --:--:-- --:--:-- --:--:--  4444<span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">bgcolor</span>=<span class="string">&quot;white&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">center</span>&gt;</span><span class="tag">&lt;<span class="name">h1</span>&gt;</span>302 Found<span class="tag">&lt;/<span class="name">h1</span>&gt;</span><span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">hr</span>&gt;</span><span class="tag">&lt;<span class="name">center</span>&gt;</span>kngx/1.10.2<span class="tag">&lt;/<span class="name">center</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line">* Connection #0 to host www.mi.com left intact</span><br></pre></td></tr></table></figure>
-
-<p>如果你觉得上面的信息还不够，那么下面的命令<strong>可以查看更详细的通信过程</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace output.txt www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace-ascii output.txt www.mi.com</span><br></pre></td></tr></table></figure>
-
-<p>运行后，请打开 output.txt文件查看。</p>
-<p><code>--trace</code>参数也可以用于调试，还会输出原始的二进制数据。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --trace - https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="发送表单信息"><a href="#发送表单信息" class="headerlink" title="发送表单信息"></a>发送表单信息</h3><p><strong>发送表单信息有GET和POST两种方法</strong>。GET方法相对简单，只要把数据附在网址后面就行。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl example.com/form.cgi?data=xxx</span><br></pre></td></tr></table></figure>
-
-<p><code>-G</code>参数用来构造 URL 的查询字符串。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G -d <span class="string">&#x27;q=kitties&#x27;</span> -d <span class="string">&#x27;count=20&#x27;</span> https://google.com/search</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会发出一个 GET 请求，实际请求的 URL 为<code>https://google.com/search?q=kitties&amp;count=20</code>。如果省略<code>--G</code>，会发出一个 POST 请求。</p>
-<p>如果数据需要 URL 编码，可以结合<code>--data--urlencode</code>参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -G --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="发送-POST-请求的数据体"><a href="#发送-POST-请求的数据体" class="headerlink" title="发送 POST 请求的数据体"></a>发送 POST 请求的数据体</h4><p>POST方法必须把数据和网址分开，curl就要用到 <code>--data</code>参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST --data <span class="string">&quot;data=xxx&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-d</code>参数用于发送 POST 请求的数据体。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d<span class="string">&#x27;login=emma＆password=123&#x27;</span>-X POST https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>或者</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;login=emma&#x27;</span> -d <span class="string">&#x27;password=123&#x27;</span> -X POST  https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>使用 <code>-d</code> 参数以后，HTTP 请求会自动加上标头<code>Content-Type : application/x-www-form-urlencoded</code>。并且会自动将请求转为 POST 方法，因此可以省略<code>-X POST</code>。</p>
-<p><code>-d</code> 参数可以读取本地文本文件的数据，向服务器发送。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;@data.txt&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令读取<code>data.txt</code>文件的内容，作为数据体向服务器发送。</p>
-<p><code>--data-urlencode</code>参数等同于<code>-d</code>，发送 POST 请求的数据体，区别在于会自动将发送的数据进行 URL 编码。</p>
-<p>如果你的数据没有经过表单编码，还可以让curl为你编码，参数是<code>--data-urlencode</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST--data-urlencode <span class="string">&quot;date=April 1&quot;</span> example.com/form.cgi</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --data-urlencode <span class="string">&#x27;comment=hello world&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面代码中，发送的数据<code>hello world</code>之间有一个空格，需要进行 URL 编码。</p>
-<h3 id="HTTP-请求的代理"><a href="#HTTP-请求的代理" class="headerlink" title="HTTP 请求的代理"></a>HTTP 请求的代理</h3><p><code>-x</code>参数指定 HTTP 请求的代理。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x socks5://james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令指定 HTTP 请求通过<code>myproxy.com:8080</code>的 socks5 代理发出。</p>
-<p>如果没有指定代理协议，默认为 HTTP。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -x james:cats@myproxy.com:8080 https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令中，请求的代理使用 HTTP 协议。</p>
-<h3 id="HTTP动词"><a href="#HTTP动词" class="headerlink" title="HTTP动词"></a>HTTP动词</h3><p><code>-X</code>参数指定 HTTP 请求的方法。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令对<code>https://www.example.com</code>发出 POST 请求。</p>
-<p><strong>curl默认的HTTP动词是GET</strong>，<strong>使用</strong> <code>-X</code> <strong>参数可以支持其他动词</strong>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X POST www.example.com</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -X DELETE www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><p>假定文件上传的表单是下面这样：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&#x27;multipart/form-data&#x27;</span> <span class="attr">action</span>=<span class="string">&quot;upload.cgi&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">file</span> <span class="attr">name</span>=<span class="string">upload</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">submit</span> <span class="attr">name</span>=<span class="string">press</span> <span class="attr">value</span>=<span class="string">&quot;OK&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>可以用curl这样上传文件：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --form upload=@localfilename --form press=OK [URL]</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-F</code>参数用来向服务器上传二进制文件。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会给 HTTP 请求加上标头<code>Content-Type: multipart/form-data</code>，然后将文件<code>photo.png</code>作为<code>file</code>字段上传。</p>
-<p><code>-F</code>参数可以指定 MIME 类型。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;type=image/png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令指定 MIME 类型为<code>image/png</code>，否则 curl 会把 MIME 类型设为<code>application/octet-stream</code>。</p>
-<p><code>-F</code>参数也可以指定文件名。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -F <span class="string">&#x27;file=@photo.png;filename=me.png&#x27;</span> https://google.com/profile</span><br></pre></td></tr></table></figure>
-
-<p>上面命令中，原始文件名为<code>photo.png</code>，但是服务器接收到的文件名为<code>me.png</code>。</p>
-<h3 id="Referer字段"><a href="#Referer字段" class="headerlink" title="Referer字段"></a>Referer字段</h3><p>有时你需要在http request头信息中，提供一个referer字段，表示你是从哪里跳转过来的。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --referer http://www.example.com http://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p><code>-e</code>参数用来设置 HTTP 的标头<code>Referer</code>，表示请求的来源。</p>
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -e <span class="string">&#x27;https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将<code>Referer</code>标头设为<code>https://google.com?q=example</code>。</p>
-<p><code>-H</code>参数可以通过直接添加标头<code>Referer</code>，达到同样效果。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Referer: https://google.com?q=example&#x27;</span> https://www.example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="User-Agent字段"><a href="#User-Agent字段" class="headerlink" title="User Agent字段"></a>User Agent字段</h3><p>这个字段是用来表示<strong>客户端的设备信息</strong>。服务器有时会根据这个字段，针对不同设备，返回不同格式的网页，比如手机版和桌面版。</p>
-<p>iPhone4的User Agent是</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Mozilla/5.0 (iPhone; U; CPU iPhone OS 4<span class="built_in">_</span>0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7</span><br></pre></td></tr></table></figure>
-
-<p>curl可以这样模拟：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user-agent <span class="string">&quot;[User Agent]&quot;</span> [URL]</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-A</code>参数指定客户端的用户代理标头，即<code>User-Agent</code>。curl 的默认用户代理字符串是<code>curl/[version]</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将<code>User-Agent</code>改成 Chrome 浏览器。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -A <span class="string">&#x27;&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会移除<code>User-Agent</code>标头。</p>
-<p>也可以通过<code>-H</code>参数直接指定标头，更改<code>User-Agent</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;User-Agent: php/1.0&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>使用 <code>--cookie</code> 参数，可以让curl发送cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --cookie <span class="string">&quot;name=xxx&quot;</span> www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>至于具体的cookie的值，可以从http response头信息的<code>Set-Cookie</code>字段中得到。</p>
-<p><code>-c cookie-file</code>可以保存服务器返回的cookie到文件，<code>-b cookie-file</code>可以使用这个文件作为cookie信息，进行后续的请求。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies http://example.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -c cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将服务器的 HTTP 回应所设置 Cookie 写入文本文件<code>cookies.txt</code>。</p>
-<p><code>-b</code>参数用来向服务器发送 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies http://example.com</span><br></pre></td></tr></table></figure>
-
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo=bar&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令会生成一个标头<code>Cookie: foo=bar</code>，向服务器发送一个名为<code>foo</code>、值为<code>bar</code>的 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b <span class="string">&#x27;foo1=bar;foo2=bar2&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令发送两个 Cookie。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -b cookies.txt https://www.google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令读取本地文件<code>cookies.txt</code>，里面是服务器设置的 Cookie（参见<code>-c</code>参数），将其发送到服务器。</p>
-<h3 id="增加头信息"><a href="#增加头信息" class="headerlink" title="增加头信息"></a>增加头信息</h3><p>有时需要在http request之中，自行增加一个头信息。<code>--header</code>参数就可以起到这个作用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --header <span class="string">&quot;Content-Type:application/json&quot;</span> http://example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-H</code>参数添加 HTTP 请求的标头。</p>
-<p>例子：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加 HTTP 标头<code>Accept-Language: en-US</code>。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -H <span class="string">&#x27;Accept-Language: en-US&#x27;</span> -H <span class="string">&#x27;Secret-Message: xyzzy&#x27;</span> https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加两个 HTTP 标头。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -d <span class="string">&#x27;&#123;&quot;login&quot;: &quot;emma&quot;, &quot;pass&quot;: &quot;123&quot;&#125;&#x27;</span> -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令添加 HTTP 请求的标头是<code>Content-Type: application/json</code>，然后用<code>-d</code>参数发送 JSON 数据。</p>
-<h3 id="HTTP认证"><a href="#HTTP认证" class="headerlink" title="HTTP认证"></a>HTTP认证</h3><p>有些网域需要HTTP认证，这时curl需要用到 <code>--user</code> 参数。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --user name:password example.com</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="跳过-SSL-检测"><a href="#跳过-SSL-检测" class="headerlink" title="跳过 SSL 检测"></a>跳过 SSL 检测</h3><p><code>-k</code>参数指定跳过 SSL 检测。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -k https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令不会检查服务器的 SSL 证书是否正确。</p>
-<h3 id="限制-HTTP-请求和回应的带宽"><a href="#限制-HTTP-请求和回应的带宽" class="headerlink" title="限制 HTTP 请求和回应的带宽"></a>限制 HTTP 请求和回应的带宽</h3><p><code>--limit-rate</code>用来限制 HTTP 请求和回应的带宽，模拟慢网速的环境。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl --limit-rate 200k https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令将带宽限制在每秒 200K 字节。</p>
-<h3 id="错误信息的输出"><a href="#错误信息的输出" class="headerlink" title="错误信息的输出"></a>错误信息的输出</h3><p><code>-s</code> 参数将不输出错误和进度信息。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s https://www.example.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令一旦发生错误，不会显示错误信息。不发生错误的话，会正常显示运行结果。</p>
-<p>如果想让 curl 不产生任何输出，可以使用下面的命令。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -s -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
-
-
-
-<p><code>-S</code>参数指定只输出错误信息，通常与<code>-s</code>一起使用。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -S -o /dev/null https://google.com</span><br></pre></td></tr></table></figure>
-
-<p>上面命令没有任何输出，除非发生错误。</p>
-<h3 id="权限认证"><a href="#权限认证" class="headerlink" title="权限认证"></a>权限认证</h3><p><code>-u</code> 参数用来设置服务器认证的用户名和密码。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob:12345&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令设置用户名为<code>bob</code>，密码为<code>12345</code>，然后将其转为 HTTP 标头<code>Authorization: Basic Ym9iOjEyMzQ1</code>。</p>
-<p>curl 能够识别 URL 里面的用户名和密码。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl https://bob:12345@google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令能够识别 URL 里面的用户名和密码，将其转为上个例子里面的 HTTP 标头。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -u <span class="string">&#x27;bob&#x27;</span> https://google.com/login</span><br></pre></td></tr></table></figure>
-
-<p>上面命令只设置了用户名，执行后，curl 会提示用户输入密码。</p>
-<h2 id="命令详解"><a href="#命令详解" class="headerlink" title="命令详解"></a>命令详解</h2><p>​        curl命令作用 curl命令是一个功能强大的网络工具，它能够通过http、ftp等方式下载文件，也能够上传文件，同时支持HTTPS等众多协议，还支持POST、cookies、认证、从指定偏移处下载部分文件、用户代理字符串、限速、文件大小、进度条等特征。其实curl远不止前面所说的那些功能，大家可以通过man curl阅读手册页获取更多的信息。类似的工具还有wget。curl命令使用了libcurl库来实现，libcurl库常用在C程序中用来处理HTTP请求，curlpp是libcurl的一个C++封装，这几个东西可以用在抓取网页、网络监控等方面的开发，而curl命令可以帮助来解决开发过程中遇到的问题。</p>
-<p>常用参数 curl命令参数很多，这里只列出我曾经用过、特别是在shell脚本中经常用到过的那些。</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">-a/--append 上传文件时，附加到目标文件</span><br><span class="line"></span><br><span class="line">-A:随意指定自己这次访问所宣称的自己的浏览器信息</span><br><span class="line"></span><br><span class="line">-b/--cookie &lt;name=string/file&gt; cookie字符串或文件读取位置，使用option来把上次的cookie信息追加到http request里面去。</span><br><span class="line"></span><br><span class="line">-c/--cookie-jar &lt;file&gt; 操作结束后把cookie写入到这个文件中</span><br><span class="line"></span><br><span class="line">-C/--continue-at &lt;offset&gt;  断点续转</span><br><span class="line"></span><br><span class="line">-d/--data &lt;data&gt;   HTTP POST方式传送数据</span><br><span class="line"></span><br><span class="line">    --data-ascii &lt;data&gt;	以ascii的方式post数据</span><br><span class="line">     --data-binary &lt;data&gt;	以二进制的方式post数据</span><br><span class="line">     --negotiate	使用HTTP身份验证</span><br><span class="line">     --digest	使用数字身份验证</span><br><span class="line">     --disable-eprt	禁止使用EPRT或LPRT</span><br><span class="line">     --disable-epsv	禁止使用EPSV</span><br><span class="line">-D/--dump-header &lt;file&gt; 把header信息写入到该文件中</span><br><span class="line"></span><br><span class="line">     --egd-file &lt;file&gt;  为随机数据(SSL)设置EGD socket路径</span><br><span class="line"></span><br><span class="line">     --tcp-nodelay     使用TCP<span class="built_in">_</span>NODELAY选项</span><br><span class="line"></span><br><span class="line">-e/--referer &lt;URL&gt;  指定引用地址</span><br><span class="line"></span><br><span class="line">-F/--form &lt;name=content&gt;   模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">     --form-string &lt;name=string&gt; 模拟http表单提交数据</span><br><span class="line"></span><br><span class="line">-G/--get    以get的方式来发送数据</span><br><span class="line"></span><br><span class="line">-H/--header &lt;header&gt; 指定请求头参数</span><br><span class="line"></span><br><span class="line">    --ignore-content-length  忽略的HTTP头信息的长度</span><br><span class="line"></span><br><span class="line">-i/--include     输出时包括protocol头信息</span><br><span class="line"></span><br><span class="line">-I/--head 仅返回头部信息，使用HEAD请求</span><br><span class="line"></span><br><span class="line">-k/--insecure  允许不使用证书到SSL站点</span><br><span class="line"></span><br><span class="line">-K/--config    指定的配置文件读取</span><br><span class="line"></span><br><span class="line">-l/--list-only   列出ftp目录下的文件名称</span><br><span class="line"></span><br><span class="line">    --limit-rate &lt;rate&gt; 设置传输速度</span><br><span class="line"></span><br><span class="line">     --local-port&lt;NUM&gt;  强制使用本地端口号</span><br><span class="line"></span><br><span class="line">-m/--max-time &lt;seconds&gt; 指定处理的最大时长</span><br><span class="line"></span><br><span class="line">     --max-redirs &lt;num&gt;    设置最大读取的目录数</span><br><span class="line"></span><br><span class="line">     --max-filesize &lt;bytes&gt;  设置最大下载的文件总量</span><br><span class="line"></span><br><span class="line">-o/--output &lt;file&gt;   指定输出文件名称</span><br><span class="line"></span><br><span class="line">-O/--remote-name  把输出写到该文件中，保留远程文件的文件名</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-v/--verbose  小写的v参数，用于打印更多信息，包括发送的请求信息，这在调试脚本是特别有用。</span><br><span class="line"></span><br><span class="line">-s/--slient 减少输出的信息，比如进度</span><br><span class="line"></span><br><span class="line">--connect-timeout &lt;seconds&gt; 指定尝试连接的最大时长</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;proxyhost[:port]&gt; 指定代理服务器地址和端口，端口默认为1080</span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">-u/--user &lt;user[:password]&gt;设置服务器的用户和密码</span><br><span class="line"></span><br><span class="line">-r/--range &lt;range&gt;检索来自HTTP/1.1或FTP服务器字节范围</span><br><span class="line"></span><br><span class="line">   --range-file 读取（SSL）的随机文件</span><br><span class="line"></span><br><span class="line">-R/--remote-time   在本地生成文件时，保留远程文件时间</span><br><span class="line"></span><br><span class="line">    --retry &lt;num&gt;   指定重试次数</span><br><span class="line"></span><br><span class="line">    --retry-delay &lt;seconds&gt;   传输出现问题时，设置重试间隔时间</span><br><span class="line"></span><br><span class="line">    --retry-max-time &lt;seconds&gt;  传输出现问题时，设置最大重试时间</span><br><span class="line"></span><br><span class="line">-s/--silent  静默模式。不输出任何东西</span><br><span class="line"></span><br><span class="line">-S/--show-error  显示错误</span><br><span class="line"></span><br><span class="line">    --socks4 &lt;host[:port]&gt; 用socks4代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --socks5 &lt;host[:port]&gt; 用socks5代理给定主机和端口</span><br><span class="line"></span><br><span class="line">    --stderr &lt;file&gt;</span><br><span class="line"></span><br><span class="line">-x/--proxy &lt;host[:port]&gt; 在给定的端口上使用HTTP代理</span><br><span class="line"></span><br><span class="line">-X/--request &lt;command&gt; 指定什么命令。curl默认的HTTP动词是GET，使用-X参数可以支持其他动词。</span><br><span class="line"></span><br><span class="line">-T/--upload-file &lt;file&gt; 指定上传文件路径</span><br></pre></td></tr></table></figure>
-
-
-<p>更多内容查看：</p>
-<ul>
-<li><strong><a href="https://curl.se/docs/manpage.html">curl 用户手册</a></strong></li>
-</ul>
-<p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://www.ruanyifeng.com/blog/2011/09/curl.html">curl网站开发指南</a></strong></p>
-</li>
-<li><p><strong><a href="https://www.ruanyifeng.com/blog/2019/09/curl-reference.html">curl 的用法指南</a></strong></p>
-</li>
-<li><p><strong><a href="https://handerfly.github.io/linux/2019/05/26/curl%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/">curl命令详解</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>命令行工具</category>
-      </categories>
-      <tags>
-        <tag>计算机网络</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>回溯</title>
-    <url>/post/f92eff5d/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
-<p>回溯法是一种选优搜索法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。</p>
-<p>许多复杂的，规模较大的问题都可以使用回溯法，有“<strong>通用解题方法</strong>”的美称。</p>
-<span id="more"></span>
-<h3 id="与穷举的联系"><a href="#与穷举的联系" class="headerlink" title="与穷举的联系"></a>与穷举的联系</h3><p>回溯法简单来说就是按照深度优先的顺序，穷举所有可能性的算法，但是回溯算法比暴力穷举法更高明的地方就是回溯算法可以随时判断当前状态是否符合问题的条件。一旦不符合条件，那么就退回到上一个状态，省去了继续往下探索的时间。</p>
-<p>回溯法的特点是<strong>深度优先遍历</strong>，也就是该问题的遍历顺序是1-&gt;2-&gt;3，然后从子节点3返回，从子节点2返回，再到1-&gt;3-&gt;2，以此类推。</p>
-<p>状态的返回只有当前的节点不再满足问题的条件或者我们已经找到了问题的一个解时，才会返回，否则会以深度优先一直在<strong>解空间树</strong>内遍历下去。</p>
-<p>当然，对于某些问题如果其解空间过大，即使用回溯法进行计算也有很高的时间复杂度，因为回溯法会尝试解空间树中所有的分支。</p>
-<h3 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h3><p>所以根据这类问题，有一些优化剪枝策略以及启发式搜索策略。</p>
-<p><strong>优化剪枝策略</strong>：判断当前的分支树是否符合问题的条件，如果当前分支树不符合条件，那么就不再遍历这个分支里的所有路径。</p>
-<p><strong>启发式搜索策略</strong>：给回溯法搜索子节点的顺序设定一个优先级，从该子节点往下遍历更有可能找到问题的解。</p>
-<h2 id="一般步骤"><a href="#一般步骤" class="headerlink" title="一般步骤"></a>一般步骤</h2><p>回溯算法也叫<strong>试探法</strong>，它是一种系统地搜索问题的解的方法。</p>
-<p>用回溯算法解决问题的一般步骤：</p>
-<ol>
-<li><strong>针对</strong>所给<strong>问题</strong>，<strong>定义问题的解空间</strong>，它至少包含问题的一个（最优）解。</li>
-<li><strong>确定</strong>易于搜索的<strong>解空间结构</strong>，使得能用回溯法方便地搜索整个解空间 。</li>
-<li><strong>以深度优先的方式搜索解空间</strong>，并且在<strong>搜索过程中</strong>用<strong>剪枝</strong>函数避免无效搜索。</li>
-</ol>
-<h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。<br><strong>回溯算法说白了就是穷举法。不过回溯算法使用剪枝函数，剪去一些不可能到达 最终状态（即答案状态）的节点，从而减少状态空间树节点的生成。</strong></p>
-<p>回溯法是一个既带有<strong>系统性</strong>又带有<strong>跳跃性</strong>的的搜索算法。</p>
-<p>它在包含问题的所有解的解空间树中，按照深度优先的策略，从根结点出发搜索解空间树。<br>算法搜索至解空间树的任一结点时，总是先判断该结点是否肯定不包含问题的解。<br>如果肯定不包含，则跳过对以该结点为根的子树的系统搜索，逐层向其祖先结点回溯。<br>否则，进入该子树，继续按深度优先的策略进行搜索。</p>
-<p>回溯法在用来求问题的所有解时，要回溯到根，且根结点的所有子树都已被搜索遍才结束。<br>而回溯法在用来求问题的任一解时，只要搜索到问题的一个解就可以结束。</p>
-<p>这种以<strong>深度优先</strong>的方式<strong>系统地搜索</strong>问题的解的算法称为回溯法，它适用于解一些<strong>组合数较大的问题</strong>。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/">17. 电话号码的字母组合</a></td>
-<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/dian-hua-hao-ma-de-zi-mu-zu-he-by-leetcode-solutio/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/">通俗易懂+动画演示 17. 电话号码的字母组合</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/combination-sum/">39. 组合总和</a></td>
-<td><a href="https://leetcode-cn.com/problems/combination-sum/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-2/">回溯算法 + 剪枝（回溯经典例题详解）</a><br/><a href="https://leetcode-cn.com/problems/combination-sum/solution/39-zu-he-zong-he-by-feyl-lj9e/">回溯 + 剪枝</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-search/">79. 单词搜索</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-search/solution/dan-ci-sou-suo-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-search/solution/zai-er-wei-ping-mian-shang-shi-yong-hui-su-fa-pyth/">回溯算法（Java）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/">131. 分割回文串</a></td>
-<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/hui-su-you-hua-jia-liao-dong-tai-gui-hua-by-liweiw/">回溯算法、优化（使用动态规划预处理数组）</a></td>
-</tr>
-</tbody></table>
-<p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://houbb.github.io/2020/01/23/data-struct-learn-07-base-backtracking">五大基本算法之回溯算法 backtracking</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>回溯</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>字符串反转</title>
     <url>/post/8de7ec78/</url>
     <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
@@ -6174,6 +6174,122 @@
       </categories>
       <tags>
         <tag>字符集</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>布隆过滤器</title>
+    <url>/post/9a0369ec/</url>
+    <content><![CDATA[<h2 id="什么是布隆过滤器？"><a href="#什么是布隆过滤器？" class="headerlink" title="什么是布隆过滤器？"></a>什么是布隆过滤器？</h2><p>首先，我们需要了解布隆过滤器的概念。</p>
+<p>布隆过滤器（<strong>Bloom Filter</strong>）是一个叫做 Bloom 的老哥于 1970 年提出的。我们<strong>可以把它看作由二进制向量（或者说位数组）和一系列随机映射函数（哈希函数）两部分组成的数据结构</strong>。相比于我们平时常用的的 List、Map 、Set 等数据结构，它占用空间更少并且效率更高，但是缺点是其返回的结果是概率性的，而不是非常准确的。理论情况下添加到集合中的元素越多，误报的可能性就越大。并且，存放在布隆过滤器的数据不容易删除。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002507111.png" style="zoom:80%;" />
+
+<p>位数组中的每个元素都只占用 1 bit ，并且每个元素只能是 0 或者 1。这样申请一个 100w 个元素的位数组只占用 1000000Bit / 8 = 125000 Byte = 125000/1024 kb ≈ 122kb 的空间。</p>
+<p>总结：<strong>一个名叫 Bloom 的人提出了一种来检索元素是否在给定大集合中的数据结构，这种数据结构是高效且性能很好的，但缺点是具有一定的错误识别率和删除难度。并且，理论情况下，添加到集合中的元素越多，误报的可能性就越大。</strong></p>
+<h2 id="布隆过滤器的原理介绍"><a href="#布隆过滤器的原理介绍" class="headerlink" title="布隆过滤器的原理介绍"></a>布隆过滤器的原理介绍</h2><p><strong>当一个元素加入布隆过滤器中的时候，会进行如下操作：</strong></p>
+<ol>
+<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
+<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
+</ol>
+<p><strong>当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：</strong></p>
+<ol>
+<li>对给定元素再次进行相同的哈希计算；</li>
+<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
+</ol>
+<p>举个简单的例子：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002716080.png" style="zoom:80%;" />
+
+<p>如图所示，当字符串存储要加入到布隆过滤器中时，该字符串首先由多个哈希函数生成不同的哈希值，然后将对应的位数组的下标设置为 1（当位数组初始化时，所有位置均为 0）。当第二次存储相同字符串时，因为先前的对应位置已设置为 1，所以很容易知道此值已经存在（去重非常方便）。</p>
+<p>如果我们需要判断某个字符串是否在布隆过滤器中时，只需要对给定字符串再次进行相同的哈希计算，得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</p>
+<p><strong>不同的字符串可能哈希出来的位置相同，这种情况我们可以适当增加位数组大小或者调整我们的哈希函数。</strong></p>
+<p>综上，我们可以得出：<strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在。</strong></p>
+<h2 id="布隆过滤器使用场景"><a href="#布隆过滤器使用场景" class="headerlink" title="布隆过滤器使用场景"></a>布隆过滤器使用场景</h2><p><strong>判断给定数据是否存在：</strong>比如判断一个数字是否存在于包含大量数字的数字集中（数字集很大，5 亿以上！）、 防止缓存穿透（判断请求的数据是否有效避免直接绕过缓存请求数据库）、邮箱的垃圾邮件过滤、黑名单功能等等。</p>
+<p><strong>去重：</strong>比如爬给定网址的时候对已经爬取过的 URL 去重。</p>
+<h2 id="编码实战"><a href="#编码实战" class="headerlink" title="编码实战"></a>编码实战</h2><h3 id="通过-Java-编程手动实现布隆过滤器"><a href="#通过-Java-编程手动实现布隆过滤器" class="headerlink" title="通过 Java 编程手动实现布隆过滤器"></a>通过 Java 编程手动实现布隆过滤器</h3><p>我们上面已经说了布隆过滤器的原理，知道了布隆过滤器的原理之后就可以自己手动实现一个了。</p>
+<p>如果你想要手动实现一个的话，你需要：</p>
+<ol>
+<li>一个合适大小的位数组保存数据</li>
+<li>几个不同的哈希函数</li>
+<li>添加元素到位数组（布隆过滤器）的方法实现</li>
+<li>判断给定元素是否存在于位数组（布隆过滤器）的方法实现。</li>
+</ol>
+<p>下面给出一个我觉得写的还算不错的代码（参考网上已有代码改进得到，对于所有类型对象皆适用）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.BitSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBloomFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组的大小</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_SIZE = <span class="number">2</span> &lt;&lt; <span class="number">24</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通过这个数组可以创建 6 个不同的哈希函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] SEEDS = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">3</span>, <span class="number">13</span>, <span class="number">46</span>, <span class="number">71</span>, <span class="number">91</span>, <span class="number">134</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组。数组中的元素只能是 0 或者 1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> BitSet bits = <span class="keyword">new</span> BitSet(DEFAULT_SIZE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 存放包含 hash 函数的类的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> SimpleHash[] func = <span class="keyword">new</span> SimpleHash[SEEDS.length];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化多个包含 hash 函数的类的数组，每个类中的 hash 函数都不一样</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBloomFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 初始化多个不同的 Hash 函数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SEEDS.length; i++) &#123;</span><br><span class="line">            func[i] = <span class="keyword">new</span> SimpleHash(DEFAULT_SIZE, SEEDS[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加元素到位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            bits.set(f.hash(value), <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断指定元素是否存在于位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> ret = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            ret = ret &amp;&amp; bits.get(f.hash(value));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态内部类。用于 hash 操作！</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleHash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> cap;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> seed;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SimpleHash</span><span class="params">(<span class="keyword">int</span> cap, <span class="keyword">int</span> seed)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.cap = cap;</span><br><span class="line">            <span class="keyword">this</span>.seed = seed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 计算 hash 值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> h;</span><br><span class="line">            <span class="keyword">return</span> (value == <span class="keyword">null</span>) ? <span class="number">0</span> : Math.abs(seed * (cap - <span class="number">1</span>) &amp; ((h = value.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>)));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String value1 = <span class="string">&quot;https://javaguide.cn/&quot;</span>;</span><br><span class="line">	String value2 = <span class="string">&quot;https://github.com/Snailclimb&quot;</span>;</span><br><span class="line">	MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">	filter.add(value1);</span><br><span class="line">	filter.add(value2);</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Integer value1 = <span class="number">13423</span>;</span><br><span class="line">    Integer value2 = <span class="number">22131</span>;</span><br><span class="line">    MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">    filter.add(value1);</span><br><span class="line">    filter.add(value2);</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="利用-Google-开源的-Guava-中自带的布隆过滤器"><a href="#利用-Google-开源的-Guava-中自带的布隆过滤器" class="headerlink" title="利用 Google 开源的 Guava 中自带的布隆过滤器"></a>利用 Google 开源的 Guava 中自带的布隆过滤器</h3><p>自己实现的目的主要是为了让自己搞懂布隆过滤器的原理，Guava 中布隆过滤器的实现算是比较权威的，所以实际项目中我们不需要手动实现一个布隆过滤器。</p>
+<p>首先我们需要在项目中引入 Guava 的依赖：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>28.0-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>实际使用如下：</p>
+<p>我们创建了一个最多存放 最多 1500 个整数的布隆过滤器，并且我们可以容忍误判的概率为百分之（0.01）</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 创建布隆过滤器对象</span></span><br><span class="line">    BloomFilter&lt;Integer&gt; filter = BloomFilter.create(</span><br><span class="line">        Funnels.integerFunnel(),</span><br><span class="line">        <span class="number">1500</span>,</span><br><span class="line">        <span class="number">0.01</span>);</span><br><span class="line">    <span class="comment">// 判断指定元素是否存在</span></span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">    <span class="comment">// 将元素添加进布隆过滤器</span></span><br><span class="line">    filter.put(<span class="number">1</span>);</span><br><span class="line">    filter.put(<span class="number">2</span>);</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在我们的示例中，当 <code>mightContain()</code> 方法返回 <em>true</em> 时，我们可以 99％确定该元素在过滤器中，当过滤器返回 <em>false</em> 时，我们可以 100％确定该元素不存在于过滤器中。</p>
+<p><strong>Guava 提供的布隆过滤器的实现还是很不错的（想要详细了解的可以看一下它的源码实现），但是它有一个重大的缺陷就是只能单机使用（另外，容量扩展也不容易），而现在互联网一般都是分布式的场景。为了解决这个问题，我们就需要用到 Redis 中的布隆过滤器了。</strong></p>
+<h2 id="Redis-中的布隆过滤器"><a href="#Redis-中的布隆过滤器" class="headerlink" title="Redis 中的布隆过滤器"></a>Redis 中的布隆过滤器</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Redis v4.0 之后有了 Module（模块/插件） 功能，Redis Modules 让 Redis 可以使用外部模块扩展其功能 。布隆过滤器就是其中的 Module。详情可以查看 Redis 官方对 Redis Modules 的介绍 ：<a href="https://redis.io/modules">https://redis.io/modules</a></p>
+<p>另外，官网推荐了一个 RedisBloom 作为 Redis 布隆过滤器的 Module，地址：<a href="https://github.com/RedisBloom/RedisBloom">https://github.com/RedisBloom/RedisBloom</a> 其他还有：</p>
+<ul>
+<li><a href="https://github.com/erikdubbelboer/redis-lua-scaling-bloom-filter">redis-lua-scaling-bloom-filter（lua 脚本实现）</a></li>
+<li><a href="https://github.com/seomoz/pyreBloom">pyreBloom（Python 中的快速 Redis 布隆过滤器）</a></li>
+<li>……</li>
+</ul>
+<p>RedisBloom 提供了多种语言的客户端支持，包括：Python、Java、JavaScript 和 PHP。</p>
+<h3 id="使用-Docker-安装"><a href="#使用-Docker-安装" class="headerlink" title="使用 Docker 安装"></a>使用 Docker 安装</h3><p>如果我们需要体验 Redis 中的布隆过滤器非常简单，通过 Docker 就可以了！直接在 Google 搜索 <strong>docker redis bloomfilter</strong> 然后在排除广告的第一条搜素结果就找到了我们想要的答案，具体地址：<a href="https://hub.docker.com/r/redislabs/rebloom/">https://hub.docker.com/r/redislabs/rebloom/</a> 。</p>
+<p><strong>具体操作如下：</strong></p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">➜  ~ docker <span class="keyword">run</span><span class="bash"> -p 6379:6379 --name redis-redisbloom redislabs/rebloom:latest</span></span><br><span class="line">➜  ~ docker exec -it redis-redisbloom bash</span><br><span class="line">root@<span class="number">21396</span>d02c252:/data<span class="comment"># redis-cli</span></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常用命令一览"><a href="#常用命令一览" class="headerlink" title="常用命令一览"></a>常用命令一览</h3><blockquote>
+<p>注意： key：布隆过滤器的名称，item：添加的元素。</p>
+</blockquote>
+<ol>
+<li><code>BF.ADD</code>：将元素添加到布隆过滤器中，如果该过滤器尚不存在，则创建该过滤器。格式：<code>BF.ADD &#123;key&#125; &#123;item&#125;</code>。</li>
+<li><code>BF.MADD</code>：将一个或多个元素添加到“布隆过滤器”中，并创建一个尚不存在的过滤器。该命令的操作方式<code>BF.ADD</code>与之相同，只不过它允许多个输入并返回多个值。格式：<code>BF.MADD &#123;key&#125; &#123;item&#125; [item ...]</code> 。</li>
+<li><code>BF.EXISTS</code>：确定元素是否在布隆过滤器中存在。格式：<code>BF.EXISTS &#123;key&#125; &#123;item&#125;</code>。</li>
+<li><code>BF.MEXISTS</code> ：确定一个或者多个元素是否在布隆过滤器中存在格式：<code>BF.MEXISTS &#123;key&#125; &#123;item&#125; [item ...]</code>。</li>
+</ol>
+<p>另外， <code>BF.RESERVE</code> 命令需要单独介绍一下：</p>
+<p>这个命令的格式如下：</p>
+<p><code>BF.RESERVE &#123;key&#125; &#123;error_rate&#125; &#123;capacity&#125; [EXPANSION expansion]</code> 。</p>
+<p>下面简单介绍一下每个参数的具体含义：</p>
+<ul>
+<li>key：布隆过滤器的名称</li>
+<li>error_rate：期望的误报率。该值必须介于 0 到 1 之间。例如，对于期望的误报率 0.1％（1000 中为 1），error_rate 应该设置为 0.001。该数字越接近零，则每个项目的内存消耗越大，并且每个操作的 CPU 使用率越高。</li>
+<li>capacity：过滤器的容量。当实际存储的元素个数超过这个值之后，性能将开始下降。实际的降级将取决于超出限制的程度。随着过滤器元素数量呈指数增长，性能将线性下降。</li>
+</ul>
+<p>可选参数：</p>
+<ul>
+<li>expansion：如果创建了一个新的子过滤器，则其大小将是当前过滤器的大小乘以<code>expansion</code>。默认扩展值为 2。这意味着每个后续子过滤器将是前一个子过滤器的两倍。</li>
+</ul>
+<h3 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter github</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>文章总结来源：</p>
+<ul>
+<li><strong><a href="https://javaguide.cn/cs-basics/data-structure/bloom-filter/">布隆过滤器</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>布隆过滤器</tag>
+        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -6295,122 +6411,6 @@
       </categories>
       <tags>
         <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>布隆过滤器</title>
-    <url>/post/9a0369ec/</url>
-    <content><![CDATA[<h2 id="什么是布隆过滤器？"><a href="#什么是布隆过滤器？" class="headerlink" title="什么是布隆过滤器？"></a>什么是布隆过滤器？</h2><p>首先，我们需要了解布隆过滤器的概念。</p>
-<p>布隆过滤器（<strong>Bloom Filter</strong>）是一个叫做 Bloom 的老哥于 1970 年提出的。我们<strong>可以把它看作由二进制向量（或者说位数组）和一系列随机映射函数（哈希函数）两部分组成的数据结构</strong>。相比于我们平时常用的的 List、Map 、Set 等数据结构，它占用空间更少并且效率更高，但是缺点是其返回的结果是概率性的，而不是非常准确的。理论情况下添加到集合中的元素越多，误报的可能性就越大。并且，存放在布隆过滤器的数据不容易删除。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002507111.png" style="zoom:80%;" />
-
-<p>位数组中的每个元素都只占用 1 bit ，并且每个元素只能是 0 或者 1。这样申请一个 100w 个元素的位数组只占用 1000000Bit / 8 = 125000 Byte = 125000/1024 kb ≈ 122kb 的空间。</p>
-<p>总结：<strong>一个名叫 Bloom 的人提出了一种来检索元素是否在给定大集合中的数据结构，这种数据结构是高效且性能很好的，但缺点是具有一定的错误识别率和删除难度。并且，理论情况下，添加到集合中的元素越多，误报的可能性就越大。</strong></p>
-<h2 id="布隆过滤器的原理介绍"><a href="#布隆过滤器的原理介绍" class="headerlink" title="布隆过滤器的原理介绍"></a>布隆过滤器的原理介绍</h2><p><strong>当一个元素加入布隆过滤器中的时候，会进行如下操作：</strong></p>
-<ol>
-<li>使用布隆过滤器中的哈希函数对元素值进行计算，得到哈希值（有几个哈希函数得到几个哈希值）。</li>
-<li>根据得到的哈希值，在位数组中把对应下标的值置为 1。</li>
-</ol>
-<p><strong>当我们需要判断一个元素是否存在于布隆过滤器的时候，会进行如下操作：</strong></p>
-<ol>
-<li>对给定元素再次进行相同的哈希计算；</li>
-<li>得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</li>
-</ol>
-<p>举个简单的例子：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207002716080.png" style="zoom:80%;" />
-
-<p>如图所示，当字符串存储要加入到布隆过滤器中时，该字符串首先由多个哈希函数生成不同的哈希值，然后将对应的位数组的下标设置为 1（当位数组初始化时，所有位置均为 0）。当第二次存储相同字符串时，因为先前的对应位置已设置为 1，所以很容易知道此值已经存在（去重非常方便）。</p>
-<p>如果我们需要判断某个字符串是否在布隆过滤器中时，只需要对给定字符串再次进行相同的哈希计算，得到值之后判断位数组中的每个元素是否都为 1，如果值都为 1，那么说明这个值在布隆过滤器中，如果存在一个值不为 1，说明该元素不在布隆过滤器中。</p>
-<p><strong>不同的字符串可能哈希出来的位置相同，这种情况我们可以适当增加位数组大小或者调整我们的哈希函数。</strong></p>
-<p>综上，我们可以得出：<strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在。</strong></p>
-<h2 id="布隆过滤器使用场景"><a href="#布隆过滤器使用场景" class="headerlink" title="布隆过滤器使用场景"></a>布隆过滤器使用场景</h2><p><strong>判断给定数据是否存在：</strong>比如判断一个数字是否存在于包含大量数字的数字集中（数字集很大，5 亿以上！）、 防止缓存穿透（判断请求的数据是否有效避免直接绕过缓存请求数据库）、邮箱的垃圾邮件过滤、黑名单功能等等。</p>
-<p><strong>去重：</strong>比如爬给定网址的时候对已经爬取过的 URL 去重。</p>
-<h2 id="编码实战"><a href="#编码实战" class="headerlink" title="编码实战"></a>编码实战</h2><h3 id="通过-Java-编程手动实现布隆过滤器"><a href="#通过-Java-编程手动实现布隆过滤器" class="headerlink" title="通过 Java 编程手动实现布隆过滤器"></a>通过 Java 编程手动实现布隆过滤器</h3><p>我们上面已经说了布隆过滤器的原理，知道了布隆过滤器的原理之后就可以自己手动实现一个了。</p>
-<p>如果你想要手动实现一个的话，你需要：</p>
-<ol>
-<li>一个合适大小的位数组保存数据</li>
-<li>几个不同的哈希函数</li>
-<li>添加元素到位数组（布隆过滤器）的方法实现</li>
-<li>判断给定元素是否存在于位数组（布隆过滤器）的方法实现。</li>
-</ol>
-<p>下面给出一个我觉得写的还算不错的代码（参考网上已有代码改进得到，对于所有类型对象皆适用）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.BitSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBloomFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组的大小</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_SIZE = <span class="number">2</span> &lt;&lt; <span class="number">24</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 通过这个数组可以创建 6 个不同的哈希函数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] SEEDS = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">3</span>, <span class="number">13</span>, <span class="number">46</span>, <span class="number">71</span>, <span class="number">91</span>, <span class="number">134</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 位数组。数组中的元素只能是 0 或者 1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> BitSet bits = <span class="keyword">new</span> BitSet(DEFAULT_SIZE);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 存放包含 hash 函数的类的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> SimpleHash[] func = <span class="keyword">new</span> SimpleHash[SEEDS.length];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 初始化多个包含 hash 函数的类的数组，每个类中的 hash 函数都不一样</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBloomFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 初始化多个不同的 Hash 函数</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; SEEDS.length; i++) &#123;</span><br><span class="line">            func[i] = <span class="keyword">new</span> SimpleHash(DEFAULT_SIZE, SEEDS[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加元素到位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            bits.set(f.hash(value), <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断指定元素是否存在于位数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> ret = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">for</span> (SimpleHash f : func) &#123;</span><br><span class="line">            ret = ret &amp;&amp; bits.get(f.hash(value));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 静态内部类。用于 hash 操作！</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleHash</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> cap;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> seed;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SimpleHash</span><span class="params">(<span class="keyword">int</span> cap, <span class="keyword">int</span> seed)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.cap = cap;</span><br><span class="line">            <span class="keyword">this</span>.seed = seed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 计算 hash 值</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">int</span> h;</span><br><span class="line">            <span class="keyword">return</span> (value == <span class="keyword">null</span>) ? <span class="number">0</span> : Math.abs(seed * (cap - <span class="number">1</span>) &amp; ((h = value.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>)));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String value1 = <span class="string">&quot;https://javaguide.cn/&quot;</span>;</span><br><span class="line">	String value2 = <span class="string">&quot;https://github.com/Snailclimb&quot;</span>;</span><br><span class="line">	MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">	filter.add(value1);</span><br><span class="line">	filter.add(value2);</span><br><span class="line">	System.out.println(filter.contains(value1));</span><br><span class="line">	System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
-
-<p>测试：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Integer value1 = <span class="number">13423</span>;</span><br><span class="line">    Integer value2 = <span class="number">22131</span>;</span><br><span class="line">    MyBloomFilter filter = <span class="keyword">new</span> MyBloomFilter();</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">    filter.add(value1);</span><br><span class="line">    filter.add(value2);</span><br><span class="line">    System.out.println(filter.contains(value1));</span><br><span class="line">    System.out.println(filter.contains(value2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">false</span><br><span class="line">false</span><br><span class="line">true</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="利用-Google-开源的-Guava-中自带的布隆过滤器"><a href="#利用-Google-开源的-Guava-中自带的布隆过滤器" class="headerlink" title="利用 Google 开源的 Guava 中自带的布隆过滤器"></a>利用 Google 开源的 Guava 中自带的布隆过滤器</h3><p>自己实现的目的主要是为了让自己搞懂布隆过滤器的原理，Guava 中布隆过滤器的实现算是比较权威的，所以实际项目中我们不需要手动实现一个布隆过滤器。</p>
-<p>首先我们需要在项目中引入 Guava 的依赖：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>28.0-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>实际使用如下：</p>
-<p>我们创建了一个最多存放 最多 1500 个整数的布隆过滤器，并且我们可以容忍误判的概率为百分之（0.01）</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 创建布隆过滤器对象</span></span><br><span class="line">    BloomFilter&lt;Integer&gt; filter = BloomFilter.create(</span><br><span class="line">        Funnels.integerFunnel(),</span><br><span class="line">        <span class="number">1500</span>,</span><br><span class="line">        <span class="number">0.01</span>);</span><br><span class="line">    <span class="comment">// 判断指定元素是否存在</span></span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">    <span class="comment">// 将元素添加进布隆过滤器</span></span><br><span class="line">    filter.put(<span class="number">1</span>);</span><br><span class="line">    filter.put(<span class="number">2</span>);</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">    System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在我们的示例中，当 <code>mightContain()</code> 方法返回 <em>true</em> 时，我们可以 99％确定该元素在过滤器中，当过滤器返回 <em>false</em> 时，我们可以 100％确定该元素不存在于过滤器中。</p>
-<p><strong>Guava 提供的布隆过滤器的实现还是很不错的（想要详细了解的可以看一下它的源码实现），但是它有一个重大的缺陷就是只能单机使用（另外，容量扩展也不容易），而现在互联网一般都是分布式的场景。为了解决这个问题，我们就需要用到 Redis 中的布隆过滤器了。</strong></p>
-<h2 id="Redis-中的布隆过滤器"><a href="#Redis-中的布隆过滤器" class="headerlink" title="Redis 中的布隆过滤器"></a>Redis 中的布隆过滤器</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>Redis v4.0 之后有了 Module（模块/插件） 功能，Redis Modules 让 Redis 可以使用外部模块扩展其功能 。布隆过滤器就是其中的 Module。详情可以查看 Redis 官方对 Redis Modules 的介绍 ：<a href="https://redis.io/modules">https://redis.io/modules</a></p>
-<p>另外，官网推荐了一个 RedisBloom 作为 Redis 布隆过滤器的 Module，地址：<a href="https://github.com/RedisBloom/RedisBloom">https://github.com/RedisBloom/RedisBloom</a> 其他还有：</p>
-<ul>
-<li><a href="https://github.com/erikdubbelboer/redis-lua-scaling-bloom-filter">redis-lua-scaling-bloom-filter（lua 脚本实现）</a></li>
-<li><a href="https://github.com/seomoz/pyreBloom">pyreBloom（Python 中的快速 Redis 布隆过滤器）</a></li>
-<li>……</li>
-</ul>
-<p>RedisBloom 提供了多种语言的客户端支持，包括：Python、Java、JavaScript 和 PHP。</p>
-<h3 id="使用-Docker-安装"><a href="#使用-Docker-安装" class="headerlink" title="使用 Docker 安装"></a>使用 Docker 安装</h3><p>如果我们需要体验 Redis 中的布隆过滤器非常简单，通过 Docker 就可以了！直接在 Google 搜索 <strong>docker redis bloomfilter</strong> 然后在排除广告的第一条搜素结果就找到了我们想要的答案，具体地址：<a href="https://hub.docker.com/r/redislabs/rebloom/">https://hub.docker.com/r/redislabs/rebloom/</a> 。</p>
-<p><strong>具体操作如下：</strong></p>
-<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">➜  ~ docker <span class="keyword">run</span><span class="bash"> -p 6379:6379 --name redis-redisbloom redislabs/rebloom:latest</span></span><br><span class="line">➜  ~ docker exec -it redis-redisbloom bash</span><br><span class="line">root@<span class="number">21396</span>d02c252:/data<span class="comment"># redis-cli</span></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">6379</span>&gt;</span><br></pre></td></tr></table></figure>
-
-<h3 id="常用命令一览"><a href="#常用命令一览" class="headerlink" title="常用命令一览"></a>常用命令一览</h3><blockquote>
-<p>注意： key：布隆过滤器的名称，item：添加的元素。</p>
-</blockquote>
-<ol>
-<li><code>BF.ADD</code>：将元素添加到布隆过滤器中，如果该过滤器尚不存在，则创建该过滤器。格式：<code>BF.ADD &#123;key&#125; &#123;item&#125;</code>。</li>
-<li><code>BF.MADD</code>：将一个或多个元素添加到“布隆过滤器”中，并创建一个尚不存在的过滤器。该命令的操作方式<code>BF.ADD</code>与之相同，只不过它允许多个输入并返回多个值。格式：<code>BF.MADD &#123;key&#125; &#123;item&#125; [item ...]</code> 。</li>
-<li><code>BF.EXISTS</code>：确定元素是否在布隆过滤器中存在。格式：<code>BF.EXISTS &#123;key&#125; &#123;item&#125;</code>。</li>
-<li><code>BF.MEXISTS</code> ：确定一个或者多个元素是否在布隆过滤器中存在格式：<code>BF.MEXISTS &#123;key&#125; &#123;item&#125; [item ...]</code>。</li>
-</ol>
-<p>另外， <code>BF.RESERVE</code> 命令需要单独介绍一下：</p>
-<p>这个命令的格式如下：</p>
-<p><code>BF.RESERVE &#123;key&#125; &#123;error_rate&#125; &#123;capacity&#125; [EXPANSION expansion]</code> 。</p>
-<p>下面简单介绍一下每个参数的具体含义：</p>
-<ul>
-<li>key：布隆过滤器的名称</li>
-<li>error_rate：期望的误报率。该值必须介于 0 到 1 之间。例如，对于期望的误报率 0.1％（1000 中为 1），error_rate 应该设置为 0.001。该数字越接近零，则每个项目的内存消耗越大，并且每个操作的 CPU 使用率越高。</li>
-<li>capacity：过滤器的容量。当实际存储的元素个数超过这个值之后，性能将开始下降。实际的降级将取决于超出限制的程度。随着过滤器元素数量呈指数增长，性能将线性下降。</li>
-</ul>
-<p>可选参数：</p>
-<ul>
-<li>expansion：如果创建了一个新的子过滤器，则其大小将是当前过滤器的大小乘以<code>expansion</code>。默认扩展值为 2。这意味着每个后续子过滤器将是前一个子过滤器的两倍。</li>
-</ul>
-<h3 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.ADD myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter java</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter javaguide</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; BF.EXISTS myFilter github</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
-
-
-
-
-<p>文章总结来源：</p>
-<ul>
-<li><strong><a href="https://javaguide.cn/cs-basics/data-structure/bloom-filter/">布隆过滤器</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>布隆过滤器</tag>
-        <tag>Redis</tag>
       </tags>
   </entry>
   <entry>
@@ -6751,51 +6751,6 @@
       </tags>
   </entry>
   <entry>
-    <title>模拟</title>
-    <url>/post/d1f7904c/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
-<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
-<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
-<span id="more"></span>
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
-<ul>
-<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
-<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
-<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
-<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
-<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
-</ul>
-<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>模拟</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>数据库基础知识</title>
     <url>/post/1ad06ab1/</url>
     <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
@@ -6953,6 +6908,51 @@
       </tags>
   </entry>
   <entry>
+    <title>模拟</title>
+    <url>/post/d1f7904c/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
+<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
+<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
+<span id="more"></span>
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
+<ul>
+<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
+<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
+<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
+<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
+<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
+</ul>
+<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>浅谈数据库并发控制 - 锁和 MVCC</title>
     <url>/post/7881a926/</url>
     <content><![CDATA[<p>在学习几年编程之后，你会发现所有的问题都没有简单、快捷的解决方案，很多问题都需要权衡和妥协，而本文介绍的就是数据库在并发性能和可串行化之间做的权衡和妥协 - 并发控制机制。</p>
@@ -7089,6 +7089,71 @@
       </tags>
   </entry>
   <entry>
+    <title>滑动窗口</title>
+    <url>/post/50cab45/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>滑动窗口算法是较为入门题目的算法，一般是一些有规律数组问题的最优解，也就是说，如果一个数组问题可以用动态规划解，但又可以使用滑动窗口解决，那么往往滑动窗口的效率更高。</p>
+<p>双指针也并不局限在数组问题，像链表场景的 “快慢指针” 也属于双指针的场景，其快慢指针滑动过程中本身就会产生一个窗口，比如当窗口收缩到某种程度，可以得到一些结论。</p>
+<p><strong>滑动窗口使用双指针解决问题</strong>，所以一般也叫<strong>双指针算法</strong>，因为<strong>两个指针间形成一个窗口</strong>。</p>
+<p>什么情况适合用双指针呢？一般双指针是暴力算法的优化版，所以：</p>
+<ol>
+<li>如果题目较为简单，且是<strong>数组或链表问题</strong>，往往可以尝试双指针是否可解。</li>
+<li>如果<strong>数组存在规律</strong>，可以尝试双指针。</li>
+<li>如果<strong>链表问题限制较多</strong>，比如要求 <strong>O(1) 空间复杂度解决</strong>，也许只有双指针可解。</li>
+</ol>
+<p>也就是说，当一个问题比较有规律，或者较为简单，或较为巧妙时，可以尝试双指针（滑动窗口）解法。</p>
+<span id="more"></span>
+
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>算法的大致逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (right &lt; s.size()) &#123;</span><br><span class="line">    <span class="comment">// 增大窗口</span></span><br><span class="line">    window.add(s[right]);</span><br><span class="line">    right++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">        <span class="comment">// 缩小窗口</span></span><br><span class="line">        window.remove(s[left]);</span><br><span class="line">        left++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>时间复杂度是 O(N)，比字符串暴力算法要高效得多。</p>
+</blockquote>
+<p>其实难点不是算法的思路，而是各种细节问题。比如说如何向窗口中添加新元素，如何缩小窗口，在窗口滑动的哪个阶段更新结果。</p>
+<h3 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 滑动窗口算法框架 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">slidingWindow</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">    unordered_map&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; need, window;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c : t) need[c]++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> valid = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">while</span> (right &lt; s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">        <span class="comment">// c 是将移入窗口的字符</span></span><br><span class="line">        <span class="keyword">char</span> c = s[right];</span><br><span class="line">        <span class="comment">// 右移窗口</span></span><br><span class="line">        right++;</span><br><span class="line">        <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*** debug 输出的位置 ***/</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;window: [%d, %d)\n&quot;</span>, left, right);</span><br><span class="line">        <span class="comment">/********************/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 判断左侧窗口是否要收缩</span></span><br><span class="line">        <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">            <span class="comment">// d 是将移出窗口的字符</span></span><br><span class="line">            <span class="keyword">char</span> d = s[left];</span><br><span class="line">            <span class="comment">// 左移窗口</span></span><br><span class="line">            left++;</span><br><span class="line">            <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>其中两处 <code>...</code> 表示的更新窗口数据的地方</strong>。</p>
+<p>而且，这两个 <code>...</code> 处的操作分别是右移和左移窗口更新操作，它们操作是完全对称的。</p>
+<blockquote>
+<p>C++：</p>
+<p><code>unordered_map</code> 就是哈希表（字典），它的一个方法 <code>count(key)</code> 相当于 Java 的 <code>containsKey(key)</code> 可以判断键 key 是否存在。</p>
+<p>可以使用方括号访问键对应的值 <code>map[key]</code>。需要注意的是，如果该 <code>key</code> 不存在，C++ 会自动创建这个 key，并把 <code>map[key]</code> 赋值为 0。</p>
+<p>所以代码中多次出现的 <code>map[key]++</code> 相当于 Java 的 <code>map.put(key, map.getOrDefault(key, 0) + 1)</code>。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/">剑指 Offer 48. 最长不含重复字符的子字符串</a></td>
+<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/solution/mian-shi-ti-48-zui-chang-bu-han-zhong-fu-zi-fu-d-9/">面试题48. 最长不含重复字符的子字符串（动态规划 / 双指针 + 哈希表，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetc-2/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/">395. 至少有 K 个重复字符的最长子串</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/xiang-jie-mei-ju-shuang-zhi-zhen-jie-fa-50ri1/">【宫水三叶の相信科学系列】为什么不能用「滑动窗口」？以及如何发掘题目性质</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/jie-ben-ti-bang-zhu-da-jia-li-jie-di-gui-obla/">借本题帮助大家理解递归</a></td>
+</tr>
+</tbody></table>
+<p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://segmentfault.com/a/1190000040174595">精读《算法 - 滑动窗口》</a></strong></p>
+</li>
+<li><p><strong><a href="https://labuladong.gitee.io/algo/2/21/60/">我写了首诗，把滑动窗口算法算法变成了默写题</a></strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>双指针</tag>
+        <tag>滑动窗口</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>理解linux中的file descriptor(文件描述符)</title>
     <url>/post/1e8930fb/</url>
     <content><![CDATA[<p>file descriptor（以下简称fd）又叫文件描述符，它是一个抽象的指示符，用一个整数表示（非负整数）。它指向了由系统内核维护的一个file table中的某个条目（entry）。这个解释可能过于抽象，不过在正式详细介绍fd之前，有必要先了解用户程序和系统内核之间的工作过程。</p>
@@ -7213,221 +7278,6 @@
       </categories>
       <tags>
         <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>滑动窗口</title>
-    <url>/post/50cab45/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>滑动窗口算法是较为入门题目的算法，一般是一些有规律数组问题的最优解，也就是说，如果一个数组问题可以用动态规划解，但又可以使用滑动窗口解决，那么往往滑动窗口的效率更高。</p>
-<p>双指针也并不局限在数组问题，像链表场景的 “快慢指针” 也属于双指针的场景，其快慢指针滑动过程中本身就会产生一个窗口，比如当窗口收缩到某种程度，可以得到一些结论。</p>
-<p><strong>滑动窗口使用双指针解决问题</strong>，所以一般也叫<strong>双指针算法</strong>，因为<strong>两个指针间形成一个窗口</strong>。</p>
-<p>什么情况适合用双指针呢？一般双指针是暴力算法的优化版，所以：</p>
-<ol>
-<li>如果题目较为简单，且是<strong>数组或链表问题</strong>，往往可以尝试双指针是否可解。</li>
-<li>如果<strong>数组存在规律</strong>，可以尝试双指针。</li>
-<li>如果<strong>链表问题限制较多</strong>，比如要求 <strong>O(1) 空间复杂度解决</strong>，也许只有双指针可解。</li>
-</ol>
-<p>也就是说，当一个问题比较有规律，或者较为简单，或较为巧妙时，可以尝试双指针（滑动窗口）解法。</p>
-<span id="more"></span>
-
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>算法的大致逻辑如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (right &lt; s.size()) &#123;</span><br><span class="line">    <span class="comment">// 增大窗口</span></span><br><span class="line">    window.add(s[right]);</span><br><span class="line">    right++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">        <span class="comment">// 缩小窗口</span></span><br><span class="line">        window.remove(s[left]);</span><br><span class="line">        left++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>时间复杂度是 O(N)，比字符串暴力算法要高效得多。</p>
-</blockquote>
-<p>其实难点不是算法的思路，而是各种细节问题。比如说如何向窗口中添加新元素，如何缩小窗口，在窗口滑动的哪个阶段更新结果。</p>
-<h3 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* 滑动窗口算法框架 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">slidingWindow</span><span class="params">(string s, string t)</span> </span>&#123;</span><br><span class="line">    unordered_map&lt;<span class="keyword">char</span>, <span class="keyword">int</span>&gt; need, window;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c : t) need[c]++;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> valid = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">while</span> (right &lt; s.<span class="built_in">size</span>()) &#123;</span><br><span class="line">        <span class="comment">// c 是将移入窗口的字符</span></span><br><span class="line">        <span class="keyword">char</span> c = s[right];</span><br><span class="line">        <span class="comment">// 右移窗口</span></span><br><span class="line">        right++;</span><br><span class="line">        <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">        ...</span><br><span class="line"></span><br><span class="line">        <span class="comment">/*** debug 输出的位置 ***/</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;window: [%d, %d)\n&quot;</span>, left, right);</span><br><span class="line">        <span class="comment">/********************/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 判断左侧窗口是否要收缩</span></span><br><span class="line">        <span class="keyword">while</span> (window needs shrink) &#123;</span><br><span class="line">            <span class="comment">// d 是将移出窗口的字符</span></span><br><span class="line">            <span class="keyword">char</span> d = s[left];</span><br><span class="line">            <span class="comment">// 左移窗口</span></span><br><span class="line">            left++;</span><br><span class="line">            <span class="comment">// 进行窗口内数据的一系列更新</span></span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>其中两处 <code>...</code> 表示的更新窗口数据的地方</strong>。</p>
-<p>而且，这两个 <code>...</code> 处的操作分别是右移和左移窗口更新操作，它们操作是完全对称的。</p>
-<blockquote>
-<p>C++：</p>
-<p><code>unordered_map</code> 就是哈希表（字典），它的一个方法 <code>count(key)</code> 相当于 Java 的 <code>containsKey(key)</code> 可以判断键 key 是否存在。</p>
-<p>可以使用方括号访问键对应的值 <code>map[key]</code>。需要注意的是，如果该 <code>key</code> 不存在，C++ 会自动创建这个 key，并把 <code>map[key]</code> 赋值为 0。</p>
-<p>所以代码中多次出现的 <code>map[key]++</code> 相当于 Java 的 <code>map.put(key, map.getOrDefault(key, 0) + 1)</code>。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/">剑指 Offer 48. 最长不含重复字符的子字符串</a></td>
-<td><a href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/solution/mian-shi-ti-48-zui-chang-bu-han-zhong-fu-zi-fu-d-9/">面试题48. 最长不含重复字符的子字符串（动态规划 / 双指针 + 哈希表，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/wu-zhong-fu-zi-fu-de-zui-chang-zi-chuan-by-leetc-2/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/">395. 至少有 K 个重复字符的最长子串</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/xiang-jie-mei-ju-shuang-zhi-zhen-jie-fa-50ri1/">【宫水三叶の相信科学系列】为什么不能用「滑动窗口」？以及如何发掘题目性质</a><br/><a href="https://leetcode-cn.com/problems/longest-substring-with-at-least-k-repeating-characters/solution/jie-ben-ti-bang-zhu-da-jia-li-jie-di-gui-obla/">借本题帮助大家理解递归</a></td>
-</tr>
-</tbody></table>
-<p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://segmentfault.com/a/1190000040174595">精读《算法 - 滑动窗口》</a></strong></p>
-</li>
-<li><p><strong><a href="https://labuladong.gitee.io/algo/2/21/60/">我写了首诗，把滑动窗口算法算法变成了默写题</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>双指针</tag>
-        <tag>滑动窗口</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>贪心</title>
-    <url>/post/34811d5f/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>贪心法</strong>，又称<a href="https://zh.wikipedia.org/wiki/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><strong>贪心算法</strong></a>、<strong>贪婪算法</strong>、或称<strong>贪婪法</strong>，是一种在每一步选择中都采取在当前状态下最好或最优（即最有利）的选择，从而希望导致结果是最好或最优的算法。比如在旅行推销员问题中，如果旅行员每次都选择最近的城市，那这就是一种贪心算法。</p>
-<span id="more"></span>
-
-
-<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>贪心算法的基本思路是<strong>从问题的某一个初始解出发一步一步地进行</strong>，根据某个优化测度，<strong>每一步都要确保能获得局部最优解</strong>。每一步只考虑一个数据，他的选取应该满足局部优化的条件。若下一个数据和部分最优解连在一起不再是可行解时，就不把该数据添加到部分解中，<strong>直到把所有数据枚举完，或者不能再添加算法停止</strong>。</p>
-<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><ol>
-<li><strong>建立数学模型</strong>来描述问题；</li>
-<li>把求解的问题<strong>分成若干个子问题</strong>；</li>
-<li>对每一子问题求解，<strong>得到子问题的局部最优解</strong>；</li>
-<li>把子问题的解<strong>局部最优解合成</strong>原来解问题的一个解。</li>
-</ol>
-<p>贪心算法是一种对某些求最优解问题的更简单、更迅速的设计技术。贪心算法的特点是一步一步地进行，常<strong>以当前情况为基础根据某个优化测度作最优选择，而不考虑各种可能的整体情况</strong>，省去了为找最优解要穷尽所有可能而必须耗费的大量时间。贪心算法采用<strong>自顶向下</strong>，以<strong>迭代</strong>的方法做出相继的贪心选择，每做一次贪心选择，就将所求问题简化为一个规模更小的子问题，通过每一步贪心选择，可得到问题的一个最优解。虽然<strong>每一步上都要保证能获得局部最优解</strong>，<strong>但由此产生的全局解有时不一定是最优的</strong>，所以贪心算法不要回溯。</p>
-<h2 id="算法特性"><a href="#算法特性" class="headerlink" title="算法特性"></a>算法特性</h2><p>贪婪算法可解决的问题通常大部分都有如下的特性：</p>
-<ol>
-<li>有一个以最优方式来解决的问题。为了构造问题的解决方案，有一个候选的对象的集合：比如不同面值的硬币。</li>
-<li>随着算法的进行，将积累起其它两个集合：一个包含已经被考虑过并<strong>被选出</strong>的候选对象，另一个包含已经被考虑过但<strong>被丢弃</strong>的候选对象。</li>
-<li>有一个函数来检查一个候选对象的集合是否提供了问题的解答。该函数不考虑此时的解决方法是否最优。</li>
-<li>还有一个函数检查是否一个候选对象的集合是可行的，也即是否可能往该集合上添加更多的候选对象以获得一个解。和上一个函数一样，此时不考虑解决方法的最优性。</li>
-<li><strong>选择函数</strong>可以指出哪一个剩余的候选对象最有希望构成问题的解。</li>
-<li>最后，<strong>目标函数</strong>给出解的值。</li>
-</ol>
-<p>为了解决问题，需要<strong>寻找</strong>一个<strong>构成解的候选对象集合</strong>，它可以<strong>优化目标函数</strong>，贪婪算法一步一步的进行。起初，算法选出的候选对象的集合为空。接下来的<strong>每一步</strong>中，<strong>根据选择函数，算法从剩余候选对象中选出最有希望构成解的对象</strong>。如果集合中加上该对象后不可行，那么该对象就被丢弃并不再考虑；否则就加到集合里。每一次都<strong>扩充集合</strong>，并检查该集合是否构成解。<strong>如果贪婪算法正确工作，那么找到的第一个解通常是最优的</strong>。</p>
-<h2 id="证明方法"><a href="#证明方法" class="headerlink" title="证明方法"></a>证明方法</h2><p>贪心算法有两种证明方法：反证法和归纳法。一般情况下，一道题只会用到其中的一种方法来证明。</p>
-<ol>
-<li><strong>反证法</strong>：如果交换方案中任意两个元素/相邻的两个元素后，答案不会变得更好，那么可以推定目前的解已经是最优解了。</li>
-<li><strong>归纳法</strong>：先算得出边界情况（例如 n = 1）的最优解 ，然后再证明：对于每个 n，  F<sub>n+1</sub> 都可以由 F<sub>n</sub> 推导出结果。</li>
-</ol>
-<h2 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h2><p>利用贪心法求解的问题应具备如下2个特征：</p>
-<ol>
-<li><p><strong>贪心选择性质</strong></p>
-<p>一个问题的整体最优解可通过一系列局部的最优解的选择达到，并且<strong>每次的选择可以依赖以前作出的选择，但不依赖于后面要作出的选择。这就是贪心选择性质</strong>。对于一个具体问题，要确定它是否具有贪心选择性质，<strong>必须证明每一步所作的贪心选择最终导致问题的整体最优解</strong></p>
-</li>
-<li><p><strong>最优子结构性质</strong></p>
-<p>当<strong>一个问题的最优解包含其子问题的最优解时，称此问题具有最优子结构性质</strong>。问题的最优子结构性质是该问题可用贪心法求解的关键所在。在实际应用中，至于什么问题具有什么样的贪心选择性质是不确定的，需要具体问题具体分析。</p>
-</li>
-</ol>
-<h2 id="解题策略"><a href="#解题策略" class="headerlink" title="解题策略"></a>解题策略</h2><p>贪心算法不从整体最优上加以考虑，所做出的仅是在某种意义上的局部最优选择。<strong>使用贪心策略要注意局部最优与全局最优的关系，选择当前的局部最优并不一定能推导出问题的全局最优</strong>。贪心策略解题需要解决以下两个问题：</p>
-<ol>
-<li>该问题是否适合使用贪心策略求解，也就是该问题是否具有贪心选择性质；</li>
-<li>制定贪心策略，以达到问题的最优解或较优解。</li>
-</ol>
-<p>要确定一个问题是否适合用贪心算法求解，必须证明每一步所作的贪心选择最终导致问题的整体最优解。证明的大致过程为：首先考察问题的一个整体最优解，并证明可修改这个最优解，使其以贪心选择开始，做了贪心选择后，原问题简化为规模更小的类似子问题。然后用<a href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E5%BD%92%E7%BA%B3%E6%B3%95">数学归纳法</a>证明通过每一步做贪心选择，最终可得到问题的整体最优解。</p>
-<h2 id="常见题型"><a href="#常见题型" class="headerlink" title="常见题型"></a>常见题型</h2><p>在提高组难度以下的题目中，最常见的贪心有两种。</p>
-<ul>
-<li>「我们将 XXX 按照某某顺序排序，然后按某种顺序（例如从小到大）选择。」。</li>
-<li>「我们每次都取 XXX 中最大/小的东西，并更新 XXX。」（有时「XXX 中最大/小的东西」可以优化，比如用优先队列维护）</li>
-</ul>
-<p>二者的区别在于一种是离线的，先处理后选择；一种是在线的，边处理边选择。</p>
-<h3 id="排序解法"><a href="#排序解法" class="headerlink" title="排序解法"></a>排序解法</h3><p>用排序法常见的情况是输入一个包含几个（一般一到两个）<strong>权值</strong>的数组，通过排序然后<strong>遍历模拟计算</strong>的方法求出最优值。</p>
-<h3 id="后悔解法"><a href="#后悔解法" class="headerlink" title="后悔解法"></a>后悔解法</h3><p>思路是无论当前的选项是否最优都接受，然后进行比较，如果选择之后不是最优了，则反悔，舍弃掉这个选项；否则，正式接受。如此往复。</p>
-<h2 id="存在问题"><a href="#存在问题" class="headerlink" title="存在问题"></a>存在问题</h2><p>贪心算法也存在如下问题：</p>
-<ol>
-<li>不能保证解是最佳的。因为贪心算法总是从局部出发，并<strong>没从整体考虑</strong>；</li>
-<li>贪心算法一般用来<strong>解决求最大或最小解</strong>；</li>
-<li>贪心算法<strong>只能确定某些问题的可行性范围</strong>。</li>
-</ol>
-<h2 id="与动态规划的区别"><a href="#与动态规划的区别" class="headerlink" title="与动态规划的区别"></a>与动态规划的区别</h2><p>贪心算法与动态规划的不同在于它对每个子问题的解决方案都做出选择，不能回退。动态规划则会保存以前的运算结果，并根据以前的结果对当前进行选择，有回退功能。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/largest-number/">179. 最大数</a></td>
-<td><a href="https://leetcode-cn.com/problems/largest-number/solution/gong-shui-san-xie-noxiang-xin-ke-xue-xi-vn86e/">【宫水三叶の相信科学系列】为什么根据「拼接结果的字典序大小」决定「其在序列里的相对关系」是正确的</a><br/><a href="https://leetcode-cn.com/problems/largest-number/solution/zui-da-shu-by-leetcode-solution-sid5/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/queue-reconstruction-by-height/">406. 根据身高重建队列</a></td>
-<td><a href="https://leetcode-cn.com/problems/queue-reconstruction-by-height/solution/xian-pai-xu-zai-cha-dui-dong-hua-yan-shi-suan-fa-g/">【先排序，再插队】动画演示算法过程，有点小套路</a><br/><a href="https://leetcode-cn.com/problems/queue-reconstruction-by-height/solution/gen-ju-shen-gao-zhong-jian-dui-lie-by-leetcode-sol/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/valid-palindrome-ii/">680. 验证回文字符串 Ⅱ</a></td>
-<td><a href="https://leetcode-cn.com/problems/valid-palindrome-ii/solution/yan-zheng-hui-wen-zi-fu-chuan-ii-by-leetcode-solut/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/peaks-and-valleys-lcci/">面试题 10.11. 峰与谷</a></td>
-<td><a href="https://leetcode-cn.com/problems/peaks-and-valleys-lcci/solution/onsuan-fa-qiu-jie-by-whut_hj/">O（n）算法求解</a></td>
-</tr>
-</tbody></table>
-<h2 id="发展历史"><a href="#发展历史" class="headerlink" title="发展历史"></a>发展历史</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>经典得贪婪算法有<em><strong>Dijkstra’s algorithm</strong></em>, <em><strong>Huffman coding</strong></em>, <em><strong>Kruskal’s algorithm</strong></em>, <em><strong>optimal merge</strong></em>, <em><strong>Prim-Jarnik algorithm</strong></em>.</p>
-<p>该算法于1930年由捷克数学家沃伊捷赫·亚尔尼克发现；并在1957年由美国计算机科学家罗伯特·普里姆独立发现；1959年，艾兹格·迪科斯彻再次发现了该算法。因此，在某些场合，Prim算法又被称为<strong>DJP算法</strong>、<strong>亚尔尼克算法</strong>或<em>Prim-Jarnik algorithm</em>.。</p>
-<p>1951年，David A. Huffman和他的麻省理工学院信息理论同学们选择了学期论文。Robert M. Fano教授为寻找最有效的二进制代码问题分配了一份学期论文。Huffman无法证明任何代码是最有效的，他打算放弃并开始研究最终的结果时，他碰到使用频率排序二叉树的想法，并迅速证明这种方法是最有效的。这样做，Huffman超过了与信息理论发明家克劳德香农合作开发类似代码的范诺。与自顶向下Shannon-Fano编码不同，从底层构建树保证了最优性。1952年，于论文《一种构建极小多余编码的方法》（A Method for the Construction of Minimum-Redundancy Codes）中发表了这个编码方法。</p>
-<p><strong>Kruskal算法</strong>是一种用来查找最小生成树的算法，由Joseph Kruskal在1956年发表。用来解决同样问题的还有Prim算法和Boruvka算法等。三种算法都是贪心算法的应用。和Boruvka算法不同的地方是，Kruskal算法在图中存在相同权值的边时也有效。</p>
-<p>Edsger Dijkstra在1959年在ARMAC计算机上写出了Dijkstra算法，它来搜索最短路径的算法。Dijkstra是经典得贪婪算法之一。</p>
-<p>在1968年，人工智能研究员尼尔斯·尼尔森(Nils Nilsson)试图改进机器人Shakey所做的路径规划，这个机器人原型可以通过在一个包含障碍物的房间进行导航。这种寻路算法，Nilsson称之为A1，是当时最著名的Hans Berliner于1979算法的更快版本，用于在图中找到最短路径。Bertram Raphael建议对这个算法进行一些重要的改进，并调用了修改后的A2。然后Peter E. Hart引入了一个论证，建立了A2，只有微小的变化，才能成为寻找最短路径的最佳算法。</p>
-<p>1985 Richard Korf <strong>Iterative deepening A*</strong> (<strong>IDA*</strong>)是一种图遍历和路径搜索算法，它可以在一个加权图中找到指定的起始节点和一组目标节点的任何成员之间的最短路径。它是迭代深化深度优先搜索的一个变体，它借用了一个启发函数来评估剩余的成本，以从a <em>搜索算法获得目标。由于它是深度优先的搜索算法，它的内存使用率低于A</em>，但与普通的迭代深化搜索不同，它专注于探索最有希望的节点，因此不会访问。与A<em>不同，IDA</em>不使用动态编程，因此经常会多次访问相同的节点。1993年，Korf, R. E. (1993).对BFS进行延伸，提出RBFS，将**A***储存空间减小为线性增长。</p>
-<h3 id="主要事件"><a href="#主要事件" class="headerlink" title="主要事件"></a>主要事件</h3><table>
-<thead>
-<tr>
-<th></th>
-<th>年份</th>
-<th>事件</th>
-<th>相关论文/Reference</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>1952</td>
-<td>Huffman, D. A.提出哈夫曼编码</td>
-<td>Huffman, D. A. (1952). A method for the construction of minimum-redundancy codes. Proceedings of the IRE, 40(9), 1098-1101.</td>
-</tr>
-<tr>
-<td>2</td>
-<td>1958</td>
-<td>Hart, P. E., Nilsson, N. J., &amp; Raphael, B.提出A星算法使用两个代价函数作为目标函数</td>
-<td>Hart, P. E., Nilsson, N. J., &amp; Raphael, B. (1968). A formal basis for the heuristic determination of minimum cost paths. IEEE transactions on Systems Science and Cybernetics, 4(2), 100-107.</td>
-</tr>
-<tr>
-<td>3</td>
-<td>1959</td>
-<td>Dijkstra, E. W.提出Dijkstra路径搜索算法</td>
-<td>Dijkstra, E. W. (1959). A note on two problems in connexion with graphs. Numerische mathematik, 1(1), 269-271.</td>
-</tr>
-<tr>
-<td>4</td>
-<td>1985</td>
-<td>Korf, R. E.对A星算法进行了优化减小了A星算法的消耗</td>
-<td>Korf, R. E. (1985). Depth-first iterative-deepening: An optimal admissible tree search. Artificial intelligence, 27(1), 97-109.</td>
-</tr>
-<tr>
-<td>5</td>
-<td>2000</td>
-<td>Zhang, Z., Schwartz, S., Wagner, L., &amp; Miller, W.将贪婪算法应用于DNA得排序上</td>
-<td>Zhang, Z., Schwartz, S., Wagner, L., &amp; Miller, W. (2000). A greedy algorithm for aligning DNA sequences. Journal of Computational biology, 7(1-2), 203-214.</td>
-</tr>
-</tbody></table>
-<h2 id="发展分析"><a href="#发展分析" class="headerlink" title="发展分析"></a>发展分析</h2><h3 id="瓶颈"><a href="#瓶颈" class="headerlink" title="瓶颈"></a>瓶颈</h3><p>一个正确的贪心算法拥有很多优点，比如思维复杂度低、代码量小、运行效率高、空间复杂度低等，是信息学竞赛中的一个有力武器。缺点：贪心法的缺点集中表现在他的“非完美性”。通常我们很难找到一个简单可行并且保证正确的贪心思路，即使我们找到一个看上去很正确的贪心思路，也需要严格的正确性证明。这往往给我们直接使用贪心算法带来了巨大的困难。</p>
-<h3 id="未来发展方向"><a href="#未来发展方向" class="headerlink" title="未来发展方向"></a>未来发展方向</h3><p>在求解一个问题的过程中，如果再每一个阶段的选择都是当前状态下的最优选择，即局部最优选择，并且最终能够求得问题的整体最优解，那么说明这个问题可以通过贪心选择来求解，这时就说明此问题具有贪心选择性质。然而如何，可以更简单得来证明一个问题具有贪心选择性质也是可以考虑得地方。</p>
-<p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://baike.baidu.com/item/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/5411800?fr=aladdin&fromid=2979635&fromtitle=%E8%B4%AA%E5%A9%AA%E7%AE%97%E6%B3%95">百度百科 - 贪心算法</a></strong></p>
-</li>
-<li><p><strong><a href="https://www.jiqizhixin.com/graph/technologies/d939b81d-166f-4a73-974f-a44976c15148">贪心算法</a></strong></p>
-</li>
-<li><p><strong><a href="https://oi-wiki.org/basic/greedy/#_11">贪心</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>贪心</tag>
       </tags>
   </entry>
   <entry>
@@ -7594,12 +7444,6 @@
       <tags>
         <tag>记忆化搜索</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>阿里Java开发手册</title>
-    <url>/post/a5aab1c5/</url>
-    <content><![CDATA[<span id="more"></span>
-]]></content>
   </entry>
   <entry>
     <title>跳表</title>
@@ -7791,5 +7635,161 @@
       <tags>
         <tag>面试软技能</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>贪心</title>
+    <url>/post/34811d5f/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>贪心法</strong>，又称<a href="https://zh.wikipedia.org/wiki/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><strong>贪心算法</strong></a>、<strong>贪婪算法</strong>、或称<strong>贪婪法</strong>，是一种在每一步选择中都采取在当前状态下最好或最优（即最有利）的选择，从而希望导致结果是最好或最优的算法。比如在旅行推销员问题中，如果旅行员每次都选择最近的城市，那这就是一种贪心算法。</p>
+<span id="more"></span>
+
+
+<h2 id="思想"><a href="#思想" class="headerlink" title="思想"></a>思想</h2><p>贪心算法的基本思路是<strong>从问题的某一个初始解出发一步一步地进行</strong>，根据某个优化测度，<strong>每一步都要确保能获得局部最优解</strong>。每一步只考虑一个数据，他的选取应该满足局部优化的条件。若下一个数据和部分最优解连在一起不再是可行解时，就不把该数据添加到部分解中，<strong>直到把所有数据枚举完，或者不能再添加算法停止</strong>。</p>
+<h2 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h2><ol>
+<li><strong>建立数学模型</strong>来描述问题；</li>
+<li>把求解的问题<strong>分成若干个子问题</strong>；</li>
+<li>对每一子问题求解，<strong>得到子问题的局部最优解</strong>；</li>
+<li>把子问题的解<strong>局部最优解合成</strong>原来解问题的一个解。</li>
+</ol>
+<p>贪心算法是一种对某些求最优解问题的更简单、更迅速的设计技术。贪心算法的特点是一步一步地进行，常<strong>以当前情况为基础根据某个优化测度作最优选择，而不考虑各种可能的整体情况</strong>，省去了为找最优解要穷尽所有可能而必须耗费的大量时间。贪心算法采用<strong>自顶向下</strong>，以<strong>迭代</strong>的方法做出相继的贪心选择，每做一次贪心选择，就将所求问题简化为一个规模更小的子问题，通过每一步贪心选择，可得到问题的一个最优解。虽然<strong>每一步上都要保证能获得局部最优解</strong>，<strong>但由此产生的全局解有时不一定是最优的</strong>，所以贪心算法不要回溯。</p>
+<h2 id="算法特性"><a href="#算法特性" class="headerlink" title="算法特性"></a>算法特性</h2><p>贪婪算法可解决的问题通常大部分都有如下的特性：</p>
+<ol>
+<li>有一个以最优方式来解决的问题。为了构造问题的解决方案，有一个候选的对象的集合：比如不同面值的硬币。</li>
+<li>随着算法的进行，将积累起其它两个集合：一个包含已经被考虑过并<strong>被选出</strong>的候选对象，另一个包含已经被考虑过但<strong>被丢弃</strong>的候选对象。</li>
+<li>有一个函数来检查一个候选对象的集合是否提供了问题的解答。该函数不考虑此时的解决方法是否最优。</li>
+<li>还有一个函数检查是否一个候选对象的集合是可行的，也即是否可能往该集合上添加更多的候选对象以获得一个解。和上一个函数一样，此时不考虑解决方法的最优性。</li>
+<li><strong>选择函数</strong>可以指出哪一个剩余的候选对象最有希望构成问题的解。</li>
+<li>最后，<strong>目标函数</strong>给出解的值。</li>
+</ol>
+<p>为了解决问题，需要<strong>寻找</strong>一个<strong>构成解的候选对象集合</strong>，它可以<strong>优化目标函数</strong>，贪婪算法一步一步的进行。起初，算法选出的候选对象的集合为空。接下来的<strong>每一步</strong>中，<strong>根据选择函数，算法从剩余候选对象中选出最有希望构成解的对象</strong>。如果集合中加上该对象后不可行，那么该对象就被丢弃并不再考虑；否则就加到集合里。每一次都<strong>扩充集合</strong>，并检查该集合是否构成解。<strong>如果贪婪算法正确工作，那么找到的第一个解通常是最优的</strong>。</p>
+<h2 id="证明方法"><a href="#证明方法" class="headerlink" title="证明方法"></a>证明方法</h2><p>贪心算法有两种证明方法：反证法和归纳法。一般情况下，一道题只会用到其中的一种方法来证明。</p>
+<ol>
+<li><strong>反证法</strong>：如果交换方案中任意两个元素/相邻的两个元素后，答案不会变得更好，那么可以推定目前的解已经是最优解了。</li>
+<li><strong>归纳法</strong>：先算得出边界情况（例如 n = 1）的最优解 ，然后再证明：对于每个 n，  F<sub>n+1</sub> 都可以由 F<sub>n</sub> 推导出结果。</li>
+</ol>
+<h2 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h2><p>利用贪心法求解的问题应具备如下2个特征：</p>
+<ol>
+<li><p><strong>贪心选择性质</strong></p>
+<p>一个问题的整体最优解可通过一系列局部的最优解的选择达到，并且<strong>每次的选择可以依赖以前作出的选择，但不依赖于后面要作出的选择。这就是贪心选择性质</strong>。对于一个具体问题，要确定它是否具有贪心选择性质，<strong>必须证明每一步所作的贪心选择最终导致问题的整体最优解</strong></p>
+</li>
+<li><p><strong>最优子结构性质</strong></p>
+<p>当<strong>一个问题的最优解包含其子问题的最优解时，称此问题具有最优子结构性质</strong>。问题的最优子结构性质是该问题可用贪心法求解的关键所在。在实际应用中，至于什么问题具有什么样的贪心选择性质是不确定的，需要具体问题具体分析。</p>
+</li>
+</ol>
+<h2 id="解题策略"><a href="#解题策略" class="headerlink" title="解题策略"></a>解题策略</h2><p>贪心算法不从整体最优上加以考虑，所做出的仅是在某种意义上的局部最优选择。<strong>使用贪心策略要注意局部最优与全局最优的关系，选择当前的局部最优并不一定能推导出问题的全局最优</strong>。贪心策略解题需要解决以下两个问题：</p>
+<ol>
+<li>该问题是否适合使用贪心策略求解，也就是该问题是否具有贪心选择性质；</li>
+<li>制定贪心策略，以达到问题的最优解或较优解。</li>
+</ol>
+<p>要确定一个问题是否适合用贪心算法求解，必须证明每一步所作的贪心选择最终导致问题的整体最优解。证明的大致过程为：首先考察问题的一个整体最优解，并证明可修改这个最优解，使其以贪心选择开始，做了贪心选择后，原问题简化为规模更小的类似子问题。然后用<a href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E5%BD%92%E7%BA%B3%E6%B3%95">数学归纳法</a>证明通过每一步做贪心选择，最终可得到问题的整体最优解。</p>
+<h2 id="常见题型"><a href="#常见题型" class="headerlink" title="常见题型"></a>常见题型</h2><p>在提高组难度以下的题目中，最常见的贪心有两种。</p>
+<ul>
+<li>「我们将 XXX 按照某某顺序排序，然后按某种顺序（例如从小到大）选择。」。</li>
+<li>「我们每次都取 XXX 中最大/小的东西，并更新 XXX。」（有时「XXX 中最大/小的东西」可以优化，比如用优先队列维护）</li>
+</ul>
+<p>二者的区别在于一种是离线的，先处理后选择；一种是在线的，边处理边选择。</p>
+<h3 id="排序解法"><a href="#排序解法" class="headerlink" title="排序解法"></a>排序解法</h3><p>用排序法常见的情况是输入一个包含几个（一般一到两个）<strong>权值</strong>的数组，通过排序然后<strong>遍历模拟计算</strong>的方法求出最优值。</p>
+<h3 id="后悔解法"><a href="#后悔解法" class="headerlink" title="后悔解法"></a>后悔解法</h3><p>思路是无论当前的选项是否最优都接受，然后进行比较，如果选择之后不是最优了，则反悔，舍弃掉这个选项；否则，正式接受。如此往复。</p>
+<h2 id="存在问题"><a href="#存在问题" class="headerlink" title="存在问题"></a>存在问题</h2><p>贪心算法也存在如下问题：</p>
+<ol>
+<li>不能保证解是最佳的。因为贪心算法总是从局部出发，并<strong>没从整体考虑</strong>；</li>
+<li>贪心算法一般用来<strong>解决求最大或最小解</strong>；</li>
+<li>贪心算法<strong>只能确定某些问题的可行性范围</strong>。</li>
+</ol>
+<h2 id="与动态规划的区别"><a href="#与动态规划的区别" class="headerlink" title="与动态规划的区别"></a>与动态规划的区别</h2><p>贪心算法与动态规划的不同在于它对每个子问题的解决方案都做出选择，不能回退。动态规划则会保存以前的运算结果，并根据以前的结果对当前进行选择，有回退功能。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/largest-number/">179. 最大数</a></td>
+<td><a href="https://leetcode-cn.com/problems/largest-number/solution/gong-shui-san-xie-noxiang-xin-ke-xue-xi-vn86e/">【宫水三叶の相信科学系列】为什么根据「拼接结果的字典序大小」决定「其在序列里的相对关系」是正确的</a><br/><a href="https://leetcode-cn.com/problems/largest-number/solution/zui-da-shu-by-leetcode-solution-sid5/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/queue-reconstruction-by-height/">406. 根据身高重建队列</a></td>
+<td><a href="https://leetcode-cn.com/problems/queue-reconstruction-by-height/solution/xian-pai-xu-zai-cha-dui-dong-hua-yan-shi-suan-fa-g/">【先排序，再插队】动画演示算法过程，有点小套路</a><br/><a href="https://leetcode-cn.com/problems/queue-reconstruction-by-height/solution/gen-ju-shen-gao-zhong-jian-dui-lie-by-leetcode-sol/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/valid-palindrome-ii/">680. 验证回文字符串 Ⅱ</a></td>
+<td><a href="https://leetcode-cn.com/problems/valid-palindrome-ii/solution/yan-zheng-hui-wen-zi-fu-chuan-ii-by-leetcode-solut/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/peaks-and-valleys-lcci/">面试题 10.11. 峰与谷</a></td>
+<td><a href="https://leetcode-cn.com/problems/peaks-and-valleys-lcci/solution/onsuan-fa-qiu-jie-by-whut_hj/">O（n）算法求解</a></td>
+</tr>
+</tbody></table>
+<h2 id="发展历史"><a href="#发展历史" class="headerlink" title="发展历史"></a>发展历史</h2><h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>经典得贪婪算法有<em><strong>Dijkstra’s algorithm</strong></em>, <em><strong>Huffman coding</strong></em>, <em><strong>Kruskal’s algorithm</strong></em>, <em><strong>optimal merge</strong></em>, <em><strong>Prim-Jarnik algorithm</strong></em>.</p>
+<p>该算法于1930年由捷克数学家沃伊捷赫·亚尔尼克发现；并在1957年由美国计算机科学家罗伯特·普里姆独立发现；1959年，艾兹格·迪科斯彻再次发现了该算法。因此，在某些场合，Prim算法又被称为<strong>DJP算法</strong>、<strong>亚尔尼克算法</strong>或<em>Prim-Jarnik algorithm</em>.。</p>
+<p>1951年，David A. Huffman和他的麻省理工学院信息理论同学们选择了学期论文。Robert M. Fano教授为寻找最有效的二进制代码问题分配了一份学期论文。Huffman无法证明任何代码是最有效的，他打算放弃并开始研究最终的结果时，他碰到使用频率排序二叉树的想法，并迅速证明这种方法是最有效的。这样做，Huffman超过了与信息理论发明家克劳德香农合作开发类似代码的范诺。与自顶向下Shannon-Fano编码不同，从底层构建树保证了最优性。1952年，于论文《一种构建极小多余编码的方法》（A Method for the Construction of Minimum-Redundancy Codes）中发表了这个编码方法。</p>
+<p><strong>Kruskal算法</strong>是一种用来查找最小生成树的算法，由Joseph Kruskal在1956年发表。用来解决同样问题的还有Prim算法和Boruvka算法等。三种算法都是贪心算法的应用。和Boruvka算法不同的地方是，Kruskal算法在图中存在相同权值的边时也有效。</p>
+<p>Edsger Dijkstra在1959年在ARMAC计算机上写出了Dijkstra算法，它来搜索最短路径的算法。Dijkstra是经典得贪婪算法之一。</p>
+<p>在1968年，人工智能研究员尼尔斯·尼尔森(Nils Nilsson)试图改进机器人Shakey所做的路径规划，这个机器人原型可以通过在一个包含障碍物的房间进行导航。这种寻路算法，Nilsson称之为A1，是当时最著名的Hans Berliner于1979算法的更快版本，用于在图中找到最短路径。Bertram Raphael建议对这个算法进行一些重要的改进，并调用了修改后的A2。然后Peter E. Hart引入了一个论证，建立了A2，只有微小的变化，才能成为寻找最短路径的最佳算法。</p>
+<p>1985 Richard Korf <strong>Iterative deepening A*</strong> (<strong>IDA*</strong>)是一种图遍历和路径搜索算法，它可以在一个加权图中找到指定的起始节点和一组目标节点的任何成员之间的最短路径。它是迭代深化深度优先搜索的一个变体，它借用了一个启发函数来评估剩余的成本，以从a <em>搜索算法获得目标。由于它是深度优先的搜索算法，它的内存使用率低于A</em>，但与普通的迭代深化搜索不同，它专注于探索最有希望的节点，因此不会访问。与A<em>不同，IDA</em>不使用动态编程，因此经常会多次访问相同的节点。1993年，Korf, R. E. (1993).对BFS进行延伸，提出RBFS，将**A***储存空间减小为线性增长。</p>
+<h3 id="主要事件"><a href="#主要事件" class="headerlink" title="主要事件"></a>主要事件</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>年份</th>
+<th>事件</th>
+<th>相关论文/Reference</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1952</td>
+<td>Huffman, D. A.提出哈夫曼编码</td>
+<td>Huffman, D. A. (1952). A method for the construction of minimum-redundancy codes. Proceedings of the IRE, 40(9), 1098-1101.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1958</td>
+<td>Hart, P. E., Nilsson, N. J., &amp; Raphael, B.提出A星算法使用两个代价函数作为目标函数</td>
+<td>Hart, P. E., Nilsson, N. J., &amp; Raphael, B. (1968). A formal basis for the heuristic determination of minimum cost paths. IEEE transactions on Systems Science and Cybernetics, 4(2), 100-107.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1959</td>
+<td>Dijkstra, E. W.提出Dijkstra路径搜索算法</td>
+<td>Dijkstra, E. W. (1959). A note on two problems in connexion with graphs. Numerische mathematik, 1(1), 269-271.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>1985</td>
+<td>Korf, R. E.对A星算法进行了优化减小了A星算法的消耗</td>
+<td>Korf, R. E. (1985). Depth-first iterative-deepening: An optimal admissible tree search. Artificial intelligence, 27(1), 97-109.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>2000</td>
+<td>Zhang, Z., Schwartz, S., Wagner, L., &amp; Miller, W.将贪婪算法应用于DNA得排序上</td>
+<td>Zhang, Z., Schwartz, S., Wagner, L., &amp; Miller, W. (2000). A greedy algorithm for aligning DNA sequences. Journal of Computational biology, 7(1-2), 203-214.</td>
+</tr>
+</tbody></table>
+<h2 id="发展分析"><a href="#发展分析" class="headerlink" title="发展分析"></a>发展分析</h2><h3 id="瓶颈"><a href="#瓶颈" class="headerlink" title="瓶颈"></a>瓶颈</h3><p>一个正确的贪心算法拥有很多优点，比如思维复杂度低、代码量小、运行效率高、空间复杂度低等，是信息学竞赛中的一个有力武器。缺点：贪心法的缺点集中表现在他的“非完美性”。通常我们很难找到一个简单可行并且保证正确的贪心思路，即使我们找到一个看上去很正确的贪心思路，也需要严格的正确性证明。这往往给我们直接使用贪心算法带来了巨大的困难。</p>
+<h3 id="未来发展方向"><a href="#未来发展方向" class="headerlink" title="未来发展方向"></a>未来发展方向</h3><p>在求解一个问题的过程中，如果再每一个阶段的选择都是当前状态下的最优选择，即局部最优选择，并且最终能够求得问题的整体最优解，那么说明这个问题可以通过贪心选择来求解，这时就说明此问题具有贪心选择性质。然而如何，可以更简单得来证明一个问题具有贪心选择性质也是可以考虑得地方。</p>
+<p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://baike.baidu.com/item/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/5411800?fr=aladdin&fromid=2979635&fromtitle=%E8%B4%AA%E5%A9%AA%E7%AE%97%E6%B3%95">百度百科 - 贪心算法</a></strong></p>
+</li>
+<li><p><strong><a href="https://www.jiqizhixin.com/graph/technologies/d939b81d-166f-4a73-974f-a44976c15148">贪心算法</a></strong></p>
+</li>
+<li><p><strong><a href="https://oi-wiki.org/basic/greedy/#_11">贪心</a></strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>贪心</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里Java开发手册</title>
+    <url>/post/a5aab1c5/</url>
+    <content><![CDATA[<span id="more"></span>
+]]></content>
   </entry>
 </search>
