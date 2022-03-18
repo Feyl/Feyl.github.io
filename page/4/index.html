@@ -528,7 +528,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-03-17 20:09:28" itemprop="dateModified" datetime="2022-03-17T20:09:28+08:00">2022-03-17</time>
+                <time title="Modified: 2022-03-18 10:11:48" itemprop="dateModified" datetime="2022-03-18T10:11:48+08:00">2022-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -566,10 +566,6 @@
 
       
           <p>Java <em>Lambda 表达式</em>的一个重要用法是简化某些<em>匿名内部类</em>（<code>Anonymous Classes</code>）的写法。实际上 Lambda 表达式并不仅仅是匿名内部类的语法糖，JVM 内部是通过<em>invokedynamic</em>指令来实现 Lambda 表达式的。具体原理放到下一篇。本篇我们首先感受一下使用 Lambda 表达式带来的便利之处。</p>
-<h2 id="Lambda-and-Anonymous-Classes-I"><a href="#Lambda-and-Anonymous-Classes-I" class="headerlink" title="Lambda and Anonymous Classes(I)"></a>Lambda and Anonymous Classes(I)</h2><p>本节将介绍如何使用 Lambda 表达式简化匿名内部类的书写，但 Lambda 表达式并不能取代所有的匿名内部类，只能用来取代<strong>函数接口（Functional Interface）</strong>的简写。先别在乎细节，看几个例子再说。</p>
-<p>例子 1：无参函数的简写</p>
-<p>如果需要新建一个线程，一种常见的写法是这样：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// JDK7 匿名内部类写法</span></span><br><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable()&#123;<span class="comment">// 接口名</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;<span class="comment">// 方法名</span></span><br><span class="line">		System.out.println(<span class="string">&quot;Thread run()&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/post/9fa75fc1/#more" rel="contents">
