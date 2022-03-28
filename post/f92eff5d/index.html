@@ -29,7 +29,7 @@
 <meta property="og:description" content="简介回溯算法 实际上一个类似枚举的搜索尝试过程，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。 回溯法是一种选优搜索法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。 许多复杂的，规模较大的问题都可以使用回溯法，有“">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2022-02-09T09:08:12.000Z">
-<meta property="article:modified_time" content="2022-03-17T12:10:59.561Z">
+<meta property="article:modified_time" content="2022-03-22T01:22:04.349Z">
 <meta property="article:author" content="Feng Yuliang">
 <meta property="article:tag" content="回溯">
 <meta name="twitter:card" content="summary">
@@ -235,7 +235,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-03-17 20:10:59" itemprop="dateModified" datetime="2022-03-17T20:10:59+08:00">2022-03-17</time>
+                <time title="Modified: 2022-03-22 09:22:04" itemprop="dateModified" datetime="2022-03-22T09:22:04+08:00">2022-03-22</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -253,7 +253,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">Symbols count in article: </span>
-              <span>1.3k</span>
+              <span>1.4k</span>
             </span>
             <span class="post-meta-item" title="Reading time">
               <span class="post-meta-item-icon">
@@ -319,7 +319,7 @@
 <td><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/">官方题解</a><br/><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/hui-su-you-hua-jia-liao-dong-tai-gui-hua-by-liweiw/">回溯算法、优化（使用动态规划预处理数组）</a></td>
 </tr>
 </tbody></table>
-<p>文章转载来源：</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
 <ul>
 <li><strong><a target="_blank" rel="noopener" href="https://houbb.github.io/2020/01/23/data-struct-learn-07-base-backtracking">五大基本算法之回溯算法 backtracking</a></strong></li>
 </ul>
@@ -407,7 +407,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E7%A9%B7%E4%B8%BE%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-number">1.1.</span> <span class="nav-text">与穷举的联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%AA%E6%9E%9D"><span class="nav-number">1.2.</span> <span class="nav-text">剪枝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">一般步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">3.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">4.</span> <span class="nav-text">题目</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E7%A9%B7%E4%B8%BE%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-number">1.1.</span> <span class="nav-text">与穷举的联系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%AA%E6%9E%9D"><span class="nav-number">1.2.</span> <span class="nav-text">剪枝</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.</span> <span class="nav-text">一般步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%80%9D%E6%83%B3"><span class="nav-number">3.</span> <span class="nav-text">基本思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-number">4.</span> <span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
