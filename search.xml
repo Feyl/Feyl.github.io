@@ -250,6 +250,134 @@
       </tags>
   </entry>
   <entry>
+    <title>Java 并发编程（基础）</title>
+    <url>/post/7f164aae/</url>
+    <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
+<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称<strong>主线程</strong>。</p>
+<p>如下图所示，在 windows 中通过查看任务管理器的方式，我们就可以清楚看到 window 当前运行的进程（.exe 文件的运行）。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202211820997.png" style="zoom:75%;" />
+
+<h3 id="何为线程？"><a href="#何为线程？" class="headerlink" title="何为线程？"></a>何为线程？</h3><p>线程与进程相似，但线程是一个比进程更小的执行单位。一个进程在其执行的过程中可以产生多个线程。与进程不同的是同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为<strong>轻量级进程</strong>。</p>
+<p>Java 程序天生就是多线程程序，我们可以通过 JMX 来看一下一个普通的 Java 程序有哪些线程，代码如下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取 Java 线程管理 MXBean</span></span><br><span class="line">	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">		<span class="comment">// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">// 遍历线程信息，仅打印线程 ID 和线程名称信息</span></span><br><span class="line">		<span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> + threadInfo.getThreadName());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述程序输出如下（输出内容可能不同，不用太纠结下面每个线程的作用，只用知道 main 线程执行 main 方法即可）：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">[5] Attach Listener //添加事件</span><br><span class="line">[4] Signal Dispatcher //分发处理给 JVM 信号的线程</span><br><span class="line">[3] Finalizer //调用对象 finalize 方法的线程</span><br><span class="line">[2] Reference Handler //清除 reference 线程</span><br><span class="line">[1] main //main 线程,程序入口</span><br></pre></td></tr></table></figure>
+
+<p>从上面的输出内容可以看出：<strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong>。</p>
+<h2 id="请简要描述线程与进程的关系-区别及优缺点？"><a href="#请简要描述线程与进程的关系-区别及优缺点？" class="headerlink" title="请简要描述线程与进程的关系,区别及优缺点？"></a>请简要描述线程与进程的关系,区别及优缺点？</h2><p><strong>从 JVM 角度说进程和线程之间的关系</strong></p>
+<h3 id="图解进程和线程的关系"><a href="#图解进程和线程的关系" class="headerlink" title="图解进程和线程的关系"></a>图解进程和线程的关系</h3><p>下图是 Java 内存区域，通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202212556937.png" style="zoom:80%;" />
+
+<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)<strong>资源，但是每个线程有自己的</strong>程序计数器</strong>、<strong>虚拟机栈</strong> 和 <strong>本地方法栈</strong>。</p>
+<p><strong>总结：</strong> <strong>线程是进程划分成的更小的运行单位。线程和进程最大的不同在于基本上各进程是独立的，而各线程则不一定，因为同一进程中的线程极有可能会相互影响。线程执行开销小，但不利于资源的管理和保护；而进程正相反。</strong></p>
+<p>下面来思考这样一个问题：为什么<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>是线程私有的呢？为什么堆和方法区是线程共享的呢？</p>
+<h3 id="程序计数器为什么是私有的？"><a href="#程序计数器为什么是私有的？" class="headerlink" title="程序计数器为什么是私有的？"></a>程序计数器为什么是私有的？</h3><p>程序计数器主要有下面两个作用：</p>
+<ol>
+<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
+<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
+</ol>
+<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
+<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
+<h3 id="虚拟机栈和本地方法栈为什么是私有的？"><a href="#虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="虚拟机栈和本地方法栈为什么是私有的？"></a>虚拟机栈和本地方法栈为什么是私有的？</h3><ul>
+<li><strong>虚拟机栈：</strong>每个 Java 方法在执行的同时会创建一个栈帧用于存储<strong>局部变量表</strong>、<strong>操作数栈</strong>、<strong>常量池引用</strong>等信息。从方法调用直至执行完成的过程，就对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。</li>
+<li><strong>本地方法栈：</strong>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
+</ul>
+<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
+<h3 id="一句话简单了解堆和方法区"><a href="#一句话简单了解堆和方法区" class="headerlink" title="一句话简单了解堆和方法区"></a>一句话简单了解堆和方法区</h3><p>堆和方法区是<strong>所有线程共享的资源</strong>，其中<strong>堆是进程中最大的一块内存</strong>，主要用于存放<strong>新创建的对象</strong>（几乎所有对象都在这里分配内存），方法区主要用于存放<strong>已被加载的类信息</strong>、<strong>常量</strong>、<strong>静态变量</strong>、<strong>即时编译器编译后的代码</strong>等数据。</p>
+<h2 id="说说并发与并行的区别？"><a href="#说说并发与并行的区别？" class="headerlink" title="说说并发与并行的区别？"></a>说说并发与并行的区别？</h2><p><strong>并发：</strong>同一时间段，多个任务都在执行（单位时间内不一定同时执行）；</p>
+<p><strong>并行：</strong>单位时间内（同一时刻），多个任务同时执行。</p>
+<h2 id="为什么要使用多线程呢"><a href="#为什么要使用多线程呢" class="headerlink" title="为什么要使用多线程呢?"></a>为什么要使用多线程呢?</h2><p>先从总体上来说：</p>
+<ul>
+<li><strong>从计算机底层来说：</strong>线程可以比作是轻量级的进程，是<strong>程序执行的最小单位</strong>，线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
+<li><strong>从当代互联网发展趋势来说：</strong>现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
+</ul>
+<p>再深入到计算机底层来探讨：</p>
+<ul>
+<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
+<li><strong>多核时代</strong>：多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）。</li>
+</ul>
+<h2 id="使用多线程可能带来什么问题？"><a href="#使用多线程可能带来什么问题？" class="headerlink" title="使用多线程可能带来什么问题？"></a>使用多线程可能带来什么问题？</h2><p>并发编程的目的就是为了能提高程序的执行效率提高程序运行速度，但是并发编程并不总是能提高程序运行速度的，而且并发编程可能会遇到很多问题，比如：内存泄漏、死锁、线程不安全等等。</p>
+<h2 id="说说线程的生命周期和状态"><a href="#说说线程的生命周期和状态" class="headerlink" title="说说线程的生命周期和状态?"></a>说说线程的生命周期和状态?</h2><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220155953.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
+<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220327647.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
+<blockquote>
+<p>订正(来自<a href="https://github.com/Snailclimb/JavaGuide/issues/736">issue736</a>)：原图中 wait 到 runnable 状态的转换中，<code>join</code>实际上是<code>Thread</code>类的方法，但这里写成了<code>Object</code>。</p>
+</blockquote>
+<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
+<blockquote>
+<p>在操作系统中层面线程有 READY 和 RUNNING 状态，而在 JVM 层面只能看到 RUNNABLE 状态（图源：<a href="https://howtodoinjava.com/">HowToDoInJava</a>：<a href="https://howtodoinjava.com/Java/multi-threading/Java-thread-life-cycle-and-thread-states/">Java Thread Life Cycle and Thread States</a>），所以 Java 系统一般将这两个状态统称为 <strong>RUNNABLE（运行中）</strong> 状态 。</p>
+<p><strong>为什么 JVM 没有区分这两种状态呢？</strong>（摘自：<a href="https://www.zhihu.com/question/56494969/answer/154053599">java线程运行怎么有第六种状态？ - Dawell的回答</a>）现在的<strong>时分</strong>（time-sharing）<strong>多任务</strong>（multi-task）操作系统架构通常都是用所谓的“<strong>时间分片</strong>（time quantum or time slice）”方式进行<strong>抢占式</strong>（preemptive）轮转调度（round-robin式）。这个时间分片通常是很小的，一个线程一次最多只能在 CPU 上运行比如 10-20ms 的时间（此时处于 running 状态），也即大概只有 0.01 秒这一量级，时间片用后就要被切换下来放入调度队列的末尾等待再次调度。（也即回到 ready 状态）。线程切换的如此之快，区分这两种状态就没什么意义了。</p>
+</blockquote>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202221236800.png"></p>
+<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIMED_WAITING（超时等待）</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep(long millis)</code>方法或 <code>wait(long millis)</code>方法可以将 Java 线程置于 TIMED_WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用<strong>同步方法</strong>时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
+<p>相关阅读：<a href="https://mp.weixin.qq.com/s/UOrXql_LhOD8dhTq_EPI0w">挑错 |《Java 并发编程的艺术》中关于线程状态的三处错误</a></p>
+<h2 id="什么是上下文切换"><a href="#什么是上下文切换" class="headerlink" title="什么是上下文切换?"></a>什么是上下文切换?</h2><p>线程在执行过程中会有自己的<strong>运行条件和状态</strong>（也称<strong>上下文</strong>），比如上文所说到过的<strong>程序计数器</strong>，<strong>栈信息</strong>等。当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
+<ul>
+<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
+<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用CPU导致其他线程或者进程饿死。</li>
+<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
+<li>被终止或结束运行。</li>
+</ul>
+<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
+<p>上下文切换是现代操作系统的基本功能，因其每次需要保存信息恢复信息，这将会占用 CPU，内存等系统资源进行处理，也就意味着效率会有一定损耗，如果频繁切换就会造成整体效率低下。</p>
+<h2 id="什么是线程死锁？如何避免死锁？"><a href="#什么是线程死锁？如何避免死锁？" class="headerlink" title="什么是线程死锁？如何避免死锁？"></a>什么是线程死锁？如何避免死锁？</h2><h3 id="认识线程死锁"><a href="#认识线程死锁" class="headerlink" title="认识线程死锁"></a>认识线程死锁</h3><p>线程死锁描述的是这样一种情况：多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。</p>
+<p>如下图所示，线程 A 持有资源 2，线程 B 持有资源 1，他们同时都想申请对方的资源，所以这两个线程就会互相等待而进入死锁状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202222752163.png"></p>
+<p>下面通过一个例子来说明线程死锁,代码模拟了上图的死锁的情况（代码来源于《并发编程之美》）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource1 = <span class="keyword">new</span> Object();<span class="comment">//资源 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource2 = <span class="keyword">new</span> Object();<span class="comment">//资源 2</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]waiting get resource1</span><br></pre></td></tr></table></figure>
+
+<p>线程 A 通过 <code>synchronized (resource1)</code> 获得 <code>resource1</code> 的监视器锁，然后通过<code>Thread.sleep(1000);</code>让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。上面的例子符合产生死锁的四个必要条件。</p>
+<p>产生死锁必须具备以下四个条件：</p>
+<ol>
+<li>互斥条件：该资源任意一个时刻只由一个线程占用。</li>
+<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
+<li>不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。</li>
+<li>循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。</li>
+</ol>
+<h3 id="如何预防和避免线程死锁"><a href="#如何预防和避免线程死锁" class="headerlink" title="如何预防和避免线程死锁?"></a>如何预防和避免线程死锁?</h3><p><strong>如何预防死锁？</strong> 破坏死锁的产生的必要条件即可：</p>
+<ol>
+<li><strong>破坏请求与保持条件</strong>：一次性申请所有的资源。</li>
+<li><strong>破坏不剥夺条件</strong> ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
+<li><strong>破坏循环等待条件</strong> ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
+</ol>
+<p><strong>如何避免死锁？</strong></p>
+<p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
+<p><strong>安全状态</strong> 指的是系统能够按照某种进程推进顺序（P1、P2、P3…..Pn）来为每个进程分配所需资源，直到满足每个进程对资源的最大需求，使每个进程都可顺利完成。称&lt;P1、P2、P3…..Pn&gt;序列为安全序列。</p>
+<p>我们对线程 2 的代码修改成下面这样就不会产生死锁了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">	<span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">		System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">	System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 1,5,main]get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
+
+<p>我们分析一下上面的代码为什么避免了死锁的发生?</p>
+<p>线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。</p>
+<h2 id="说说-sleep-方法和-wait-方法区别和共同点"><a href="#说说-sleep-方法和-wait-方法区别和共同点" class="headerlink" title="说说 sleep() 方法和 wait() 方法区别和共同点?"></a>说说 sleep() 方法和 wait() 方法区别和共同点?</h2><ul>
+<li>两者最主要的区别在于：<strong>sleep() 方法没有释放锁，而 wait() 方法释放了锁</strong> 。</li>
+<li>两者都可以暂停线程的执行。</li>
+<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
+<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒。或者可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
+</ul>
+<h2 id="为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？"><a href="#为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？" class="headerlink" title="为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？"></a>为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？</h2><p>new 一个 Thread，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程<strong>进入了就绪状态</strong>，当分配到时间片后就可以<strong>开始运行</strong>了。 <code>start()</code> 会执行线程的相应<strong>准备工作</strong>，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
+<p><strong>总结： 调用 start() 方法方可启动线程并使线程进入就绪状态，直接执行 run() 方法的话不会以多线程的方式执行。</strong></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://javaguide.cn/java/concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/">Java 并发常见知识点&amp;面试题总结（基础篇）</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>HashMap 的 7 种遍历方式与性能分析</title>
     <url>/post/844a20bd/</url>
     <content><![CDATA[<p>随着 JDK 1.8 Streams API 的发布，使得 HashMap 拥有了更多的遍历的方式，但应该选择那种遍历方式？反而成了一个问题。</p>
@@ -376,156 +504,6 @@
       </categories>
       <tags>
         <tag>容器</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>IDEA .properties 文件中文乱码</title>
-    <url>/post/5816ad50/</url>
-    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
-
-<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
-<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
-
-<p>最后中文乱码问题解决：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>properties</tag>
-        <tag>配置文件</tag>
-        <tag>IntelliJ IDEA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java 并发编程（基础）</title>
-    <url>/post/7f164aae/</url>
-    <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
-<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称<strong>主线程</strong>。</p>
-<p>如下图所示，在 windows 中通过查看任务管理器的方式，我们就可以清楚看到 window 当前运行的进程（.exe 文件的运行）。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202211820997.png" style="zoom:75%;" />
-
-<h3 id="何为线程？"><a href="#何为线程？" class="headerlink" title="何为线程？"></a>何为线程？</h3><p>线程与进程相似，但线程是一个比进程更小的执行单位。一个进程在其执行的过程中可以产生多个线程。与进程不同的是同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为<strong>轻量级进程</strong>。</p>
-<p>Java 程序天生就是多线程程序，我们可以通过 JMX 来看一下一个普通的 Java 程序有哪些线程，代码如下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取 Java 线程管理 MXBean</span></span><br><span class="line">	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">		<span class="comment">// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">// 遍历线程信息，仅打印线程 ID 和线程名称信息</span></span><br><span class="line">		<span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> + threadInfo.getThreadName());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述程序输出如下（输出内容可能不同，不用太纠结下面每个线程的作用，只用知道 main 线程执行 main 方法即可）：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">[5] Attach Listener //添加事件</span><br><span class="line">[4] Signal Dispatcher //分发处理给 JVM 信号的线程</span><br><span class="line">[3] Finalizer //调用对象 finalize 方法的线程</span><br><span class="line">[2] Reference Handler //清除 reference 线程</span><br><span class="line">[1] main //main 线程,程序入口</span><br></pre></td></tr></table></figure>
-
-<p>从上面的输出内容可以看出：<strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong>。</p>
-<h2 id="请简要描述线程与进程的关系-区别及优缺点？"><a href="#请简要描述线程与进程的关系-区别及优缺点？" class="headerlink" title="请简要描述线程与进程的关系,区别及优缺点？"></a>请简要描述线程与进程的关系,区别及优缺点？</h2><p><strong>从 JVM 角度说进程和线程之间的关系</strong></p>
-<h3 id="图解进程和线程的关系"><a href="#图解进程和线程的关系" class="headerlink" title="图解进程和线程的关系"></a>图解进程和线程的关系</h3><p>下图是 Java 内存区域，通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202212556937.png" style="zoom:80%;" />
-
-<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)<strong>资源，但是每个线程有自己的</strong>程序计数器</strong>、<strong>虚拟机栈</strong> 和 <strong>本地方法栈</strong>。</p>
-<p><strong>总结：</strong> <strong>线程是进程划分成的更小的运行单位。线程和进程最大的不同在于基本上各进程是独立的，而各线程则不一定，因为同一进程中的线程极有可能会相互影响。线程执行开销小，但不利于资源的管理和保护；而进程正相反。</strong></p>
-<p>下面来思考这样一个问题：为什么<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>是线程私有的呢？为什么堆和方法区是线程共享的呢？</p>
-<h3 id="程序计数器为什么是私有的？"><a href="#程序计数器为什么是私有的？" class="headerlink" title="程序计数器为什么是私有的？"></a>程序计数器为什么是私有的？</h3><p>程序计数器主要有下面两个作用：</p>
-<ol>
-<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
-<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
-</ol>
-<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
-<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
-<h3 id="虚拟机栈和本地方法栈为什么是私有的？"><a href="#虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="虚拟机栈和本地方法栈为什么是私有的？"></a>虚拟机栈和本地方法栈为什么是私有的？</h3><ul>
-<li><strong>虚拟机栈：</strong>每个 Java 方法在执行的同时会创建一个栈帧用于存储<strong>局部变量表</strong>、<strong>操作数栈</strong>、<strong>常量池引用</strong>等信息。从方法调用直至执行完成的过程，就对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。</li>
-<li><strong>本地方法栈：</strong>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
-</ul>
-<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
-<h3 id="一句话简单了解堆和方法区"><a href="#一句话简单了解堆和方法区" class="headerlink" title="一句话简单了解堆和方法区"></a>一句话简单了解堆和方法区</h3><p>堆和方法区是<strong>所有线程共享的资源</strong>，其中<strong>堆是进程中最大的一块内存</strong>，主要用于存放<strong>新创建的对象</strong>（几乎所有对象都在这里分配内存），方法区主要用于存放<strong>已被加载的类信息</strong>、<strong>常量</strong>、<strong>静态变量</strong>、<strong>即时编译器编译后的代码</strong>等数据。</p>
-<h2 id="说说并发与并行的区别？"><a href="#说说并发与并行的区别？" class="headerlink" title="说说并发与并行的区别？"></a>说说并发与并行的区别？</h2><p><strong>并发：</strong>同一时间段，多个任务都在执行（单位时间内不一定同时执行）；</p>
-<p><strong>并行：</strong>单位时间内（同一时刻），多个任务同时执行。</p>
-<h2 id="为什么要使用多线程呢"><a href="#为什么要使用多线程呢" class="headerlink" title="为什么要使用多线程呢?"></a>为什么要使用多线程呢?</h2><p>先从总体上来说：</p>
-<ul>
-<li><strong>从计算机底层来说：</strong>线程可以比作是轻量级的进程，是<strong>程序执行的最小单位</strong>，线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
-<li><strong>从当代互联网发展趋势来说：</strong>现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
-</ul>
-<p>再深入到计算机底层来探讨：</p>
-<ul>
-<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
-<li><strong>多核时代</strong>：多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）。</li>
-</ul>
-<h2 id="使用多线程可能带来什么问题？"><a href="#使用多线程可能带来什么问题？" class="headerlink" title="使用多线程可能带来什么问题？"></a>使用多线程可能带来什么问题？</h2><p>并发编程的目的就是为了能提高程序的执行效率提高程序运行速度，但是并发编程并不总是能提高程序运行速度的，而且并发编程可能会遇到很多问题，比如：内存泄漏、死锁、线程不安全等等。</p>
-<h2 id="说说线程的生命周期和状态"><a href="#说说线程的生命周期和状态" class="headerlink" title="说说线程的生命周期和状态?"></a>说说线程的生命周期和状态?</h2><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220155953.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
-<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220327647.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
-<blockquote>
-<p>订正(来自<a href="https://github.com/Snailclimb/JavaGuide/issues/736">issue736</a>)：原图中 wait 到 runnable 状态的转换中，<code>join</code>实际上是<code>Thread</code>类的方法，但这里写成了<code>Object</code>。</p>
-</blockquote>
-<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
-<blockquote>
-<p>在操作系统中层面线程有 READY 和 RUNNING 状态，而在 JVM 层面只能看到 RUNNABLE 状态（图源：<a href="https://howtodoinjava.com/">HowToDoInJava</a>：<a href="https://howtodoinjava.com/Java/multi-threading/Java-thread-life-cycle-and-thread-states/">Java Thread Life Cycle and Thread States</a>），所以 Java 系统一般将这两个状态统称为 <strong>RUNNABLE（运行中）</strong> 状态 。</p>
-<p><strong>为什么 JVM 没有区分这两种状态呢？</strong>（摘自：<a href="https://www.zhihu.com/question/56494969/answer/154053599">java线程运行怎么有第六种状态？ - Dawell的回答</a>）现在的<strong>时分</strong>（time-sharing）<strong>多任务</strong>（multi-task）操作系统架构通常都是用所谓的“<strong>时间分片</strong>（time quantum or time slice）”方式进行<strong>抢占式</strong>（preemptive）轮转调度（round-robin式）。这个时间分片通常是很小的，一个线程一次最多只能在 CPU 上运行比如 10-20ms 的时间（此时处于 running 状态），也即大概只有 0.01 秒这一量级，时间片用后就要被切换下来放入调度队列的末尾等待再次调度。（也即回到 ready 状态）。线程切换的如此之快，区分这两种状态就没什么意义了。</p>
-</blockquote>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202221236800.png"></p>
-<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIMED_WAITING（超时等待）</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep(long millis)</code>方法或 <code>wait(long millis)</code>方法可以将 Java 线程置于 TIMED_WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用<strong>同步方法</strong>时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
-<p>相关阅读：<a href="https://mp.weixin.qq.com/s/UOrXql_LhOD8dhTq_EPI0w">挑错 |《Java 并发编程的艺术》中关于线程状态的三处错误</a></p>
-<h2 id="什么是上下文切换"><a href="#什么是上下文切换" class="headerlink" title="什么是上下文切换?"></a>什么是上下文切换?</h2><p>线程在执行过程中会有自己的<strong>运行条件和状态</strong>（也称<strong>上下文</strong>），比如上文所说到过的<strong>程序计数器</strong>，<strong>栈信息</strong>等。当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
-<ul>
-<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
-<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用CPU导致其他线程或者进程饿死。</li>
-<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
-<li>被终止或结束运行。</li>
-</ul>
-<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
-<p>上下文切换是现代操作系统的基本功能，因其每次需要保存信息恢复信息，这将会占用 CPU，内存等系统资源进行处理，也就意味着效率会有一定损耗，如果频繁切换就会造成整体效率低下。</p>
-<h2 id="什么是线程死锁？如何避免死锁？"><a href="#什么是线程死锁？如何避免死锁？" class="headerlink" title="什么是线程死锁？如何避免死锁？"></a>什么是线程死锁？如何避免死锁？</h2><h3 id="认识线程死锁"><a href="#认识线程死锁" class="headerlink" title="认识线程死锁"></a>认识线程死锁</h3><p>线程死锁描述的是这样一种情况：多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。</p>
-<p>如下图所示，线程 A 持有资源 2，线程 B 持有资源 1，他们同时都想申请对方的资源，所以这两个线程就会互相等待而进入死锁状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202222752163.png"></p>
-<p>下面通过一个例子来说明线程死锁,代码模拟了上图的死锁的情况（代码来源于《并发编程之美》）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource1 = <span class="keyword">new</span> Object();<span class="comment">//资源 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource2 = <span class="keyword">new</span> Object();<span class="comment">//资源 2</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]waiting get resource1</span><br></pre></td></tr></table></figure>
-
-<p>线程 A 通过 <code>synchronized (resource1)</code> 获得 <code>resource1</code> 的监视器锁，然后通过<code>Thread.sleep(1000);</code>让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。上面的例子符合产生死锁的四个必要条件。</p>
-<p>产生死锁必须具备以下四个条件：</p>
-<ol>
-<li>互斥条件：该资源任意一个时刻只由一个线程占用。</li>
-<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
-<li>不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。</li>
-<li>循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。</li>
-</ol>
-<h3 id="如何预防和避免线程死锁"><a href="#如何预防和避免线程死锁" class="headerlink" title="如何预防和避免线程死锁?"></a>如何预防和避免线程死锁?</h3><p><strong>如何预防死锁？</strong> 破坏死锁的产生的必要条件即可：</p>
-<ol>
-<li><strong>破坏请求与保持条件</strong>：一次性申请所有的资源。</li>
-<li><strong>破坏不剥夺条件</strong> ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
-<li><strong>破坏循环等待条件</strong> ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
-</ol>
-<p><strong>如何避免死锁？</strong></p>
-<p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
-<p><strong>安全状态</strong> 指的是系统能够按照某种进程推进顺序（P1、P2、P3…..Pn）来为每个进程分配所需资源，直到满足每个进程对资源的最大需求，使每个进程都可顺利完成。称&lt;P1、P2、P3…..Pn&gt;序列为安全序列。</p>
-<p>我们对线程 2 的代码修改成下面这样就不会产生死锁了。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">	<span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">		System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">	System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br></pre></td></tr></table></figure>
-
-<p>Output</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 1,5,main]get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
-
-<p>我们分析一下上面的代码为什么避免了死锁的发生?</p>
-<p>线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。</p>
-<h2 id="说说-sleep-方法和-wait-方法区别和共同点"><a href="#说说-sleep-方法和-wait-方法区别和共同点" class="headerlink" title="说说 sleep() 方法和 wait() 方法区别和共同点?"></a>说说 sleep() 方法和 wait() 方法区别和共同点?</h2><ul>
-<li>两者最主要的区别在于：<strong>sleep() 方法没有释放锁，而 wait() 方法释放了锁</strong> 。</li>
-<li>两者都可以暂停线程的执行。</li>
-<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
-<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒。或者可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
-</ul>
-<h2 id="为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？"><a href="#为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？" class="headerlink" title="为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？"></a>为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？</h2><p>new 一个 Thread，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程<strong>进入了就绪状态</strong>，当分配到时间片后就可以<strong>开始运行</strong>了。 <code>start()</code> 会执行线程的相应<strong>准备工作</strong>，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
-<p><strong>总结： 调用 start() 方法方可启动线程并使线程进入就绪状态，直接执行 run() 方法的话不会以多线程的方式执行。</strong></p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://javaguide.cn/java/concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/">Java 并发常见知识点&amp;面试题总结（基础篇）</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>并发编程</tag>
       </tags>
   </entry>
   <entry>
@@ -1382,6 +1360,70 @@
       </tags>
   </entry>
   <entry>
+    <title>IDEA .properties 文件中文乱码</title>
+    <url>/post/5816ad50/</url>
+    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
+
+<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
+<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
+
+<p>最后中文乱码问题解决：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>properties</tag>
+        <tag>配置文件</tag>
+        <tag>IntelliJ IDEA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maven parent.relativePath 说明</title>
+    <url>/post/b60506ad/</url>
+    <content><![CDATA[<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p> xml 原生英文解释：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;relativePath&quot;</span> <span class="attr">minOccurs</span>=<span class="string">&quot;0&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span> <span class="attr">default</span>=<span class="string">&quot;../pom.xml&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;version&quot;</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;description&quot;</span>&gt;</span></span><br><span class="line">      The relative path of the parent <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> file within the check out.</span><br><span class="line">      The default value is <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>../pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span>.</span><br><span class="line">      Maven looks for the parent pom first in the reactor of currently building projects, then in this location on</span><br><span class="line">      the filesystem, then the local repository, and lastly in the remote repo.</span><br><span class="line">      <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>relativePath<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> allows you to select a different location,</span><br><span class="line">      for example when your structure is flat, or deeper without an intermediate parent pom.</span><br><span class="line">      However, the group ID, artifact ID and version are still required,</span><br><span class="line">      and must match the file in the location given or it will revert to the repository for the POM.</span><br><span class="line">      This feature is only for enhancing the development in a local checkout of that project.</span><br><span class="line">    <span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:element</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<ul>
+<li><p>relativePath 是Maven为了寻找父模块pom.xml所额外增加的一个寻找路径</p>
+</li>
+<li><p>relativePath 默认值为 ../pom.xml</p>
+</li>
+<li><p><strong>Maven 寻找父模块pom.xml 的顺序如下：</strong></p>
+<ol>
+<li><p>first in the reactor of currently building projects<br>这里一个maven概念 反应堆（reactor），意思就是先从工程里面有依赖相关的模块中找你引入的 parent 的pom.xml。</p>
+</li>
+<li><p>then in this location on the filesystem<br>然后从你定义的  <code>&lt;relativePath&gt;</code> 路径中找，当然你如果只是 <code>/</code>  即空值，则跳过该步骤，默认值 ../pom.xml 则是从上级目录中找。</p>
+</li>
+<li><p>then the local repository</p>
+<p>如果 （1） （2） 步骤没有则从本地仓库找。</p>
+</li>
+<li><p>and lastly in the remote repo</p>
+<p>上面都找不到了，最后只能从远程仓库找，再找不到就报错。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://blog.csdn.net/gzt19881123/article/details/105255138">Maven parent.relativePath 说明</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Maven</tag>
+        <tag>项目构建工具</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Lambda 表达式</title>
     <url>/post/9fa75fc1/</url>
     <content><![CDATA[<p>Java <em>Lambda 表达式</em>的一个重要用法是简化某些<em>匿名内部类</em>（<code>Anonymous Classes</code>）的写法。实际上 Lambda 表达式并不仅仅是匿名内部类的语法糖，JVM 内部是通过<em>invokedynamic</em>指令来实现 Lambda 表达式的。具体原理放到下一篇。本篇我们首先感受一下使用 Lambda 表达式带来的便利之处。</p>
@@ -1930,48 +1972,6 @@
       </categories>
       <tags>
         <tag>Java8</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Maven parent.relativePath 说明</title>
-    <url>/post/b60506ad/</url>
-    <content><![CDATA[<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p> xml 原生英文解释：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;relativePath&quot;</span> <span class="attr">minOccurs</span>=<span class="string">&quot;0&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span> <span class="attr">default</span>=<span class="string">&quot;../pom.xml&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;version&quot;</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;description&quot;</span>&gt;</span></span><br><span class="line">      The relative path of the parent <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> file within the check out.</span><br><span class="line">      The default value is <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>../pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span>.</span><br><span class="line">      Maven looks for the parent pom first in the reactor of currently building projects, then in this location on</span><br><span class="line">      the filesystem, then the local repository, and lastly in the remote repo.</span><br><span class="line">      <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>relativePath<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> allows you to select a different location,</span><br><span class="line">      for example when your structure is flat, or deeper without an intermediate parent pom.</span><br><span class="line">      However, the group ID, artifact ID and version are still required,</span><br><span class="line">      and must match the file in the location given or it will revert to the repository for the POM.</span><br><span class="line">      This feature is only for enhancing the development in a local checkout of that project.</span><br><span class="line">    <span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:element</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<ul>
-<li><p>relativePath 是Maven为了寻找父模块pom.xml所额外增加的一个寻找路径</p>
-</li>
-<li><p>relativePath 默认值为 ../pom.xml</p>
-</li>
-<li><p><strong>Maven 寻找父模块pom.xml 的顺序如下：</strong></p>
-<ol>
-<li><p>first in the reactor of currently building projects<br>这里一个maven概念 反应堆（reactor），意思就是先从工程里面有依赖相关的模块中找你引入的 parent 的pom.xml。</p>
-</li>
-<li><p>then in this location on the filesystem<br>然后从你定义的  <code>&lt;relativePath&gt;</code> 路径中找，当然你如果只是 <code>/</code>  即空值，则跳过该步骤，默认值 ../pom.xml 则是从上级目录中找。</p>
-</li>
-<li><p>then the local repository</p>
-<p>如果 （1） （2） 步骤没有则从本地仓库找。</p>
-</li>
-<li><p>and lastly in the remote repo</p>
-<p>上面都找不到了，最后只能从远程仓库找，再找不到就报错。</p>
-</li>
-</ol>
-</li>
-</ul>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://blog.csdn.net/gzt19881123/article/details/105255138">Maven parent.relativePath 说明</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Maven</tag>
-        <tag>项目构建工具</tag>
       </tags>
   </entry>
   <entry>
@@ -3650,220 +3650,6 @@
       </categories>
       <tags>
         <tag>为什么这么设计</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>二分</title>
-    <url>/post/9947c71c/</url>
-    <content><![CDATA[<h2 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>二分查找（英语：binary search），也称折半搜索（英语：half-interval search）、对数搜索（英语：logarithmic search），是用来在一个有序数组中查找某一元素的算法。</p>
-<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>以在一个升序数组中查找一个数为例。</p>
-<p>它每次考察数组当前部分的中间元素，如果中间元素刚好是要找的，就结束搜索过程；如果中间元素小于所查找的值，那么左侧的只会更小，不会有所查找的元素，只需到右侧查找；如果中间元素大于所查找的值同理，只需到左侧查找。</p>
-<span id="more"></span>
-<h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><p><strong>时间复杂度</strong></p>
-<ul>
-<li>二分查找的最优时间复杂度为 O(1)。</li>
-<li>二分查找的平均时间复杂度和最坏时间复杂度均为 O(logn)。因为在二分搜索过程中，算法每次都把查询的区间减半，所以对于一个长度为 的数组，至多会进行 O(logn)次查找。</li>
-</ul>
-<p><strong>空间复杂度</strong></p>
-<ul>
-<li>迭代版本的二分查找的空间复杂度为 O(1)。</li>
-<li>递归（无尾调用消除）版本的二分查找的空间复杂度为 O(logn)。</li>
-</ul>
-<h3 id="二分答案"><a href="#二分答案" class="headerlink" title="二分答案"></a>二分答案</h3><p>解题的时候往往会考虑枚举答案然后检验枚举的值是否正确。若满足单调性，则满足使用二分法的条件。把这里的枚举换成二分，就变成了“二分答案”。</p>
-<h3 id="二分查找框架"><a href="#二分查找框架" class="headerlink" title="二分查找框架"></a>二分查找框架</h3><p>最常用的二分查找场景：寻找一个数、寻找左侧边界、寻找右侧边界。深入细节，比如不等号是否应该带等号，<code>mid</code> 是否应该加一等等。分析这些细节的差异以及出现这些差异的原因，保证你能灵活准确地写出正确的二分查找算法。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = ...;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(...) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = ...</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ...;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>分析二分查找的一个技巧是：不要出现 else，而是把所有情况用 else if 写清楚，这样可以清楚地展现所有细节</strong>。本文都会使用 else if，旨在讲清楚，读者理解后可自行简化。</p>
-<p>其中 <code>...</code> 标记的部分，就是可能出现细节问题的地方，当你见到一个二分查找的代码时，首先注意这几个地方。后文用实例分析这些地方能有什么样的变化。</p>
-<p>另外声明一下，计算 mid 时需要防止溢出，代码中 <code>left + (right - left) / 2</code> 就和 <code>(left + right) / 2</code> 的结果相同，但是有效防止了 <code>left</code> 和 <code>right</code> 太大直接相加导致溢出。</p>
-<h4 id="寻找一个数（基本的二分搜索）"><a href="#寻找一个数（基本的二分搜索）" class="headerlink" title="寻找一个数（基本的二分搜索）"></a>寻找一个数（基本的二分搜索）</h4><p>搜索一个数，如果存在，返回其索引，否则返回 -1。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(nums[mid] == target)</span><br><span class="line">            <span class="keyword">return</span> mid; </span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target)</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target)</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>1、为什么 while 循环的条件中是 &lt;=，而不是 &lt;？</strong></p>
-<p>答：因为初始化 <code>right</code> 的赋值是 <code>nums.length - 1</code>，即最后一个元素的索引，而不是 <code>nums.length</code>。</p>
-<p>这二者可能出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间 <code>[left, right]</code>，后者相当于左闭右开区间 <code>[left, right)</code>，因为索引大小为 <code>nums.length</code> 是越界的。</p>
-<p>我们这个算法中使用的是前者 <code>[left, right]</code> 两端都闭的区间。<strong>这个区间其实就是每次进行搜索的区间</strong>。</p>
-<p>什么时候应该停止搜索呢？当然，找到了目标值的时候可以终止：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(nums[mid] == target)</span><br><span class="line">    <span class="keyword">return</span> mid; </span><br></pre></td></tr></table></figure>
-
-<p>但如果没找到，就需要 while 循环终止，然后返回 -1。那 while 循环什么时候应该终止？<strong>搜索区间为空的时候应该终止</strong>，意味着你没得找了，就等于没找到嘛。</p>
-<p><code>while(left &lt;= right)</code> 的终止条件是 <code>left == right + 1</code>，写成区间的形式就是 <code>[right + 1, right]</code>，或者带个具体的数字进去 <code>[3, 2]</code>，可见<strong>这时候区间为空</strong>，因为没有数字既大于等于 3 又小于等于 2 的吧。所以这时候 while 循环终止是正确的，直接返回 -1 即可。</p>
-<p><code>while(left &lt; right)</code> 的终止条件是 <code>left == right</code>，写成区间的形式就是 <code>[right, right]</code>，或者带个具体的数字进去 <code>[2, 2]</code>，<strong>这时候区间非空</strong>，还有一个数 2，但此时 while 循环终止了。也就是说这区间 <code>[2, 2]</code> 被漏掉了，索引 2 没有被搜索，如果这时候直接返回 -1 就是错误的。</p>
-<p>当然，如果你非要用 <code>while(left &lt; right)</code> 也可以，我们已经知道了出错的原因，就打个补丁好了：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span>(left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、为什么 <code>left = mid + 1</code>，<code>right = mid - 1</code>？我看有的代码是 <code>right = mid</code> 或者 <code>left = mid</code>，没有这些加加减减，到底怎么回事，怎么判断？</strong></p>
-<p>答：这也是二分查找的一个难点，不过只要你能理解前面的内容，就能够很容易判断。</p>
-<p>刚才明确了<strong>「搜索区间」</strong>这个概念，而且本算法的搜索区间是两端都闭的，即 <code>[left, right]</code>。那么当我们发现索引 <code>mid</code> 不是要找的 <code>target</code> 时，下一步应该去搜索哪里呢？</p>
-<p>当然是去搜索 <code>[left, mid-1]</code> 或者 <code>[mid+1, right]</code> 对不对？<strong>因为 <code>mid</code> 已经搜索过，应该从搜索区间中去除</strong>。</p>
-<p><strong>3、此算法有什么缺陷？</strong></p>
-<p>答：至此，你应该已经掌握了该算法的所有细节，以及这样处理的原因。但是，这个算法存在局限性。</p>
-<p>比如说给你有序数组 <code>nums = [1,2,2,2,3]</code>，<code>target</code> 为 2，此算法返回的索引是 2，没错。但是如果我想得到 <code>target</code> 的左侧边界，即索引 1，或者我想得到 <code>target</code> 的右侧边界，即索引 3，这样的话此算法是无法处理的。</p>
-<p>这样的需求很常见，<strong>你也许会说，找到一个 <code>target</code>，然后向左或向右线性搜索不行吗？可以，但是不好，因为这样难以保证二分查找对数级的复杂度了</strong>。</p>
-<p>后续的算法就来讨论这两种二分查找的算法。</p>
-<h4 id="寻找左侧边界的二分搜索"><a href="#寻找左侧边界的二分搜索" class="headerlink" title="寻找左侧边界的二分搜索"></a>寻找左侧边界的二分搜索</h4><p>以下是最常见的代码形式，其中的标记是需要注意的细节：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>1、为什么 while 中是 <code>&lt;</code> 而不是 <code>&lt;=</code>?</strong></p>
-<p>答：用相同的方法分析，因为 <code>right = nums.length</code> 而不是 <code>nums.length - 1</code>。因此每次循环的「搜索区间」是 <code>[left, right)</code> 左闭右开。</p>
-<p><code>while(left &lt; right)</code> 终止的条件是 <code>left == right</code>，此时搜索区间 <code>[left, left)</code> 为空，所以可以正确终止。</p>
-<blockquote>
-<p>PS：这里先要说一个搜索左右边界和上面这个算法的一个区别，也是很多读者问的：<strong>刚才的 <code>right</code> 不是 <code>nums.length - 1</code> 吗，为啥这里非要写成 <code>nums.length</code> 使得「搜索区间」变成左闭右开呢</strong>？</p>
-</blockquote>
-<p>因为对于搜索左右侧边界的二分查找，这种写法比较普遍，我就拿这种写法举例了，保证你以后遇到这类代码可以理解。你非要用两端都闭的写法反而更简单，我会在后面写相关的代码，把三种二分搜索都用一种两端都闭的写法统一起来，你耐心往后看就行了。</p>
-<p><strong>2、为什么没有返回 -1 的操作？如果 <code>nums</code> 中不存在 <code>target</code> 这个值，怎么办</strong>？</p>
-<p>答：因为要一步一步来，先理解一下这个「左侧边界」有什么特殊含义：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220225215952439.png" style="zoom: 45%;" />
-
-<p>对于这个数组，算法会返回索引 1。</p>
-<p>这个索引 1 的含义可以解读为「<code>nums</code> 中小于 2 的元素有 1 个」。</p>
-<p>比如对于有序数组 <code>nums = [2,3,5,7]</code>, <code>target = 1</code>，算法会返回 0，含义是：<code>nums</code> 中小于 1 的元素有 0 个。</p>
-<p>再比如说 <code>nums = [2,3,5,7], target = 8</code>，算法会返回 4，含义是：<code>nums</code> 中小于 8 的元素有 4 个。</p>
-<blockquote>
-<p>PS：对于 <code>target</code> 不存在 <code>nums</code> 中的情况，函数的返回值还可以有多种理解方式，详见 <a href="https://labuladong.github.io/algo/2/21/66/">随机权重算法</a> 中对二分搜索的运用。</p>
-</blockquote>
-<p>综上可以看出，函数的返回值（即 <code>left</code> 变量的值）取值区间是闭区间 <code>[0, nums.length]</code>，所以我们简单添加两行代码就能在正确的时候 return -1：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// target 比所有数都大</span></span><br><span class="line"><span class="keyword">if</span> (left == nums.length) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"><span class="comment">// 类似之前算法的处理方式</span></span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<p><strong>3、为什么 <code>left = mid + 1</code>，<code>right = mid</code> ？和之前的算法不一样？</strong></p>
-<p>答：这个很好解释，因为我们的「搜索区间」是 <code>[left, right)</code> 左闭右开，所以当 <code>nums[mid]</code> 被检测之后，下一步的搜索区间应该去掉 <code>mid</code> 分割成两个区间，即 <code>[left, mid)</code> 或 <code>[mid + 1, right)</code>。</p>
-<p><strong>4、为什么该算法能够搜索左侧边界</strong>？</p>
-<p>答：关键在于对于 <code>nums[mid] == target</code> 这种情况的处理：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] == target)</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure>
-
-<p>可见，找到 target 时不要立即返回，而是缩小「搜索区间」的上界 <code>right</code>，在区间 <code>[left, mid)</code> 中继续搜索，即不断向左收缩，达到锁定左侧边界的目的。</p>
-<p><strong>5、为什么返回 <code>left</code> 而不是 <code>right</code>？</strong></p>
-<p>答：都是一样的，因为 while 终止的条件是 <code>left == right</code>。</p>
-<p><strong>6、能不能想办法把 <code>right</code> 变成 <code>nums.length - 1</code>，也就是继续使用两边都闭的「搜索区间」？这样就可以和第一种二分搜索在某种程度上统一起来了</strong>。</p>
-<p>答：当然可以，只要你明白了「搜索区间」这个概念，就能有效避免漏掉元素，随便你怎么改都行。下面我们严格根据逻辑来修改：</p>
-<p>因为你非要让搜索区间两端都闭，所以 <code>right</code> 应该初始化为 <code>nums.length - 1</code>，while 的终止条件应该是 <code>left == right + 1</code>，也就是其中应该用 <code>&lt;=</code>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为 [left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// if else ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>因为搜索区间是两端都闭的，且现在是搜索左侧边界，所以 <code>left</code> 和 <code>right</code> 的更新逻辑如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    <span class="comment">// 搜索区间变为 [mid+1, right]</span></span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">    <span class="comment">// 搜索区间变为 [left, mid-1]</span></span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">    <span class="comment">// 收缩右侧边界</span></span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>由于 while 的退出条件是 <code>left == right + 1</code>，所以当 <code>target</code> 比 <code>nums</code> 中所有元素都大时，会存在以下情况使得索引越界：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220225221026390.png" style="zoom:45%;" />
-
-<p>因此，最后返回结果的代码应该检查越界情况：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">return</span> left;</span><br></pre></td></tr></table></figure>
-
-<p>至此，整个算法就写完了，完整代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为 [left, right]</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为 [mid+1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为 [left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查出界情况</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这样就和第一种二分搜索算法统一了，都是两端都闭的「搜索区间」，而且最后返回的也是 <code>left</code> 变量的值。只要把住二分搜索的逻辑，两种形式大家看自己喜欢哪种记哪种吧。</p>
-<h4 id="寻找右侧边界的二分查找"><a href="#寻找右侧边界的二分查找" class="headerlink" title="寻找右侧边界的二分查找"></a>寻找右侧边界的二分查找</h4><p>类似寻找左侧边界的算法，这里也会提供两种写法，还是先写常见的左闭右开的写法，只有两处和搜索左侧边界不同，已标注：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>1、为什么这个算法能够找到右侧边界？</strong></p>
-<p>答：类似地，关键点还是这里：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<p>当 <code>nums[mid] == target</code> 时，不要立即返回，而是增大「搜索区间」的下界 <code>left</code>，使得区间不断向右收缩，达到锁定右侧边界的目的。</p>
-<p><strong>2、为什么最后返回 <code>left - 1</code> 而不像左侧边界的函数，返回 <code>left</code>？而且我觉得这里既然是搜索右侧边界，应该返回 <code>right</code> 才对</strong>。</p>
-<p>答：首先，while 循环的终止条件是 <code>left == right</code>，所以 <code>left</code> 和 <code>right</code> 是一样的，你非要体现右侧的特点，返回 <code>right - 1</code> 好了。</p>
-<p>至于为什么要减一，这是搜索右侧边界的一个特殊点，关键在这个条件判断：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 这样想: mid = left - 1</span></span><br></pre></td></tr></table></figure>
-
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226112725552.png" style="zoom:45%;" />
-
-<p>因为我们对 <code>left</code> 的更新必须是 <code>left = mid + 1</code>，就是说 while 循环结束时，<code>nums[left]</code> 一定不等于 <code>target</code> 了，而 <code>nums[left-1]</code> 可能是 <code>target</code>。</p>
-<p>至于为什么 <code>left</code> 的更新必须是 <code>left = mid + 1</code>，同左侧边界搜索，就不再赘述。</p>
-<p><strong>3、为什么没有返回 -1 的操作？如果 <code>nums</code> 中不存在 <code>target</code> 这个值，怎么办？</strong></p>
-<p>答：类似之前的左侧边界搜索，因为 while 的终止条件是 <code>left == right</code>，就是说 <code>left</code> 的取值范围是 <code>[0, nums.length]</code>，所以可以添加两行代码，正确地返回 -1：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (left == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">return</span> nums[left-<span class="number">1</span>] == target ? (left-<span class="number">1</span>) : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、是否也可以把这个算法的「搜索区间」也统一成两端都闭的形式呢？这样这三个写法就完全统一了，以后就可以闭着眼睛写出来了。</strong></p>
-<p>答：当然可以，类似搜索左侧边界的统一写法，其实只要改两个地方就行了：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 这里改成收缩左侧边界即可</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这里改为检查 right 越界的情况，见下图</span></span><br><span class="line">    <span class="keyword">if</span> (right &lt; <span class="number">0</span> || nums[right] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当 <code>target</code> 比所有元素都小时，<code>right</code> 会被减到 -1，所以需要在最后防止越界：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226142140238.png" style="zoom:45%;" />
-
-<p>至此，搜索右侧边界的二分查找的两种写法也完成了，其实将「搜索区间」统一成两端都闭反而更容易记忆，你说是吧？</p>
-<h4 id="逻辑统一"><a href="#逻辑统一" class="headerlink" title="逻辑统一"></a>逻辑统一</h4><p>接下来梳理一下这些细节差异的因果逻辑：</p>
-<p><strong>第一个，最基本的二分查找算法：</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">因为我们初始化 right = nums.length - <span class="number">1</span></span><br><span class="line">所以决定了我们的「搜索区间」是 [left, right]</span><br><span class="line">所以决定了 <span class="keyword">while</span> (left &lt;= right)</span><br><span class="line">同时也决定了 left = mid+<span class="number">1</span> 和 right = mid-<span class="number">1</span></span><br><span class="line"></span><br><span class="line">因为我们只需找到一个 target 的索引即可</span><br><span class="line">所以当 nums[mid] == target 时可以立即返回</span><br></pre></td></tr></table></figure>
-
-<p><strong>第二个，寻找左侧边界的二分查找：</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">因为我们初始化 right = nums.length</span><br><span class="line">所以决定了我们的「搜索区间」是 [left, right)</span><br><span class="line">所以决定了 <span class="keyword">while</span> (left &lt; right)</span><br><span class="line">同时也决定了 left = mid + <span class="number">1</span> 和 right = mid</span><br><span class="line"></span><br><span class="line">因为我们需找到 target 的最左侧索引</span><br><span class="line">所以当 nums[mid] == target 时不要立即返回</span><br><span class="line">而要收紧右侧边界以锁定左侧边界</span><br></pre></td></tr></table></figure>
-
-<p><strong>第三个，寻找右侧边界的二分查找：</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">因为我们初始化 right = nums.length</span><br><span class="line">所以决定了我们的「搜索区间」是 [left, right)</span><br><span class="line">所以决定了 <span class="keyword">while</span> (left &lt; right)</span><br><span class="line">同时也决定了 left = mid + <span class="number">1</span> 和 right = mid</span><br><span class="line"></span><br><span class="line">因为我们需找到 target 的最右侧索引</span><br><span class="line">所以当 nums[mid] == target 时不要立即返回</span><br><span class="line">而要收紧左侧边界以锁定右侧边界</span><br><span class="line"></span><br><span class="line">又因为收紧左侧边界时必须 left = mid + <span class="number">1</span></span><br><span class="line">所以最后无论返回 left 还是 right，必须减一</span><br></pre></td></tr></table></figure>
-
-<p>对于寻找左右边界的二分搜索，常见的手法是使用左闭右开的「搜索区间」，<strong>我们还根据逻辑将「搜索区间」全都统一成了两端都闭，便于记忆，只要修改两处即可变化出三种写法：</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binary_search</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>; </span><br><span class="line">    <span class="keyword">while</span>(left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 直接返回</span></span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 直接返回</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 别返回，锁定左侧边界</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后要检查 left 越界的情况</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 别返回，锁定右侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后要检查 right 越界的情况</span></span><br><span class="line">    <span class="keyword">if</span> (right &lt; <span class="number">0</span> || nums[right] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通过本文，你学会了：</p>
-<p>1、分析二分查找代码时，不要出现 else，全部展开成 else if 方便理解。</p>
-<p>2、注意「搜索区间」和 while 的终止条件，如果存在漏掉的元素，记得在最后检查。</p>
-<p>3、如需定义左闭右开的「搜索区间」搜索左右边界，只要在 <code>nums[mid] == target</code> 时做修改即可，搜索右侧时需要减一。</p>
-<p>4、如果将「搜索区间」全都统一成两端都闭，好记，只要稍改 <code>nums[mid] == target</code> 条件处的代码和返回的逻辑即可，<strong>推荐拿小本本记下，作为二分搜索模板</strong>。</p>
-<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/">33. 搜索旋转排序数组</a></td>
-<td><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/solution/duo-si-lu-wan-quan-gong-lue-bi-xu-miao-dong-by-swe/">多思路完全攻略，🤷‍♀️必须秒懂！</a><br/><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/solution/ji-jian-solution-by-lukelee/">极简 Solution</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/">240. 搜索二维矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/solution/sou-suo-er-wei-ju-zhen-ii-by-leetcode-so-9hcx/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-5-4/">详细通俗的思路分析，多解法</a></td>
-</tr>
-</tbody></table>
-<h2 id="三分法"><a href="#三分法" class="headerlink" title="三分法"></a>三分法</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><p>三分法可以用来查找凸函数的最大（小）值。</p>
-<ul>
-<li>如果 <code>lmid</code> 和 <code>rmid</code> 在最大（小）值的同一侧：由于单调性，一定是二者中较大（小）的那个离最值近一些，较远的那个点对应的区间不可能包含最值，所以可以舍弃。</li>
-<li>如果在两侧：由于最值在二者中间，我们舍弃两侧的一个区间后，也不会影响最值，所以可以舍弃。</li>
-</ul>
-<p><strong>二分法</strong>最基本的应用是求一个<strong>单调函数</strong>的<strong>零点</strong>。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160426232.png" style="zoom: 65%;" />
-
-<p><strong>三分法</strong>是二分法的变种，他最基本的用途是求<strong>单峰函数</strong>的<strong>极值点</strong>。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160507296.png" style="zoom:65%;" />
-
-<p>从数学的角度来说，求极值点，先<strong>求导</strong>再<strong>二分</strong>不就好了吗？然而，实际中我们遇到的函数，求导可能很困难，所以会用上三分法。而三分法的原理非常简单，以求极大值为例，每次对一个区间 <code>[l,r] </code>求三等分点 <code>lsec</code> 和 <code>rsec</code>：</p>
-<ul>
-<li><p>如果 <code>f(lsec) &lt; f(rsec)</code> ，说明极大值一定在 <code>[lsec,r]</code> 内取到，因为如果在 <code>[0,lsec)</code> 内，那 <code>rsec</code> 一定处于单调下降的区间内，它的函数值不可能大于 <code>lsec</code> 的函数值。 于是我们令 <code>l=lsec</code> 并继续。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160605736.png" style="zoom:65%;" /></li>
-<li><p>如果<code>f(lsec) &gt; f(rsec)</code>，同理，极大值一定在<code>[l,rsec]</code>内取到，令<code>r=rsec</code>并继续。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160712468.png" style="zoom:65%;" /></li>
-</ul>
-<p>这样进行下去，直到<code>l</code>和<code>r</code>的差距小于设定的<code>eps</code>为止。如果求的是极小值而非极大值，只需把上面条件判断处的大于、小于互换。</p>
-<p>按照上面的算法，我们每次减少三分之一的长度。但其实还可以优化，即每次在中点附近取点，那么每次可以减少约二分之一的长度。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (r - l &gt; eps)</span><br><span class="line">&#123;</span><br><span class="line">    mid = (l + r) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">double</span> fl = f(mid - eps), fr = f(mid + eps);</span><br><span class="line">    <span class="keyword">if</span> (fl &lt; fr)</span><br><span class="line">        l = mid; <span class="comment">// 这里不写成mid - eps，防止死循环；可能会错过极值，但在误差范围以内所以没关系</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        r = mid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这种写法的三分，其实和普通的二分很像了。</p>
-<table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/">852. 山脉数组的峰顶索引</a></td>
-<td><a href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/solution/gong-shui-san-xie-er-fen-san-fen-cha-zhi-5gfv/">【宫水三叶】二分 &amp; 三分极值问题</a></td>
-</tr>
-</tbody></table>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://labuladong.gitee.io/algo/2/21/61/">我写了首诗，让你闭着眼睛也能写对二分搜索</a></strong></p>
-</li>
-<li><p><strong><a href="https://zhuanlan.zhihu.com/p/337752413">算法学习笔记(62): 三分法</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>二分</tag>
-        <tag>三分</tag>
       </tags>
   </entry>
   <entry>
@@ -6028,6 +5814,220 @@
       </tags>
   </entry>
   <entry>
+    <title>二分</title>
+    <url>/post/9947c71c/</url>
+    <content><![CDATA[<h2 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>二分查找（英语：binary search），也称折半搜索（英语：half-interval search）、对数搜索（英语：logarithmic search），是用来在一个有序数组中查找某一元素的算法。</p>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>以在一个升序数组中查找一个数为例。</p>
+<p>它每次考察数组当前部分的中间元素，如果中间元素刚好是要找的，就结束搜索过程；如果中间元素小于所查找的值，那么左侧的只会更小，不会有所查找的元素，只需到右侧查找；如果中间元素大于所查找的值同理，只需到左侧查找。</p>
+<span id="more"></span>
+<h3 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h3><p><strong>时间复杂度</strong></p>
+<ul>
+<li>二分查找的最优时间复杂度为 O(1)。</li>
+<li>二分查找的平均时间复杂度和最坏时间复杂度均为 O(logn)。因为在二分搜索过程中，算法每次都把查询的区间减半，所以对于一个长度为 的数组，至多会进行 O(logn)次查找。</li>
+</ul>
+<p><strong>空间复杂度</strong></p>
+<ul>
+<li>迭代版本的二分查找的空间复杂度为 O(1)。</li>
+<li>递归（无尾调用消除）版本的二分查找的空间复杂度为 O(logn)。</li>
+</ul>
+<h3 id="二分答案"><a href="#二分答案" class="headerlink" title="二分答案"></a>二分答案</h3><p>解题的时候往往会考虑枚举答案然后检验枚举的值是否正确。若满足单调性，则满足使用二分法的条件。把这里的枚举换成二分，就变成了“二分答案”。</p>
+<h3 id="二分查找框架"><a href="#二分查找框架" class="headerlink" title="二分查找框架"></a>二分查找框架</h3><p>最常用的二分查找场景：寻找一个数、寻找左侧边界、寻找右侧边界。深入细节，比如不等号是否应该带等号，<code>mid</code> 是否应该加一等等。分析这些细节的差异以及出现这些差异的原因，保证你能灵活准确地写出正确的二分查找算法。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = ...;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(...) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = ...</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = ...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ...;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>分析二分查找的一个技巧是：不要出现 else，而是把所有情况用 else if 写清楚，这样可以清楚地展现所有细节</strong>。本文都会使用 else if，旨在讲清楚，读者理解后可自行简化。</p>
+<p>其中 <code>...</code> 标记的部分，就是可能出现细节问题的地方，当你见到一个二分查找的代码时，首先注意这几个地方。后文用实例分析这些地方能有什么样的变化。</p>
+<p>另外声明一下，计算 mid 时需要防止溢出，代码中 <code>left + (right - left) / 2</code> 就和 <code>(left + right) / 2</code> 的结果相同，但是有效防止了 <code>left</code> 和 <code>right</code> 太大直接相加导致溢出。</p>
+<h4 id="寻找一个数（基本的二分搜索）"><a href="#寻找一个数（基本的二分搜索）" class="headerlink" title="寻找一个数（基本的二分搜索）"></a>寻找一个数（基本的二分搜索）</h4><p>搜索一个数，如果存在，返回其索引，否则返回 -1。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>; </span><br><span class="line">    <span class="keyword">int</span> right = nums.length - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>(left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span>(nums[mid] == target)</span><br><span class="line">            <span class="keyword">return</span> mid; </span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target)</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target)</span><br><span class="line">            right = mid - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>1、为什么 while 循环的条件中是 &lt;=，而不是 &lt;？</strong></p>
+<p>答：因为初始化 <code>right</code> 的赋值是 <code>nums.length - 1</code>，即最后一个元素的索引，而不是 <code>nums.length</code>。</p>
+<p>这二者可能出现在不同功能的二分查找中，区别是：前者相当于两端都闭区间 <code>[left, right]</code>，后者相当于左闭右开区间 <code>[left, right)</code>，因为索引大小为 <code>nums.length</code> 是越界的。</p>
+<p>我们这个算法中使用的是前者 <code>[left, right]</code> 两端都闭的区间。<strong>这个区间其实就是每次进行搜索的区间</strong>。</p>
+<p>什么时候应该停止搜索呢？当然，找到了目标值的时候可以终止：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(nums[mid] == target)</span><br><span class="line">    <span class="keyword">return</span> mid; </span><br></pre></td></tr></table></figure>
+
+<p>但如果没找到，就需要 while 循环终止，然后返回 -1。那 while 循环什么时候应该终止？<strong>搜索区间为空的时候应该终止</strong>，意味着你没得找了，就等于没找到嘛。</p>
+<p><code>while(left &lt;= right)</code> 的终止条件是 <code>left == right + 1</code>，写成区间的形式就是 <code>[right + 1, right]</code>，或者带个具体的数字进去 <code>[3, 2]</code>，可见<strong>这时候区间为空</strong>，因为没有数字既大于等于 3 又小于等于 2 的吧。所以这时候 while 循环终止是正确的，直接返回 -1 即可。</p>
+<p><code>while(left &lt; right)</code> 的终止条件是 <code>left == right</code>，写成区间的形式就是 <code>[right, right]</code>，或者带个具体的数字进去 <code>[2, 2]</code>，<strong>这时候区间非空</strong>，还有一个数 2，但此时 while 循环终止了。也就是说这区间 <code>[2, 2]</code> 被漏掉了，索引 2 没有被搜索，如果这时候直接返回 -1 就是错误的。</p>
+<p>当然，如果你非要用 <code>while(left &lt; right)</code> 也可以，我们已经知道了出错的原因，就打个补丁好了：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span>(left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、为什么 <code>left = mid + 1</code>，<code>right = mid - 1</code>？我看有的代码是 <code>right = mid</code> 或者 <code>left = mid</code>，没有这些加加减减，到底怎么回事，怎么判断？</strong></p>
+<p>答：这也是二分查找的一个难点，不过只要你能理解前面的内容，就能够很容易判断。</p>
+<p>刚才明确了<strong>「搜索区间」</strong>这个概念，而且本算法的搜索区间是两端都闭的，即 <code>[left, right]</code>。那么当我们发现索引 <code>mid</code> 不是要找的 <code>target</code> 时，下一步应该去搜索哪里呢？</p>
+<p>当然是去搜索 <code>[left, mid-1]</code> 或者 <code>[mid+1, right]</code> 对不对？<strong>因为 <code>mid</code> 已经搜索过，应该从搜索区间中去除</strong>。</p>
+<p><strong>3、此算法有什么缺陷？</strong></p>
+<p>答：至此，你应该已经掌握了该算法的所有细节，以及这样处理的原因。但是，这个算法存在局限性。</p>
+<p>比如说给你有序数组 <code>nums = [1,2,2,2,3]</code>，<code>target</code> 为 2，此算法返回的索引是 2，没错。但是如果我想得到 <code>target</code> 的左侧边界，即索引 1，或者我想得到 <code>target</code> 的右侧边界，即索引 3，这样的话此算法是无法处理的。</p>
+<p>这样的需求很常见，<strong>你也许会说，找到一个 <code>target</code>，然后向左或向右线性搜索不行吗？可以，但是不好，因为这样难以保证二分查找对数级的复杂度了</strong>。</p>
+<p>后续的算法就来讨论这两种二分查找的算法。</p>
+<h4 id="寻找左侧边界的二分搜索"><a href="#寻找左侧边界的二分搜索" class="headerlink" title="寻找左侧边界的二分搜索"></a>寻找左侧边界的二分搜索</h4><p>以下是最常见的代码形式，其中的标记是需要注意的细节：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> right = nums.length; <span class="comment">// 注意</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123; <span class="comment">// 注意</span></span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid; <span class="comment">// 注意</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>1、为什么 while 中是 <code>&lt;</code> 而不是 <code>&lt;=</code>?</strong></p>
+<p>答：用相同的方法分析，因为 <code>right = nums.length</code> 而不是 <code>nums.length - 1</code>。因此每次循环的「搜索区间」是 <code>[left, right)</code> 左闭右开。</p>
+<p><code>while(left &lt; right)</code> 终止的条件是 <code>left == right</code>，此时搜索区间 <code>[left, left)</code> 为空，所以可以正确终止。</p>
+<blockquote>
+<p>PS：这里先要说一个搜索左右边界和上面这个算法的一个区别，也是很多读者问的：<strong>刚才的 <code>right</code> 不是 <code>nums.length - 1</code> 吗，为啥这里非要写成 <code>nums.length</code> 使得「搜索区间」变成左闭右开呢</strong>？</p>
+</blockquote>
+<p>因为对于搜索左右侧边界的二分查找，这种写法比较普遍，我就拿这种写法举例了，保证你以后遇到这类代码可以理解。你非要用两端都闭的写法反而更简单，我会在后面写相关的代码，把三种二分搜索都用一种两端都闭的写法统一起来，你耐心往后看就行了。</p>
+<p><strong>2、为什么没有返回 -1 的操作？如果 <code>nums</code> 中不存在 <code>target</code> 这个值，怎么办</strong>？</p>
+<p>答：因为要一步一步来，先理解一下这个「左侧边界」有什么特殊含义：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220225215952439.png" style="zoom: 45%;" />
+
+<p>对于这个数组，算法会返回索引 1。</p>
+<p>这个索引 1 的含义可以解读为「<code>nums</code> 中小于 2 的元素有 1 个」。</p>
+<p>比如对于有序数组 <code>nums = [2,3,5,7]</code>, <code>target = 1</code>，算法会返回 0，含义是：<code>nums</code> 中小于 1 的元素有 0 个。</p>
+<p>再比如说 <code>nums = [2,3,5,7], target = 8</code>，算法会返回 4，含义是：<code>nums</code> 中小于 8 的元素有 4 个。</p>
+<blockquote>
+<p>PS：对于 <code>target</code> 不存在 <code>nums</code> 中的情况，函数的返回值还可以有多种理解方式，详见 <a href="https://labuladong.github.io/algo/2/21/66/">随机权重算法</a> 中对二分搜索的运用。</p>
+</blockquote>
+<p>综上可以看出，函数的返回值（即 <code>left</code> 变量的值）取值区间是闭区间 <code>[0, nums.length]</code>，所以我们简单添加两行代码就能在正确的时候 return -1：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// target 比所有数都大</span></span><br><span class="line"><span class="keyword">if</span> (left == nums.length) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"><span class="comment">// 类似之前算法的处理方式</span></span><br><span class="line"><span class="keyword">return</span> nums[left] == target ? left : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3、为什么 <code>left = mid + 1</code>，<code>right = mid</code> ？和之前的算法不一样？</strong></p>
+<p>答：这个很好解释，因为我们的「搜索区间」是 <code>[left, right)</code> 左闭右开，所以当 <code>nums[mid]</code> 被检测之后，下一步的搜索区间应该去掉 <code>mid</code> 分割成两个区间，即 <code>[left, mid)</code> 或 <code>[mid + 1, right)</code>。</p>
+<p><strong>4、为什么该算法能够搜索左侧边界</strong>？</p>
+<p>答：关键在于对于 <code>nums[mid] == target</code> 这种情况的处理：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] == target)</span><br><span class="line">    right = mid;</span><br></pre></td></tr></table></figure>
+
+<p>可见，找到 target 时不要立即返回，而是缩小「搜索区间」的上界 <code>right</code>，在区间 <code>[left, mid)</code> 中继续搜索，即不断向左收缩，达到锁定左侧边界的目的。</p>
+<p><strong>5、为什么返回 <code>left</code> 而不是 <code>right</code>？</strong></p>
+<p>答：都是一样的，因为 while 终止的条件是 <code>left == right</code>。</p>
+<p><strong>6、能不能想办法把 <code>right</code> 变成 <code>nums.length - 1</code>，也就是继续使用两边都闭的「搜索区间」？这样就可以和第一种二分搜索在某种程度上统一起来了</strong>。</p>
+<p>答：当然可以，只要你明白了「搜索区间」这个概念，就能有效避免漏掉元素，随便你怎么改都行。下面我们严格根据逻辑来修改：</p>
+<p>因为你非要让搜索区间两端都闭，所以 <code>right</code> 应该初始化为 <code>nums.length - 1</code>，while 的终止条件应该是 <code>left == right + 1</code>，也就是其中应该用 <code>&lt;=</code>：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 搜索区间为 [left, right]</span></span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// if else ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为搜索区间是两端都闭的，且现在是搜索左侧边界，所以 <code>left</code> 和 <code>right</code> 的更新逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">    <span class="comment">// 搜索区间变为 [mid+1, right]</span></span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">    <span class="comment">// 搜索区间变为 [left, mid-1]</span></span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">    <span class="comment">// 收缩右侧边界</span></span><br><span class="line">    right = mid - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于 while 的退出条件是 <code>left == right + 1</code>，所以当 <code>target</code> 比 <code>nums</code> 中所有元素都大时，会存在以下情况使得索引越界：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220225221026390.png" style="zoom:45%;" />
+
+<p>因此，最后返回结果的代码应该检查越界情况：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target)</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">return</span> left;</span><br></pre></td></tr></table></figure>
+
+<p>至此，整个算法就写完了，完整代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 搜索区间为 [left, right]</span></span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为 [mid+1, right]</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            <span class="comment">// 搜索区间变为 [left, mid-1]</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 收缩右侧边界</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 检查出界情况</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样就和第一种二分搜索算法统一了，都是两端都闭的「搜索区间」，而且最后返回的也是 <code>left</code> 变量的值。只要把住二分搜索的逻辑，两种形式大家看自己喜欢哪种记哪种吧。</p>
+<h4 id="寻找右侧边界的二分查找"><a href="#寻找右侧边界的二分查找" class="headerlink" title="寻找右侧边界的二分查找"></a>寻找右侧边界的二分查找</h4><p>类似寻找左侧边界的算法，这里也会提供两种写法，还是先写常见的左闭右开的写法，只有两处和搜索左侧边界不同，已标注：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nums.length == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left - <span class="number">1</span>; <span class="comment">// 注意</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>1、为什么这个算法能够找到右侧边界？</strong></p>
+<p>答：类似地，关键点还是这里：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>nums[mid] == target</code> 时，不要立即返回，而是增大「搜索区间」的下界 <code>left</code>，使得区间不断向右收缩，达到锁定右侧边界的目的。</p>
+<p><strong>2、为什么最后返回 <code>left - 1</code> 而不像左侧边界的函数，返回 <code>left</code>？而且我觉得这里既然是搜索右侧边界，应该返回 <code>right</code> 才对</strong>。</p>
+<p>答：首先，while 循环的终止条件是 <code>left == right</code>，所以 <code>left</code> 和 <code>right</code> 是一样的，你非要体现右侧的特点，返回 <code>right - 1</code> 好了。</p>
+<p>至于为什么要减一，这是搜索右侧边界的一个特殊点，关键在这个条件判断：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">    left = mid + <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// 这样想: mid = left - 1</span></span><br></pre></td></tr></table></figure>
+
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226112725552.png" style="zoom:45%;" />
+
+<p>因为我们对 <code>left</code> 的更新必须是 <code>left = mid + 1</code>，就是说 while 循环结束时，<code>nums[left]</code> 一定不等于 <code>target</code> 了，而 <code>nums[left-1]</code> 可能是 <code>target</code>。</p>
+<p>至于为什么 <code>left</code> 的更新必须是 <code>left = mid + 1</code>，同左侧边界搜索，就不再赘述。</p>
+<p><strong>3、为什么没有返回 -1 的操作？如果 <code>nums</code> 中不存在 <code>target</code> 这个值，怎么办？</strong></p>
+<p>答：类似之前的左侧边界搜索，因为 while 的终止条件是 <code>left == right</code>，就是说 <code>left</code> 的取值范围是 <code>[0, nums.length]</code>，所以可以添加两行代码，正确地返回 -1：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (left == <span class="number">0</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line"><span class="keyword">return</span> nums[left-<span class="number">1</span>] == target ? (left-<span class="number">1</span>) : -<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、是否也可以把这个算法的「搜索区间」也统一成两端都闭的形式呢？这样这三个写法就完全统一了，以后就可以闭着眼睛写出来了。</strong></p>
+<p>答：当然可以，类似搜索左侧边界的统一写法，其实只要改两个地方就行了：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 这里改成收缩左侧边界即可</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这里改为检查 right 越界的情况，见下图</span></span><br><span class="line">    <span class="keyword">if</span> (right &lt; <span class="number">0</span> || nums[right] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>target</code> 比所有元素都小时，<code>right</code> 会被减到 -1，所以需要在最后防止越界：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226142140238.png" style="zoom:45%;" />
+
+<p>至此，搜索右侧边界的二分查找的两种写法也完成了，其实将「搜索区间」统一成两端都闭反而更容易记忆，你说是吧？</p>
+<h4 id="逻辑统一"><a href="#逻辑统一" class="headerlink" title="逻辑统一"></a>逻辑统一</h4><p>接下来梳理一下这些细节差异的因果逻辑：</p>
+<p><strong>第一个，最基本的二分查找算法：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">因为我们初始化 right = nums.length - <span class="number">1</span></span><br><span class="line">所以决定了我们的「搜索区间」是 [left, right]</span><br><span class="line">所以决定了 <span class="keyword">while</span> (left &lt;= right)</span><br><span class="line">同时也决定了 left = mid+<span class="number">1</span> 和 right = mid-<span class="number">1</span></span><br><span class="line"></span><br><span class="line">因为我们只需找到一个 target 的索引即可</span><br><span class="line">所以当 nums[mid] == target 时可以立即返回</span><br></pre></td></tr></table></figure>
+
+<p><strong>第二个，寻找左侧边界的二分查找：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">因为我们初始化 right = nums.length</span><br><span class="line">所以决定了我们的「搜索区间」是 [left, right)</span><br><span class="line">所以决定了 <span class="keyword">while</span> (left &lt; right)</span><br><span class="line">同时也决定了 left = mid + <span class="number">1</span> 和 right = mid</span><br><span class="line"></span><br><span class="line">因为我们需找到 target 的最左侧索引</span><br><span class="line">所以当 nums[mid] == target 时不要立即返回</span><br><span class="line">而要收紧右侧边界以锁定左侧边界</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三个，寻找右侧边界的二分查找：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">因为我们初始化 right = nums.length</span><br><span class="line">所以决定了我们的「搜索区间」是 [left, right)</span><br><span class="line">所以决定了 <span class="keyword">while</span> (left &lt; right)</span><br><span class="line">同时也决定了 left = mid + <span class="number">1</span> 和 right = mid</span><br><span class="line"></span><br><span class="line">因为我们需找到 target 的最右侧索引</span><br><span class="line">所以当 nums[mid] == target 时不要立即返回</span><br><span class="line">而要收紧左侧边界以锁定右侧边界</span><br><span class="line"></span><br><span class="line">又因为收紧左侧边界时必须 left = mid + <span class="number">1</span></span><br><span class="line">所以最后无论返回 left 还是 right，必须减一</span><br></pre></td></tr></table></figure>
+
+<p>对于寻找左右边界的二分搜索，常见的手法是使用左闭右开的「搜索区间」，<strong>我们还根据逻辑将「搜索区间」全都统一成了两端都闭，便于记忆，只要修改两处即可变化出三种写法：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">binary_search</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>; </span><br><span class="line">    <span class="keyword">while</span>(left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>; </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 直接返回</span></span><br><span class="line">            <span class="keyword">return</span> mid;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 直接返回</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">left_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 别返回，锁定左侧边界</span></span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后要检查 left 越界的情况</span></span><br><span class="line">    <span class="keyword">if</span> (left &gt;= nums.length || nums[left] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">right_bound</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> left = <span class="number">0</span>, right = nums.length - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (left &lt;= right) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = left + (right - left) / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">if</span> (nums[mid] &lt; target) &#123;</span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] &gt; target) &#123;</span><br><span class="line">            right = mid - <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nums[mid] == target) &#123;</span><br><span class="line">            <span class="comment">// 别返回，锁定右侧边界</span></span><br><span class="line">            left = mid + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 最后要检查 right 越界的情况</span></span><br><span class="line">    <span class="keyword">if</span> (right &lt; <span class="number">0</span> || nums[right] != target) &#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> right;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过本文，你学会了：</p>
+<p>1、分析二分查找代码时，不要出现 else，全部展开成 else if 方便理解。</p>
+<p>2、注意「搜索区间」和 while 的终止条件，如果存在漏掉的元素，记得在最后检查。</p>
+<p>3、如需定义左闭右开的「搜索区间」搜索左右边界，只要在 <code>nums[mid] == target</code> 时做修改即可，搜索右侧时需要减一。</p>
+<p>4、如果将「搜索区间」全都统一成两端都闭，好记，只要稍改 <code>nums[mid] == target</code> 条件处的代码和返回的逻辑即可，<strong>推荐拿小本本记下，作为二分搜索模板</strong>。</p>
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/">33. 搜索旋转排序数组</a></td>
+<td><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/solution/duo-si-lu-wan-quan-gong-lue-bi-xu-miao-dong-by-swe/">多思路完全攻略，🤷‍♀️必须秒懂！</a><br/><a href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/solution/ji-jian-solution-by-lukelee/">极简 Solution</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/">240. 搜索二维矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/solution/sou-suo-er-wei-ju-zhen-ii-by-leetcode-so-9hcx/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/search-a-2d-matrix-ii/solution/xiang-xi-tong-su-de-si-lu-fen-xi-duo-jie-fa-by-5-4/">详细通俗的思路分析，多解法</a></td>
+</tr>
+</tbody></table>
+<h2 id="三分法"><a href="#三分法" class="headerlink" title="三分法"></a>三分法</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><p>三分法可以用来查找凸函数的最大（小）值。</p>
+<ul>
+<li>如果 <code>lmid</code> 和 <code>rmid</code> 在最大（小）值的同一侧：由于单调性，一定是二者中较大（小）的那个离最值近一些，较远的那个点对应的区间不可能包含最值，所以可以舍弃。</li>
+<li>如果在两侧：由于最值在二者中间，我们舍弃两侧的一个区间后，也不会影响最值，所以可以舍弃。</li>
+</ul>
+<p><strong>二分法</strong>最基本的应用是求一个<strong>单调函数</strong>的<strong>零点</strong>。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160426232.png" style="zoom: 65%;" />
+
+<p><strong>三分法</strong>是二分法的变种，他最基本的用途是求<strong>单峰函数</strong>的<strong>极值点</strong>。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160507296.png" style="zoom:65%;" />
+
+<p>从数学的角度来说，求极值点，先<strong>求导</strong>再<strong>二分</strong>不就好了吗？然而，实际中我们遇到的函数，求导可能很困难，所以会用上三分法。而三分法的原理非常简单，以求极大值为例，每次对一个区间 <code>[l,r] </code>求三等分点 <code>lsec</code> 和 <code>rsec</code>：</p>
+<ul>
+<li><p>如果 <code>f(lsec) &lt; f(rsec)</code> ，说明极大值一定在 <code>[lsec,r]</code> 内取到，因为如果在 <code>[0,lsec)</code> 内，那 <code>rsec</code> 一定处于单调下降的区间内，它的函数值不可能大于 <code>lsec</code> 的函数值。 于是我们令 <code>l=lsec</code> 并继续。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160605736.png" style="zoom:65%;" /></li>
+<li><p>如果<code>f(lsec) &gt; f(rsec)</code>，同理，极大值一定在<code>[l,rsec]</code>内取到，令<code>r=rsec</code>并继续。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220226160712468.png" style="zoom:65%;" /></li>
+</ul>
+<p>这样进行下去，直到<code>l</code>和<code>r</code>的差距小于设定的<code>eps</code>为止。如果求的是极小值而非极大值，只需把上面条件判断处的大于、小于互换。</p>
+<p>按照上面的算法，我们每次减少三分之一的长度。但其实还可以优化，即每次在中点附近取点，那么每次可以减少约二分之一的长度。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (r - l &gt; eps)</span><br><span class="line">&#123;</span><br><span class="line">    mid = (l + r) / <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">double</span> fl = f(mid - eps), fr = f(mid + eps);</span><br><span class="line">    <span class="keyword">if</span> (fl &lt; fr)</span><br><span class="line">        l = mid; <span class="comment">// 这里不写成mid - eps，防止死循环；可能会错过极值，但在误差范围以内所以没关系</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        r = mid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种写法的三分，其实和普通的二分很像了。</p>
+<table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/">852. 山脉数组的峰顶索引</a></td>
+<td><a href="https://leetcode-cn.com/problems/peak-index-in-a-mountain-array/solution/gong-shui-san-xie-er-fen-san-fen-cha-zhi-5gfv/">【宫水三叶】二分 &amp; 三分极值问题</a></td>
+</tr>
+</tbody></table>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://labuladong.gitee.io/algo/2/21/61/">我写了首诗，让你闭着眼睛也能写对二分搜索</a></strong></p>
+</li>
+<li><p><strong><a href="https://zhuanlan.zhihu.com/p/337752413">算法学习笔记(62): 三分法</a></strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>二分</tag>
+        <tag>三分</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>双指针</title>
     <url>/post/91a7e4d1/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
@@ -6153,6 +6153,36 @@
       </categories>
       <tags>
         <tag>回溯</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
@@ -6350,36 +6380,6 @@
       </tags>
   </entry>
   <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>并查集</title>
     <url>/post/c517589e/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/zh-hans/%E5%B9%B6%E6%9F%A5%E9%9B%86">并查集</a>（Union-Find）算法，主要是解决图论中「动态连通性」问题的。</p>
@@ -6498,163 +6498,6 @@
       </categories>
       <tags>
         <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据库基础知识</title>
-    <url>/post/1ad06ab1/</url>
-    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
-<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
-<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
-<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
-<span id="more"></span>
-<p>数据库系统基本构成如下图所示：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
-<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
-<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
-<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
-<blockquote>
-<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
-</blockquote>
-<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
-<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
-<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
-<blockquote>
-<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
-</blockquote>
-<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
-<blockquote>
-<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
-</blockquote>
-<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
-<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
-<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
-</ul>
-<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
-<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
-<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
-<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
-<ol>
-<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
-<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
-<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
-<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
-<li>……</li>
-</ol>
-<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
-<ol>
-<li>保证了数据库数据的一致性和完整性；</li>
-<li>级联操作方便，减轻了程序代码量；</li>
-<li>……</li>
-</ol>
-<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
-<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
-<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
-<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
-<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
-<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
-<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
-<blockquote>
-<p>表：学号、课程号、姓名、学分</p>
-</blockquote>
-<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
-<p><strong>可能会存在问题：</strong></p>
-<ul>
-<li>数据冗余：每条记录都含有相同信息；</li>
-<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
-<li>插入异常：学生未选课，无法记录进数据库；</li>
-<li>更新异常：调整课程学分，所有行都调整。</li>
-</ul>
-<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
-<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
-<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
-<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
-</blockquote>
-<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
-</blockquote>
-<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
-<blockquote>
-<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
-</blockquote>
-<p><strong>3NF(第三范式)</strong></p>
-<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
-<p><strong>总结</strong></p>
-<ul>
-<li>1NF：属性不可再分。</li>
-<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
-<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
-</ul>
-<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
-<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
-<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
-<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以尽量的减少数据冗余</li>
-<li>数据表更新快体积小</li>
-<li>范式化的更新操作比反范式化更快</li>
-<li>范式化的表通常比反范式化更小</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>对于查询需要对多个表进行关联导致性能降低</li>
-<li>更难进行索引优化</li>
-</ul>
-<p><strong>反范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以减少表的关联</li>
-<li>可以更好的进行索引优化</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>存在数据冗余及数据维护异常</li>
-<li>对数据的修改需要更多的成本</li>
-</ul>
-<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
-<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
-<blockquote>
-<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
-<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
-</blockquote>
-<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
-<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
-<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
-<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
-<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
-<p><strong>DML 语句和 DDL 语句区别：</strong></p>
-<ul>
-<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
-<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
-</ul>
-<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
-<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
-<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
-<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
-<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
-<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
-<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
-<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
-</ol>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></strong></p>
-</li>
-<li><p><strong><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>基础知识</tag>
       </tags>
   </entry>
   <entry>
@@ -6995,48 +6838,160 @@
       </tags>
   </entry>
   <entry>
-    <title>模拟</title>
-    <url>/post/d1f7904c/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
-<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
-<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
+    <title>数据库基础知识</title>
+    <url>/post/1ad06ab1/</url>
+    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
+<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
+<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
+<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
 <span id="more"></span>
-
-<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
-<ul>
-<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
-<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
-<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
-<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
-<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
+<p>数据库系统基本构成如下图所示：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
+<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
+<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
+<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
+<blockquote>
+<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
+</blockquote>
+<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
+<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
+<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
+<blockquote>
+<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
+</blockquote>
+<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
+<blockquote>
+<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
+</blockquote>
+<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
+<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
+<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
 </ul>
-<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
-<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
-</tr>
-</tbody></table>
+<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
+<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
+<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
+<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
+<ol>
+<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
+<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
+<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
+<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
+<li>……</li>
+</ol>
+<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
+<ol>
+<li>保证了数据库数据的一致性和完整性；</li>
+<li>级联操作方便，减轻了程序代码量；</li>
+<li>……</li>
+</ol>
+<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
+<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
+<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
+<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
+<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
+<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
+<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
+<blockquote>
+<p>表：学号、课程号、姓名、学分</p>
+</blockquote>
+<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
+<p><strong>可能会存在问题：</strong></p>
+<ul>
+<li>数据冗余：每条记录都含有相同信息；</li>
+<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
+<li>插入异常：学生未选课，无法记录进数据库；</li>
+<li>更新异常：调整课程学分，所有行都调整。</li>
+</ul>
+<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
+<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
+<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
+<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
+</blockquote>
+<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
+</blockquote>
+<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
+<blockquote>
+<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
+</blockquote>
+<p><strong>3NF(第三范式)</strong></p>
+<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
+<p><strong>总结</strong></p>
+<ul>
+<li>1NF：属性不可再分。</li>
+<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
+<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
+</ul>
+<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
+<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
+<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
+<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以尽量的减少数据冗余</li>
+<li>数据表更新快体积小</li>
+<li>范式化的更新操作比反范式化更快</li>
+<li>范式化的表通常比反范式化更小</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对于查询需要对多个表进行关联导致性能降低</li>
+<li>更难进行索引优化</li>
+</ul>
+<p><strong>反范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以减少表的关联</li>
+<li>可以更好的进行索引优化</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>存在数据冗余及数据维护异常</li>
+<li>对数据的修改需要更多的成本</li>
+</ul>
+<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
+<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
+<blockquote>
+<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
+<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
+</blockquote>
+<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
+<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
+<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
+<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
+<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
+<p><strong>DML 语句和 DDL 语句区别：</strong></p>
+<ul>
+<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
+<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
+</ul>
+<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
+<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
+<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
+<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
+<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
+<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
+<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
+<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></strong></p>
+</li>
+<li><p><strong><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></strong></p>
+</li>
+</ul>
 ]]></content>
       <categories>
-        <category>算法</category>
+        <category>数据库</category>
       </categories>
       <tags>
-        <tag>模拟</tag>
+        <tag>基础知识</tag>
       </tags>
   </entry>
   <entry>
@@ -7241,123 +7196,6 @@
       </tags>
   </entry>
   <entry>
-    <title>红黑树</title>
-    <url>/post/f89cb603/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207175122084.png" style="zoom:80%;" />
-
-<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>学过二叉查找树的同学都知道，普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。为了避免这种情况，就出现了一些<strong>自平衡的查找树</strong>，比如 AVL，红黑树等。这些自平衡的查找树通过定义一些性质，<strong>将任意节点的左右子树高度差控制在规定范围内，以达到平衡状态</strong>。以红黑树为例，红黑树通过如下的性质定义实现自平衡：</p>
-<ol>
-<li>节点是红色或黑色。</li>
-<li>根是黑色。</li>
-<li>所有叶子都是黑色（叶子是NIL节点）。</li>
-<li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
-<li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点（简称黑高）。</li>
-</ol>
-<p>有了上面的几个性质作为限制，即可避免二叉查找树退化成单链表的情况。但是，仅仅避免这种情况还不够，这里还要考虑某个节点到其每个叶子节点路径长度的问题。如果某些路径长度过长，那么，在对这些路径上的节点进行增删查操作时，效率也会大大降低。这个时候性质4和性质5用途就凸显了，有了这两个性质作为约束，即可保证<strong>任意节点到其每个叶子节点路径最长不会超过最短路径的2倍</strong>。原因如下：</p>
-<p>当某条路径最短时，这条路径必然都是由黑色节点构成。当某条路径长度最长时，这条路径必然是由红色和黑色节点相间构成（性质4限定了不能出现两个连续的红色节点）。而性质5又限定了从任一节点到其每个叶子节点的所有路径必须包含相同数量的黑色节点。此时，在路径最长的情况下，路径上红色节点数量 = 黑色节点数量。该路径长度为两倍黑色节点数量，也就是最短路径长度的2倍。举例说明一下，请看下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207180835565.png" style="zoom:80%;" />
-
-<p>上图画出了从根节点 M 出发的到其叶子节点的最长和最短路径。这里偷懒只画出了两条最长路径，实际上最长路径有4条，分别为：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">M -&gt; Q -&gt; O -&gt; N</span><br><span class="line">M -&gt; Q -&gt; O -&gt; p</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; X</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; Z</span><br></pre></td></tr></table></figure>
-
-<p>长度为4，最短路径为 <code>M -&gt; E</code>，长度为2。最长路径的长度正好为最短路径长度的2倍。</p>
-<p>前面说了关于红黑树的一些性质，这里还需要补充一些其他方面的东西。在红黑树简介一节中说到红黑树被发明出来的时候并不叫 <code>红黑树</code>，而是叫做 <code>对称二叉 B 树</code>，从名字中可发现红黑树和 B 树（这里指的是<strong>2-3树</strong>）或许有一定的关联，事实也正是如此。如果对红黑树的性质稍加修改，就能让红黑树和B树形成一一对应的关系。关于红黑树和 B 树关系的细节这里不展开说明了，有兴趣的同学可以参考<a href="https://book.douban.com/subject/19952400/">《算法》</a>第4版，那本书上讲的很透彻。</p>
-<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>红黑树的基本操作和其他树形结构一样，一般都包括查找、插入、删除等操作。前面说到，红黑树是一种自平衡的二叉查找树，既然是二叉查找树的一种，那么查找过程和二叉查找树一样，比较简单，这里不再赘述。相对于查找操作，红黑树的插入和删除操作就要复杂的多。尤其是删除操作，要处理的情况比较多，不过大家如果静下心来去看，会发现其实也没想的那么难。</p>
-<h3 id="旋转操作"><a href="#旋转操作" class="headerlink" title="旋转操作"></a>旋转操作</h3><p>在分析插入和删除操作前，这里需要插个队，先说明一下旋转操作，这个操作在后续操作中都会用得到。旋转操作分为左旋和右旋，<strong>左旋是将某个节点旋转为其右孩子的左孩子</strong>，而<strong>右旋是节点旋转为其左孩子的右孩子</strong>。这话听起来有点绕，所以还是请看下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182356324.png" style="zoom:80%;" />
-
-<p>上图包含了左旋和右旋的示意图，这里以右旋为例进行说明，右旋节点 M 的步骤如下：</p>
-<ol>
-<li>将节点 M 的左孩子引用指向节点 E 的右孩子</li>
-<li>将节点 E 的右孩子引用指向节点 M，完成旋转</li>
-</ol>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182602018.png" style="zoom:80%;" />
-
-<p>上面分析了右旋操作，左旋操作与此类似，大家有兴趣自己画图试试吧，这里不再赘述了。旋转操作本身并不复杂，这里先分析到这吧。</p>
-<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入过程和二叉查找树插入过程基本类似，不同的地方在于，红黑树插入新节点后，需要进行调整，以满足红黑树的性质。性质1规定红黑树节点的颜色要么是红色要么是黑色，那么在插入新节点时，这个节点应该是红色还是黑色呢？答案是红色，原因也不难理解。如果插入的节点是黑色，那么这个节点所在路径比其他路径多出一个黑色节点，这个调整起来会比较麻烦（参考红黑树的删除操作，就知道为啥多一个或少一个黑色节点时，调整起来这么麻烦了）。如果插入的节点是红色，此时所有路径上的黑色节点数量不变，仅可能会出现两个连续的红色节点的情况。这种情况下，通过变色和旋转进行调整即可，比之前的简单多了。</p>
-<p>接下来，将分析插入红色节点后红黑树的情况。这里假设要插入的节点为 N，N 的父节点为 P，祖父节点为 G，叔叔节点为 U。插入红色节点后，会出现5种情况，分别如下：</p>
-<h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>插入的新节点 N 是红黑树的根节点，这种情况下，我们把节点 N 的颜色由红色变为黑色，性质2（根是黑色）被满足。同时 N 被染成黑色后，红黑树所有路径上的黑色节点数量增加一个，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍然被满足。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182903027.png" style="zoom:80%;" />
-
-<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>N 的父节点是黑色，这种情况下，性质4（每个红色节点必须有两个黑色的子节点）和性质5没有受到影响，不需要调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207183215154.png" style="zoom:80%;" />
-
-<h4 id="情况三"><a href="#情况三" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。这种情况下，先将 P 和 U 的颜色染成黑色，再将 G 的颜色染成红色。此时经过 G 的路径上的黑色节点数量不变，性质5仍然满足。但需要注意的是 G 被染成红色后，可能会和它的父节点形成连续的红色节点，此时需要递归向上调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152056319752.jpg" style="zoom:80%;" />
-
-<h4 id="情况四"><a href="#情况四" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，叔叔节点为黑色。节点 N 是 P 的右孩子，且节点 P 是 G 的左孩子。此时先对节点 P 进行左旋，调整 N 与 P 的位置。接下来按照情况五进行处理，以恢复性质4。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057064115.jpg" style="zoom:80%;" />
-
-<h4 id="情况五"><a href="#情况五" class="headerlink" title="情况五"></a>情况五</h4><p>N 的父节点为红色，叔叔节点为黑色。N 是 P 的左孩子，且节点 P 是 G 的左孩子。此时对 G 进行右旋，调整 P 和 G 的位置，并互换颜色。经过这样的调整后，性质4被恢复，同时也未破坏性质5。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057476644.jpg" style="zoom:80%;" />
-
-<h4 id="插入总结"><a href="#插入总结" class="headerlink" title="插入总结"></a>插入总结</h4><p>上面五种情况中，情况一和情况二比较简单，情况三、四、五稍复杂。但如果细心观察，会发现这三种情况的区别在于叔叔节点的颜色，如果<strong>叔叔节点为红色，直接变色</strong>即可。如果<strong>叔叔节点为黑色，则需要旋转，再交换颜色</strong>。当把这三种情况的图画在一起就区别就比较容易观察了，如下图：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152052502152.jpg" style="zoom:80%;" />
-
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>相较于插入操作，红黑树的删除操作则要更为复杂一些。删除操作首先要确定待删除节点有几个孩子，如果有两个孩子，不能直接删除该节点。而是要先找到该节点的<strong>前驱（该节点左子树中最大的节点）</strong>或者<strong>后继（该节点右子树中最小的节点）</strong>，然后将前驱或者后继的值复制到要删除的节点中，最后再将前驱或后继删除。由于前驱和后继至多只有一个孩子节点，这样我们就把原来要删除的节点有两个孩子的问题转化为只有一个孩子节点的问题，问题被简化了一些。我们并不关心最终被删除的节点是否是我们开始想要删除的那个节点，只要节点里的值最终被删除就行了，至于树结构如何变化，这个并不重要。</p>
-<p>红黑树删除操作的复杂度在于删除节点的颜色，当删除的节点是红色时，直接拿其孩子节点补空位即可。因为删除红色节点，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍能够被满足。当删除的节点是黑色时，那么所有经过该节点的路径上的黑节点数量少了一个，破坏了性质5。如果该节点的孩子为红色，直接拿孩子节点替换被删除的节点，并将孩子节点染成黑色，即可恢复性质5。但如果孩子节点为黑色，处理起来就要复杂的多。分为6种情况，下面会展开说明。</p>
-<p>在展开说明之前，我们先做一些假设，方便说明。这里假设最终被删除的节点为 <code>X</code>（至多只有一个孩子节点），其孩子节点为 <code>N</code>，<code>X</code> 的兄弟节点为 <code>S</code>，<code>S</code> 的左节点为 SL，右节点为 SR。接下来讨论是建立在节点 <code>X</code> 被删除，节点 <code>N</code> 替换 <code>X</code> 的基础上进行的。这里说明把被删除的节点 <code>X</code> 特地拎出来说一下的原因是防止大家误以为节点 <code>N</code> 会被删除，不然后面就会看不明白。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15272593488180.jpg" style="zoom:80%;" />
-
-<p>在上面的基础上，接下来就可以展开讨论了。红黑树删除有6种情况，分别是：</p>
-<h4 id="情况一-1"><a href="#情况一-1" class="headerlink" title="情况一"></a>情况一</h4><blockquote>
-<p>N 是新的根。在这种情形下，我们就做完了。我们从所有路径去除了一个黑色节点，而新根是黑色的，所以性质都保持着。</p>
-</blockquote>
-<p>上面是维基百科中关于红黑树删除的情况一说明，由于没有配图，看的有点晕。经过思考，我觉得可能会是下面这种情形：</p>
-<p>要删除的节点 X 是根节点，且左右孩子节点均为空节点，此时将节点 X 用空节点替换完成删除操作。</p>
-<p>可能还有其他情形，大家如果知道，烦请告知。</p>
-<h4 id="情况二-1"><a href="#情况二-1" class="headerlink" title="情况二"></a>情况二</h4><p>S 为红色，其他节点为黑色。这种情况下可以对 N 的父节点进行左旋操作，然后互换 P 与 S 颜色。但这并未结束，经过节点 P 和 N 的路径删除前有3个黑色节点（<code>P -&gt; X -&gt; N</code>），现在只剩两个了（<code>P -&gt; N</code>）。比未经过 N 的路径少一个黑色节点，性质5仍不满足，还需要继续调整。不过此时可以按照情况四、五、六进行调整。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097130545.jpg" style="zoom:80%;" />
-
-<h4 id="情况三-1"><a href="#情况三-1" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以简单的把 S 染成红色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致了。但经过 P 的路径比不经过 P 的路径少一个黑色节点，此时需要从情况一开始对 P 进行平衡处理。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097574115.jpg" style="zoom:80%;" />
-
-<h4 id="情况四-1"><a href="#情况四-1" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以把 S 染成红色，把P染成黑色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致且经过 P 的路径黑色节点数不变。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207194653272.png" style="zoom:80%;" />
-
-<h4 id="情况五-1"><a href="#情况五-1" class="headerlink" title="情况五"></a>情况五</h4><p>S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 SL 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 SL，而 SL 的右孩子变为红色。接下来我们到情况六继续分析。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098446251.jpg" style="zoom:80%;" />
-
-<h4 id="情况六"><a href="#情况六" class="headerlink" title="情况六"></a>情况六</h4><p>S 为黑色，S 的右孩子为红色。N 的父节点颜色可红可黑，且 N 是其父节点左孩子。这种情况下，我们对 P 进行左旋操作，并互换 P 和 S 的颜色，并将 SR 变为黑色。因为 P 变为黑色，所以经过 N 的路径多了一个黑色节点，经过 N 的路径上的黑色节点与删除前的数量一致。对于不经过 N 的路径，则有以下两种情况：</p>
-<ol>
-<li>该路径经过 N 新的兄弟节点 SL ，那它之前必然经过 S 和 P。而 S 和 P 现在只是交换颜色，对于经过 SL 的路径不影响。</li>
-<li>该路径经过 N 新的叔叔节点 SR，那它之前必然经过 P、 S 和 SR，而现在它只经过 S 和 SR。在对 P 进行左旋，并与 S 换色后，经过 SR 的路径少了一个黑色节点，性质5被打破。另外，由于 S 的颜色可红可黑，如果 S 是红色的话，会与 SR 形成连续的红色节点，打破性质4（每个红色节点必须有两个黑色的子节点）。此时仅需将 SR 由红色变为黑色即可同时恢复性质4和性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。）。</li>
-</ol>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098765266.jpg" style="zoom:80%;" />
-
-<h4 id="删除总结"><a href="#删除总结" class="headerlink" title="删除总结"></a>删除总结</h4><p>红黑树删除的情况比较多，大家刚开始看的时候可能会比较晕。可能会产生这样的疑问，为啥红黑树会有这种删除情况，为啥又会有另一种情况，它们之间有什么联系和区别？和大家一样，我刚开始看的时候也有这样的困惑，直到我把所有情况对应的图形画在一起时，拨云见日，一切都明了了。此时天空中出现了4个字，原来如此、原来如此、原来如此。所以，请看图吧：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152095299211.jpg" style="zoom:80%;" />
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>红黑树是一种重要的二叉树，应用广泛，但在很多数据结构相关的书本中出现的次数并不多。很多书中要么不说，要么就一笔带过，并不会进行详细的分析，这可能是因为红黑树比较复杂的缘故。我在学习红黑树的时候也找了很多资料，但总体感觉讲的都不太好。尤其是在我学习删除操作的时候，很多资料是实在人看不下去，看的我很痛苦。直到我看到维基百科上关于<a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树</a>的分析时，很是欣喜。这篇文章分析的很有条理，言简意赅，比很多资料好了太多。本文对红黑树的分析也主要参考了维基百科中的红黑树分析，并对维基百科中容易让人产生疑问和误解的地方进行了说明。同时维基百科中文版红黑树文中的图片较为模糊，这里我重新进行了绘制。需要说明的是，维基百科中文版无法打开了，文中关于维基百科的链接都是英文版的。另外在给大家推荐一个数据结构可视化的网站，里面包含常见数据结构可视化过程，地址为：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">t.cn/RZFgryr</a>。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://book.douban.com/subject/19952400/">《算法》第四版</a></li>
-<li><a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树 – 维基百科</a></li>
-</ul>
-<p>推荐阅读：</p>
-<ul>
-<li><p><a href="https://zhuanlan.zhihu.com/p/24367771">红黑树深入剖析及Java实现</a></p>
-</li>
-<li><p><a href="https://brianway.github.io/2016/10/14/algorithms-data-structures-2/">常见数据结构(二)-树(二叉树，红黑树，B树)</a></p>
-</li>
-</ul>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://www.tianxiaobo.com/2018/01/11/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90/">红黑树详细分析</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>自平衡树</tag>
-        <tag>查找树</tag>
-        <tag>二叉树</tag>
-        <tag>树</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>理解linux中的file descriptor(文件描述符)</title>
     <url>/post/1e8930fb/</url>
     <content><![CDATA[<p>file descriptor（以下简称fd）又叫文件描述符，它是一个抽象的指示符，用一个整数表示（非负整数）。它指向了由系统内核维护的一个file table中的某个条目（entry）。这个解释可能过于抽象，不过在正式详细介绍fd之前，有必要先了解用户程序和系统内核之间的工作过程。</p>
@@ -7483,6 +7321,222 @@
       <tags>
         <tag>Linux</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>模拟</title>
+    <url>/post/d1f7904c/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>模拟就是用计算机来模拟题目中要求的操作。</p>
+<p>模拟题目通常具有码量大、操作多、思路繁复的特点。由于它码量大，经常会出现难以查错的情况，如果在考试中写错是相当浪费时间的。</p>
+<p>模拟算法是一种最基本的算法思想，是对程序员基本编程能力的一种考查，其解决方法就是<strong>根据题目给出的规则对题目要求的相关过程进行编程模拟。</strong>在解决模拟类问题时，需要注意字符串处理、<strong>特殊情况处理</strong>和<strong>对题目意思的理解</strong>。在程序设计过程中，可使用随机函数来模拟自然界中发生的不可预测情况。在解题时，需要<strong>仔细分析题目给出的规则</strong>，要<strong>尽可能地做到全面地考虑所有可能出现的情况</strong>，这是解模拟类问题的关键点之一。</p>
+<span id="more"></span>
+
+<h2 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h2><p>写模拟题时，遵循以下的建议有可能会提升做题速度：</p>
+<ul>
+<li>在动手写代码之前，在草纸上尽可能地写好要实现的流程。</li>
+<li>在代码中，<strong>尽量把每个部分模块化，</strong>写成函数、结构体或类。</li>
+<li><strong>对于一些可能重复用到的概念，可以统一转化，方便处理</strong>：如，某题给你 “YY-MM-DD 时：分” 把它抽取到一个函数，处理成秒，会减少概念混淆。</li>
+<li>调试时<strong>分块调试</strong>。模块化的好处就是可以方便的单独调某一部分。</li>
+<li>写代码的时候一定要思路清晰，不要想到什么写什么，要按照落在纸上的步骤写。</li>
+</ul>
+<p>实际上，上述步骤在解决其它类型的题目时也是很有帮助的。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/">43. 字符串相乘</a></td>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/solution/zi-fu-chuan-xiang-cheng-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/multiply-strings/solution/you-hua-ban-shu-shi-da-bai-994-by-breezean/">优化版竖式(打败99.4%)</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/">54. 螺旋矩阵</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/luo-xuan-ju-zhen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix/solution/cxiang-xi-ti-jie-by-youlookdeliciousc-3/">C++ 详细题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/">59. 螺旋矩阵 II</a></td>
+<td><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/luo-xuan-ju-zhen-ii-by-leetcode-solution-f7fp/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/spiral-matrix-ii/solution/spiral-matrix-ii-mo-ni-fa-she-ding-bian-jie-qing-x/">Spiral Matrix II （模拟法，设定边界，代码简短清晰）</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>模拟</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>红黑树</title>
+    <url>/post/f89cb603/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>红黑树是一种<strong>自平衡的二叉查找树</strong>，是一种高效的查找树。它是由 Rudolf Bayer 于1978年发明，在当时被称为 <strong>对称二叉 B 树(symmetric binary B-trees)<strong>。后来，在1978年被 Leo J. Guibas 和 Robert Sedgewick 修改为如今的 <strong>红黑树</strong>。红黑树具有良好的效率，它</strong>可在</strong> <code>O(logN)</code> <strong>时间内完成查找、增加、删除等操作</strong>。因此，红黑树在业界应用很广泛，比如 Java 中的 TreeMap，JDK 1.8 中的 HashMap、C++ STL 中的 map 均是基于红黑树结构实现的。考虑到红黑树是一种被广泛应用的数据结构，所以我们很有必要去弄懂它。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207175122084.png" style="zoom:80%;" />
+
+<h2 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h2><p>学过二叉查找树的同学都知道，普通的二叉查找树在极端情况下可退化成链表，此时的增删查效率都会比较低下。为了避免这种情况，就出现了一些<strong>自平衡的查找树</strong>，比如 AVL，红黑树等。这些自平衡的查找树通过定义一些性质，<strong>将任意节点的左右子树高度差控制在规定范围内，以达到平衡状态</strong>。以红黑树为例，红黑树通过如下的性质定义实现自平衡：</p>
+<ol>
+<li>节点是红色或黑色。</li>
+<li>根是黑色。</li>
+<li>所有叶子都是黑色（叶子是NIL节点）。</li>
+<li>每个红色节点必须有两个黑色的子节点。（从每个叶子到根的所有路径上不能有两个连续的红色节点。）</li>
+<li>从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点（简称黑高）。</li>
+</ol>
+<p>有了上面的几个性质作为限制，即可避免二叉查找树退化成单链表的情况。但是，仅仅避免这种情况还不够，这里还要考虑某个节点到其每个叶子节点路径长度的问题。如果某些路径长度过长，那么，在对这些路径上的节点进行增删查操作时，效率也会大大降低。这个时候性质4和性质5用途就凸显了，有了这两个性质作为约束，即可保证<strong>任意节点到其每个叶子节点路径最长不会超过最短路径的2倍</strong>。原因如下：</p>
+<p>当某条路径最短时，这条路径必然都是由黑色节点构成。当某条路径长度最长时，这条路径必然是由红色和黑色节点相间构成（性质4限定了不能出现两个连续的红色节点）。而性质5又限定了从任一节点到其每个叶子节点的所有路径必须包含相同数量的黑色节点。此时，在路径最长的情况下，路径上红色节点数量 = 黑色节点数量。该路径长度为两倍黑色节点数量，也就是最短路径长度的2倍。举例说明一下，请看下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207180835565.png" style="zoom:80%;" />
+
+<p>上图画出了从根节点 M 出发的到其叶子节点的最长和最短路径。这里偷懒只画出了两条最长路径，实际上最长路径有4条，分别为：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">M -&gt; Q -&gt; O -&gt; N</span><br><span class="line">M -&gt; Q -&gt; O -&gt; p</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; X</span><br><span class="line">M -&gt; Q -&gt; Y -&gt; Z</span><br></pre></td></tr></table></figure>
+
+<p>长度为4，最短路径为 <code>M -&gt; E</code>，长度为2。最长路径的长度正好为最短路径长度的2倍。</p>
+<p>前面说了关于红黑树的一些性质，这里还需要补充一些其他方面的东西。在红黑树简介一节中说到红黑树被发明出来的时候并不叫 <code>红黑树</code>，而是叫做 <code>对称二叉 B 树</code>，从名字中可发现红黑树和 B 树（这里指的是<strong>2-3树</strong>）或许有一定的关联，事实也正是如此。如果对红黑树的性质稍加修改，就能让红黑树和B树形成一一对应的关系。关于红黑树和 B 树关系的细节这里不展开说明了，有兴趣的同学可以参考<a href="https://book.douban.com/subject/19952400/">《算法》</a>第4版，那本书上讲的很透彻。</p>
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>红黑树的基本操作和其他树形结构一样，一般都包括查找、插入、删除等操作。前面说到，红黑树是一种自平衡的二叉查找树，既然是二叉查找树的一种，那么查找过程和二叉查找树一样，比较简单，这里不再赘述。相对于查找操作，红黑树的插入和删除操作就要复杂的多。尤其是删除操作，要处理的情况比较多，不过大家如果静下心来去看，会发现其实也没想的那么难。</p>
+<h3 id="旋转操作"><a href="#旋转操作" class="headerlink" title="旋转操作"></a>旋转操作</h3><p>在分析插入和删除操作前，这里需要插个队，先说明一下旋转操作，这个操作在后续操作中都会用得到。旋转操作分为左旋和右旋，<strong>左旋是将某个节点旋转为其右孩子的左孩子</strong>，而<strong>右旋是节点旋转为其左孩子的右孩子</strong>。这话听起来有点绕，所以还是请看下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182356324.png" style="zoom:80%;" />
+
+<p>上图包含了左旋和右旋的示意图，这里以右旋为例进行说明，右旋节点 M 的步骤如下：</p>
+<ol>
+<li>将节点 M 的左孩子引用指向节点 E 的右孩子</li>
+<li>将节点 E 的右孩子引用指向节点 M，完成旋转</li>
+</ol>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182602018.png" style="zoom:80%;" />
+
+<p>上面分析了右旋操作，左旋操作与此类似，大家有兴趣自己画图试试吧，这里不再赘述了。旋转操作本身并不复杂，这里先分析到这吧。</p>
+<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>红黑树的插入过程和二叉查找树插入过程基本类似，不同的地方在于，红黑树插入新节点后，需要进行调整，以满足红黑树的性质。性质1规定红黑树节点的颜色要么是红色要么是黑色，那么在插入新节点时，这个节点应该是红色还是黑色呢？答案是红色，原因也不难理解。如果插入的节点是黑色，那么这个节点所在路径比其他路径多出一个黑色节点，这个调整起来会比较麻烦（参考红黑树的删除操作，就知道为啥多一个或少一个黑色节点时，调整起来这么麻烦了）。如果插入的节点是红色，此时所有路径上的黑色节点数量不变，仅可能会出现两个连续的红色节点的情况。这种情况下，通过变色和旋转进行调整即可，比之前的简单多了。</p>
+<p>接下来，将分析插入红色节点后红黑树的情况。这里假设要插入的节点为 N，N 的父节点为 P，祖父节点为 G，叔叔节点为 U。插入红色节点后，会出现5种情况，分别如下：</p>
+<h4 id="情况一"><a href="#情况一" class="headerlink" title="情况一"></a>情况一</h4><p>插入的新节点 N 是红黑树的根节点，这种情况下，我们把节点 N 的颜色由红色变为黑色，性质2（根是黑色）被满足。同时 N 被染成黑色后，红黑树所有路径上的黑色节点数量增加一个，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍然被满足。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207182903027.png" style="zoom:80%;" />
+
+<h4 id="情况二"><a href="#情况二" class="headerlink" title="情况二"></a>情况二</h4><p>N 的父节点是黑色，这种情况下，性质4（每个红色节点必须有两个黑色的子节点）和性质5没有受到影响，不需要调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207183215154.png" style="zoom:80%;" />
+
+<h4 id="情况三"><a href="#情况三" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点是红色（节点 P 为红色，其父节点必然为黑色），叔叔节点 U 也是红色。由于 P 和 N 均为红色，所以性质4被打破，此时需要进行调整。这种情况下，先将 P 和 U 的颜色染成黑色，再将 G 的颜色染成红色。此时经过 G 的路径上的黑色节点数量不变，性质5仍然满足。但需要注意的是 G 被染成红色后，可能会和它的父节点形成连续的红色节点，此时需要递归向上调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152056319752.jpg" style="zoom:80%;" />
+
+<h4 id="情况四"><a href="#情况四" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，叔叔节点为黑色。节点 N 是 P 的右孩子，且节点 P 是 G 的左孩子。此时先对节点 P 进行左旋，调整 N 与 P 的位置。接下来按照情况五进行处理，以恢复性质4。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057064115.jpg" style="zoom:80%;" />
+
+<h4 id="情况五"><a href="#情况五" class="headerlink" title="情况五"></a>情况五</h4><p>N 的父节点为红色，叔叔节点为黑色。N 是 P 的左孩子，且节点 P 是 G 的左孩子。此时对 G 进行右旋，调整 P 和 G 的位置，并互换颜色。经过这样的调整后，性质4被恢复，同时也未破坏性质5。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152057476644.jpg" style="zoom:80%;" />
+
+<h4 id="插入总结"><a href="#插入总结" class="headerlink" title="插入总结"></a>插入总结</h4><p>上面五种情况中，情况一和情况二比较简单，情况三、四、五稍复杂。但如果细心观察，会发现这三种情况的区别在于叔叔节点的颜色，如果<strong>叔叔节点为红色，直接变色</strong>即可。如果<strong>叔叔节点为黑色，则需要旋转，再交换颜色</strong>。当把这三种情况的图画在一起就区别就比较容易观察了，如下图：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152052502152.jpg" style="zoom:80%;" />
+
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>相较于插入操作，红黑树的删除操作则要更为复杂一些。删除操作首先要确定待删除节点有几个孩子，如果有两个孩子，不能直接删除该节点。而是要先找到该节点的<strong>前驱（该节点左子树中最大的节点）</strong>或者<strong>后继（该节点右子树中最小的节点）</strong>，然后将前驱或者后继的值复制到要删除的节点中，最后再将前驱或后继删除。由于前驱和后继至多只有一个孩子节点，这样我们就把原来要删除的节点有两个孩子的问题转化为只有一个孩子节点的问题，问题被简化了一些。我们并不关心最终被删除的节点是否是我们开始想要删除的那个节点，只要节点里的值最终被删除就行了，至于树结构如何变化，这个并不重要。</p>
+<p>红黑树删除操作的复杂度在于删除节点的颜色，当删除的节点是红色时，直接拿其孩子节点补空位即可。因为删除红色节点，性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点）仍能够被满足。当删除的节点是黑色时，那么所有经过该节点的路径上的黑节点数量少了一个，破坏了性质5。如果该节点的孩子为红色，直接拿孩子节点替换被删除的节点，并将孩子节点染成黑色，即可恢复性质5。但如果孩子节点为黑色，处理起来就要复杂的多。分为6种情况，下面会展开说明。</p>
+<p>在展开说明之前，我们先做一些假设，方便说明。这里假设最终被删除的节点为 <code>X</code>（至多只有一个孩子节点），其孩子节点为 <code>N</code>，<code>X</code> 的兄弟节点为 <code>S</code>，<code>S</code> 的左节点为 SL，右节点为 SR。接下来讨论是建立在节点 <code>X</code> 被删除，节点 <code>N</code> 替换 <code>X</code> 的基础上进行的。这里说明把被删除的节点 <code>X</code> 特地拎出来说一下的原因是防止大家误以为节点 <code>N</code> 会被删除，不然后面就会看不明白。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15272593488180.jpg" style="zoom:80%;" />
+
+<p>在上面的基础上，接下来就可以展开讨论了。红黑树删除有6种情况，分别是：</p>
+<h4 id="情况一-1"><a href="#情况一-1" class="headerlink" title="情况一"></a>情况一</h4><blockquote>
+<p>N 是新的根。在这种情形下，我们就做完了。我们从所有路径去除了一个黑色节点，而新根是黑色的，所以性质都保持着。</p>
+</blockquote>
+<p>上面是维基百科中关于红黑树删除的情况一说明，由于没有配图，看的有点晕。经过思考，我觉得可能会是下面这种情形：</p>
+<p>要删除的节点 X 是根节点，且左右孩子节点均为空节点，此时将节点 X 用空节点替换完成删除操作。</p>
+<p>可能还有其他情形，大家如果知道，烦请告知。</p>
+<h4 id="情况二-1"><a href="#情况二-1" class="headerlink" title="情况二"></a>情况二</h4><p>S 为红色，其他节点为黑色。这种情况下可以对 N 的父节点进行左旋操作，然后互换 P 与 S 颜色。但这并未结束，经过节点 P 和 N 的路径删除前有3个黑色节点（<code>P -&gt; X -&gt; N</code>），现在只剩两个了（<code>P -&gt; N</code>）。比未经过 N 的路径少一个黑色节点，性质5仍不满足，还需要继续调整。不过此时可以按照情况四、五、六进行调整。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097130545.jpg" style="zoom:80%;" />
+
+<h4 id="情况三-1"><a href="#情况三-1" class="headerlink" title="情况三"></a>情况三</h4><p>N 的父节点，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以简单的把 S 染成红色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致了。但经过 P 的路径比不经过 P 的路径少一个黑色节点，此时需要从情况一开始对 P 进行平衡处理。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152097574115.jpg" style="zoom:80%;" />
+
+<h4 id="情况四-1"><a href="#情况四-1" class="headerlink" title="情况四"></a>情况四</h4><p>N 的父节点为红色，兄弟节点 S 和 S 的孩子节点均为黑色。这种情况下可以把 S 染成红色，把P染成黑色，所有经过 S 的路径比之前少了一个黑色节点，这样经过 N 的路径和经过 S 的路径黑色节点数量一致且经过 P 的路径黑色节点数不变。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220207194653272.png" style="zoom:80%;" />
+
+<h4 id="情况五-1"><a href="#情况五-1" class="headerlink" title="情况五"></a>情况五</h4><p>S 为黑色，S 的左孩子为红色，右孩子为黑色。N 的父节点颜色可红可黑，且 N 是 P 左孩子。这种情况下对 S 进行右旋操作，并互换 S 和 SL 的颜色。此时，所有路径上的黑色数量仍然相等，N 兄弟节点的由 S 变为了 SL，而 SL 的右孩子变为红色。接下来我们到情况六继续分析。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098446251.jpg" style="zoom:80%;" />
+
+<h4 id="情况六"><a href="#情况六" class="headerlink" title="情况六"></a>情况六</h4><p>S 为黑色，S 的右孩子为红色。N 的父节点颜色可红可黑，且 N 是其父节点左孩子。这种情况下，我们对 P 进行左旋操作，并互换 P 和 S 的颜色，并将 SR 变为黑色。因为 P 变为黑色，所以经过 N 的路径多了一个黑色节点，经过 N 的路径上的黑色节点与删除前的数量一致。对于不经过 N 的路径，则有以下两种情况：</p>
+<ol>
+<li>该路径经过 N 新的兄弟节点 SL ，那它之前必然经过 S 和 P。而 S 和 P 现在只是交换颜色，对于经过 SL 的路径不影响。</li>
+<li>该路径经过 N 新的叔叔节点 SR，那它之前必然经过 P、 S 和 SR，而现在它只经过 S 和 SR。在对 P 进行左旋，并与 S 换色后，经过 SR 的路径少了一个黑色节点，性质5被打破。另外，由于 S 的颜色可红可黑，如果 S 是红色的话，会与 SR 形成连续的红色节点，打破性质4（每个红色节点必须有两个黑色的子节点）。此时仅需将 SR 由红色变为黑色即可同时恢复性质4和性质5（从任一节点到其每个叶子的所有简单路径都包含相同数目的黑色节点。）。</li>
+</ol>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152098765266.jpg" style="zoom:80%;" />
+
+<h4 id="删除总结"><a href="#删除总结" class="headerlink" title="删除总结"></a>删除总结</h4><p>红黑树删除的情况比较多，大家刚开始看的时候可能会比较晕。可能会产生这样的疑问，为啥红黑树会有这种删除情况，为啥又会有另一种情况，它们之间有什么联系和区别？和大家一样，我刚开始看的时候也有这样的困惑，直到我把所有情况对应的图形画在一起时，拨云见日，一切都明了了。此时天空中出现了4个字，原来如此、原来如此、原来如此。所以，请看图吧：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/15152095299211.jpg" style="zoom:80%;" />
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>红黑树是一种重要的二叉树，应用广泛，但在很多数据结构相关的书本中出现的次数并不多。很多书中要么不说，要么就一笔带过，并不会进行详细的分析，这可能是因为红黑树比较复杂的缘故。我在学习红黑树的时候也找了很多资料，但总体感觉讲的都不太好。尤其是在我学习删除操作的时候，很多资料是实在人看不下去，看的我很痛苦。直到我看到维基百科上关于<a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树</a>的分析时，很是欣喜。这篇文章分析的很有条理，言简意赅，比很多资料好了太多。本文对红黑树的分析也主要参考了维基百科中的红黑树分析，并对维基百科中容易让人产生疑问和误解的地方进行了说明。同时维基百科中文版红黑树文中的图片较为模糊，这里我重新进行了绘制。需要说明的是，维基百科中文版无法打开了，文中关于维基百科的链接都是英文版的。另外在给大家推荐一个数据结构可视化的网站，里面包含常见数据结构可视化过程，地址为：<a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">t.cn/RZFgryr</a>。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://book.douban.com/subject/19952400/">《算法》第四版</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Red%E2%80%93black_tree">红黑树 – 维基百科</a></li>
+</ul>
+<p>推荐阅读：</p>
+<ul>
+<li><p><a href="https://zhuanlan.zhihu.com/p/24367771">红黑树深入剖析及Java实现</a></p>
+</li>
+<li><p><a href="https://brianway.github.io/2016/10/14/algorithms-data-structures-2/">常见数据结构(二)-树(二叉树，红黑树，B树)</a></p>
+</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://www.tianxiaobo.com/2018/01/11/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%AF%A6%E7%BB%86%E5%88%86%E6%9E%90/">红黑树详细分析</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>自平衡树</tag>
+        <tag>查找树</tag>
+        <tag>二叉树</tag>
+        <tag>树</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记忆化搜索</title>
+    <url>/post/cb5e0eb8/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
+<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
+<span id="more"></span>
+
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>函数有返回值</li>
+<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
+<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
+</ul>
+<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
+<blockquote>
+<p>本质上是自顶向下的动态规划加备忘录。</p>
+</blockquote>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
+<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
+<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
+<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>记忆化搜索</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里Java开发手册</title>
+    <url>/post/a5aab1c5/</url>
+    <content><![CDATA[<span id="more"></span>
+]]></content>
   </entry>
   <entry>
     <title>贪心</title>
@@ -7635,54 +7689,6 @@
       </tags>
   </entry>
   <entry>
-    <title>记忆化搜索</title>
-    <url>/post/cb5e0eb8/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>记忆化搜索是一种典型的<strong>空间换时间</strong>的思想。</p>
-<p>一般说来，动态规划总要遍历所有的状态，而<strong>搜索可以排除一些无效状态</strong>。更重要的是<strong>搜索</strong>还可以<strong>剪枝</strong>，可能剪去大量不必要的状态，因此在空间开销上往往比动态规划要低很多。<strong>记忆化算法在求解的时候还是按着自顶向下的顺序，但是每求解一个状态，就将它的解保存下来，以后再次遇到这个状态的时候，就不必重新求解</strong>了。这种方法综合了搜索和动态规划两方面的优点，因而还是很有实用价值的。</p>
-<span id="more"></span>
-
-<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
-<li>函数有返回值</li>
-<li>函数返回结果和输入参数有关，和其他全局状态无关</li>
-<li>参数列表中传入哈希表或者其他用于记录计算结果的数据结构</li>
-</ul>
-<p>在递归函数中, 在函数返回前，记录函数的返回结果。在下一次以同样参数访问函数时直接返回记录下的结果。也就是对递归树进行剪枝，遇到已经计算过的节点就不再继续往下计算，直接返回储存在哈希表或者其他数据结构中的值。</p>
-<blockquote>
-<p>本质上是自顶向下的动态规划加备忘录。</p>
-</blockquote>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/multiply-strings/"><a href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></a></td>
-<td><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/pa-lou-ti-by-leetcode-solution/">官方题解</a><br><a href="https://leetcode-cn.com/problems/climbing-stairs/solution/hua-jie-suan-fa-70-pa-lou-ti-by-guanpengchn/">画解算法：70. 爬楼梯</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-break/">139. 单词拆分</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-break/solution/dan-ci-chai-fen-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-break/solution/shou-hui-tu-jie-san-chong-fang-fa-dfs-bfs-dong-tai/">「手画图解」剖析三种解法: DFS, BFS, 动态规划 </a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/">329. 矩阵中的最长递增路径</a></td>
-<td><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/329-ju-zhen-zhong-de-zui-chang-di-zeng-l-64yg/">DFS（记忆化搜索）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/">397. 整数替换</a></td>
-<td><a href="https://leetcode-cn.com/problems/integer-replacement/solution/zheng-shu-ti-huan-by-leetcode-solution-swef/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/integer-replacement/solution/gong-shui-san-xie-yi-ti-san-jie-dfsbfs-t-373h/">【宫水三叶】一题三解 :「DFS/BFS」&amp;「贪心（位运算）」</a></td>
-</tr>
-</tbody></table>
-]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>记忆化搜索</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>跳表</title>
     <url>/post/2e152a56/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E8%B7%B3%E8%B7%83%E5%88%97%E8%A1%A8">跳跃列表</a> 的查找、插入、删除的时间复杂度都是 O(logn)，而且可以按照范围区间查找元素，当工作中遇到某些场景时，需要想到可以使用跳表解决问题即可。毕竟平时的工作都是直接使用封装好的跳表，例如：java.util.concurrent 下的 ConcurrentSkipListMap()。</p>
@@ -7803,12 +7809,6 @@
         <tag>双向链表</tag>
         <tag>链表</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>阿里Java开发手册</title>
-    <url>/post/a5aab1c5/</url>
-    <content><![CDATA[<span id="more"></span>
-]]></content>
   </entry>
   <entry>
     <title>面试规则</title>
