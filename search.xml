@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>IDEA .properties 文件中文乱码</title>
-    <url>/post/5816ad50/</url>
-    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
-<span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
-
-<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
-<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
-
-<p>最后中文乱码问题解决：</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>properties</tag>
-        <tag>配置文件</tag>
-        <tag>IntelliJ IDEA</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>CAP &amp; BASE理论</title>
     <url>/post/4d60196d/</url>
     <content><![CDATA[<h2 id="从集中式到分布式"><a href="#从集中式到分布式" class="headerlink" title="从集中式到分布式"></a>从集中式到分布式</h2><p>ACID 是数据库事务完整性的理论，CAP 是分布式系统设计理论，BASE 是 CAP 理论中 AP 方案的延伸。</p>
@@ -272,131 +250,25 @@
       </tags>
   </entry>
   <entry>
-    <title>Java 并发编程（基础）</title>
-    <url>/post/7f164aae/</url>
-    <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
-<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称<strong>主线程</strong>。</p>
-<p>如下图所示，在 windows 中通过查看任务管理器的方式，我们就可以清楚看到 window 当前运行的进程（.exe 文件的运行）。</p>
+    <title>IDEA .properties 文件中文乱码</title>
+    <url>/post/5816ad50/</url>
+    <content><![CDATA[<p>问题：从 Gitee中拉下来的项目发现打开配置文件（.properties）中的中文是乱码的。</p>
 <span id="more"></span>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202211820997.png" style="zoom:75%;" />
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219104856672.png" style="zoom:75%;" />
 
-<h3 id="何为线程？"><a href="#何为线程？" class="headerlink" title="何为线程？"></a>何为线程？</h3><p>线程与进程相似，但线程是一个比进程更小的执行单位。一个进程在其执行的过程中可以产生多个线程。与进程不同的是同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为<strong>轻量级进程</strong>。</p>
-<p>Java 程序天生就是多线程程序，我们可以通过 JMX 来看一下一个普通的 Java 程序有哪些线程，代码如下。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取 Java 线程管理 MXBean</span></span><br><span class="line">	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">		<span class="comment">// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">// 遍历线程信息，仅打印线程 ID 和线程名称信息</span></span><br><span class="line">		<span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> + threadInfo.getThreadName());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原因是我电脑上（Windows）的默认编码格式为 ISO-8859-1，mac上默认是UTF-8。</p>
+<p>解决办法：<strong>File -&gt; setting -&gt; Editor -&gt; File Encodings</strong> 修改 properties 文件的编码格式。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105354734.png" style="zoom:75%;" />
 
-<p>上述程序输出如下（输出内容可能不同，不用太纠结下面每个线程的作用，只用知道 main 线程执行 main 方法即可）：</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">[5] Attach Listener //添加事件</span><br><span class="line">[4] Signal Dispatcher //分发处理给 JVM 信号的线程</span><br><span class="line">[3] Finalizer //调用对象 finalize 方法的线程</span><br><span class="line">[2] Reference Handler //清除 reference 线程</span><br><span class="line">[1] main //main 线程,程序入口</span><br></pre></td></tr></table></figure>
-
-<p>从上面的输出内容可以看出：<strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong>。</p>
-<h2 id="请简要描述线程与进程的关系-区别及优缺点？"><a href="#请简要描述线程与进程的关系-区别及优缺点？" class="headerlink" title="请简要描述线程与进程的关系,区别及优缺点？"></a>请简要描述线程与进程的关系,区别及优缺点？</h2><p><strong>从 JVM 角度说进程和线程之间的关系</strong></p>
-<h3 id="图解进程和线程的关系"><a href="#图解进程和线程的关系" class="headerlink" title="图解进程和线程的关系"></a>图解进程和线程的关系</h3><p>下图是 Java 内存区域，通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202212556937.png" style="zoom:80%;" />
-
-<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)<strong>资源，但是每个线程有自己的</strong>程序计数器</strong>、<strong>虚拟机栈</strong> 和 <strong>本地方法栈</strong>。</p>
-<p><strong>总结：</strong> <strong>线程是进程划分成的更小的运行单位。线程和进程最大的不同在于基本上各进程是独立的，而各线程则不一定，因为同一进程中的线程极有可能会相互影响。线程执行开销小，但不利于资源的管理和保护；而进程正相反。</strong></p>
-<p>下面来思考这样一个问题：为什么<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>是线程私有的呢？为什么堆和方法区是线程共享的呢？</p>
-<h3 id="程序计数器为什么是私有的？"><a href="#程序计数器为什么是私有的？" class="headerlink" title="程序计数器为什么是私有的？"></a>程序计数器为什么是私有的？</h3><p>程序计数器主要有下面两个作用：</p>
-<ol>
-<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
-<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
-</ol>
-<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
-<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
-<h3 id="虚拟机栈和本地方法栈为什么是私有的？"><a href="#虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="虚拟机栈和本地方法栈为什么是私有的？"></a>虚拟机栈和本地方法栈为什么是私有的？</h3><ul>
-<li><strong>虚拟机栈：</strong>每个 Java 方法在执行的同时会创建一个栈帧用于存储<strong>局部变量表</strong>、<strong>操作数栈</strong>、<strong>常量池引用</strong>等信息。从方法调用直至执行完成的过程，就对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。</li>
-<li><strong>本地方法栈：</strong>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
-</ul>
-<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
-<h3 id="一句话简单了解堆和方法区"><a href="#一句话简单了解堆和方法区" class="headerlink" title="一句话简单了解堆和方法区"></a>一句话简单了解堆和方法区</h3><p>堆和方法区是<strong>所有线程共享的资源</strong>，其中<strong>堆是进程中最大的一块内存</strong>，主要用于存放<strong>新创建的对象</strong>（几乎所有对象都在这里分配内存），方法区主要用于存放<strong>已被加载的类信息</strong>、<strong>常量</strong>、<strong>静态变量</strong>、<strong>即时编译器编译后的代码</strong>等数据。</p>
-<h2 id="说说并发与并行的区别？"><a href="#说说并发与并行的区别？" class="headerlink" title="说说并发与并行的区别？"></a>说说并发与并行的区别？</h2><p><strong>并发：</strong>同一时间段，多个任务都在执行（单位时间内不一定同时执行）；</p>
-<p><strong>并行：</strong>单位时间内（同一时刻），多个任务同时执行。</p>
-<h2 id="为什么要使用多线程呢"><a href="#为什么要使用多线程呢" class="headerlink" title="为什么要使用多线程呢?"></a>为什么要使用多线程呢?</h2><p>先从总体上来说：</p>
-<ul>
-<li><strong>从计算机底层来说：</strong>线程可以比作是轻量级的进程，是<strong>程序执行的最小单位</strong>，线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
-<li><strong>从当代互联网发展趋势来说：</strong>现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
-</ul>
-<p>再深入到计算机底层来探讨：</p>
-<ul>
-<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
-<li><strong>多核时代</strong>：多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）。</li>
-</ul>
-<h2 id="使用多线程可能带来什么问题？"><a href="#使用多线程可能带来什么问题？" class="headerlink" title="使用多线程可能带来什么问题？"></a>使用多线程可能带来什么问题？</h2><p>并发编程的目的就是为了能提高程序的执行效率提高程序运行速度，但是并发编程并不总是能提高程序运行速度的，而且并发编程可能会遇到很多问题，比如：内存泄漏、死锁、线程不安全等等。</p>
-<h2 id="说说线程的生命周期和状态"><a href="#说说线程的生命周期和状态" class="headerlink" title="说说线程的生命周期和状态?"></a>说说线程的生命周期和状态?</h2><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220155953.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
-<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示：</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220327647.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
-<blockquote>
-<p>订正(来自<a href="https://github.com/Snailclimb/JavaGuide/issues/736">issue736</a>)：原图中 wait 到 runnable 状态的转换中，<code>join</code>实际上是<code>Thread</code>类的方法，但这里写成了<code>Object</code>。</p>
-</blockquote>
-<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
-<blockquote>
-<p>在操作系统中层面线程有 READY 和 RUNNING 状态，而在 JVM 层面只能看到 RUNNABLE 状态（图源：<a href="https://howtodoinjava.com/">HowToDoInJava</a>：<a href="https://howtodoinjava.com/Java/multi-threading/Java-thread-life-cycle-and-thread-states/">Java Thread Life Cycle and Thread States</a>），所以 Java 系统一般将这两个状态统称为 <strong>RUNNABLE（运行中）</strong> 状态 。</p>
-<p><strong>为什么 JVM 没有区分这两种状态呢？</strong>（摘自：<a href="https://www.zhihu.com/question/56494969/answer/154053599">java线程运行怎么有第六种状态？ - Dawell的回答</a>）现在的<strong>时分</strong>（time-sharing）<strong>多任务</strong>（multi-task）操作系统架构通常都是用所谓的“<strong>时间分片</strong>（time quantum or time slice）”方式进行<strong>抢占式</strong>（preemptive）轮转调度（round-robin式）。这个时间分片通常是很小的，一个线程一次最多只能在 CPU 上运行比如 10-20ms 的时间（此时处于 running 状态），也即大概只有 0.01 秒这一量级，时间片用后就要被切换下来放入调度队列的末尾等待再次调度。（也即回到 ready 状态）。线程切换的如此之快，区分这两种状态就没什么意义了。</p>
-</blockquote>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202221236800.png"></p>
-<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIMED_WAITING（超时等待）</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep(long millis)</code>方法或 <code>wait(long millis)</code>方法可以将 Java 线程置于 TIMED_WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用<strong>同步方法</strong>时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
-<p>相关阅读：<a href="https://mp.weixin.qq.com/s/UOrXql_LhOD8dhTq_EPI0w">挑错 |《Java 并发编程的艺术》中关于线程状态的三处错误</a></p>
-<h2 id="什么是上下文切换"><a href="#什么是上下文切换" class="headerlink" title="什么是上下文切换?"></a>什么是上下文切换?</h2><p>线程在执行过程中会有自己的<strong>运行条件和状态</strong>（也称<strong>上下文</strong>），比如上文所说到过的<strong>程序计数器</strong>，<strong>栈信息</strong>等。当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
-<ul>
-<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
-<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用CPU导致其他线程或者进程饿死。</li>
-<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
-<li>被终止或结束运行。</li>
-</ul>
-<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
-<p>上下文切换是现代操作系统的基本功能，因其每次需要保存信息恢复信息，这将会占用 CPU，内存等系统资源进行处理，也就意味着效率会有一定损耗，如果频繁切换就会造成整体效率低下。</p>
-<h2 id="什么是线程死锁？如何避免死锁？"><a href="#什么是线程死锁？如何避免死锁？" class="headerlink" title="什么是线程死锁？如何避免死锁？"></a>什么是线程死锁？如何避免死锁？</h2><h3 id="认识线程死锁"><a href="#认识线程死锁" class="headerlink" title="认识线程死锁"></a>认识线程死锁</h3><p>线程死锁描述的是这样一种情况：多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。</p>
-<p>如下图所示，线程 A 持有资源 2，线程 B 持有资源 1，他们同时都想申请对方的资源，所以这两个线程就会互相等待而进入死锁状态。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202222752163.png"></p>
-<p>下面通过一个例子来说明线程死锁,代码模拟了上图的死锁的情况（代码来源于《并发编程之美》）：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource1 = <span class="keyword">new</span> Object();<span class="comment">//资源 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource2 = <span class="keyword">new</span> Object();<span class="comment">//资源 2</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Output</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]waiting get resource1</span><br></pre></td></tr></table></figure>
-
-<p>线程 A 通过 <code>synchronized (resource1)</code> 获得 <code>resource1</code> 的监视器锁，然后通过<code>Thread.sleep(1000);</code>让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。上面的例子符合产生死锁的四个必要条件。</p>
-<p>产生死锁必须具备以下四个条件：</p>
-<ol>
-<li>互斥条件：该资源任意一个时刻只由一个线程占用。</li>
-<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
-<li>不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。</li>
-<li>循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。</li>
-</ol>
-<h3 id="如何预防和避免线程死锁"><a href="#如何预防和避免线程死锁" class="headerlink" title="如何预防和避免线程死锁?"></a>如何预防和避免线程死锁?</h3><p><strong>如何预防死锁？</strong> 破坏死锁的产生的必要条件即可：</p>
-<ol>
-<li><strong>破坏请求与保持条件</strong>：一次性申请所有的资源。</li>
-<li><strong>破坏不剥夺条件</strong> ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
-<li><strong>破坏循环等待条件</strong> ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
-</ol>
-<p><strong>如何避免死锁？</strong></p>
-<p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
-<p><strong>安全状态</strong> 指的是系统能够按照某种进程推进顺序（P1、P2、P3…..Pn）来为每个进程分配所需资源，直到满足每个进程对资源的最大需求，使每个进程都可顺利完成。称&lt;P1、P2、P3…..Pn&gt;序列为安全序列。</p>
-<p>我们对线程 2 的代码修改成下面这样就不会产生死锁了。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">	<span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">		System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">	System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br></pre></td></tr></table></figure>
-
-<p>Output</p>
-<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 1,5,main]get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
-
-<p>我们分析一下上面的代码为什么避免了死锁的发生?</p>
-<p>线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。</p>
-<h2 id="说说-sleep-方法和-wait-方法区别和共同点"><a href="#说说-sleep-方法和-wait-方法区别和共同点" class="headerlink" title="说说 sleep() 方法和 wait() 方法区别和共同点?"></a>说说 sleep() 方法和 wait() 方法区别和共同点?</h2><ul>
-<li>两者最主要的区别在于：<strong>sleep() 方法没有释放锁，而 wait() 方法释放了锁</strong> 。</li>
-<li>两者都可以暂停线程的执行。</li>
-<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
-<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒。或者可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
-</ul>
-<h2 id="为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？"><a href="#为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？" class="headerlink" title="为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？"></a>为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？</h2><p>new 一个 Thread，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程<strong>进入了就绪状态</strong>，当分配到时间片后就可以<strong>开始运行</strong>了。 <code>start()</code> 会执行线程的相应<strong>准备工作</strong>，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
-<p><strong>总结： 调用 start() 方法方可启动线程并使线程进入就绪状态，直接执行 run() 方法的话不会以多线程的方式执行。</strong></p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://javaguide.cn/java/concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/">Java 并发常见知识点&amp;面试题总结（基础篇）</a></strong></li>
-</ul>
-]]></content>
+<p>最后中文乱码问题解决：</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220219105508764.png" style="zoom:75%;" />]]></content>
       <categories>
-        <category>Java</category>
+        <category>开发工具</category>
       </categories>
       <tags>
-        <tag>并发编程</tag>
+        <tag>properties</tag>
+        <tag>配置文件</tag>
+        <tag>IntelliJ IDEA</tag>
       </tags>
   </entry>
   <entry>
@@ -526,6 +398,134 @@
       </categories>
       <tags>
         <tag>容器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java 并发编程（基础）</title>
+    <url>/post/7f164aae/</url>
+    <content><![CDATA[<h2 id="什么是线程和进程"><a href="#什么是线程和进程" class="headerlink" title="什么是线程和进程?"></a>什么是线程和进程?</h2><h3 id="何为进程"><a href="#何为进程" class="headerlink" title="何为进程?"></a>何为进程?</h3><p>进程是程序的一次执行过程，是<strong>系统运行程序的基本单位</strong>，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
+<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称<strong>主线程</strong>。</p>
+<p>如下图所示，在 windows 中通过查看任务管理器的方式，我们就可以清楚看到 window 当前运行的进程（.exe 文件的运行）。</p>
+<span id="more"></span>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202211820997.png" style="zoom:75%;" />
+
+<h3 id="何为线程？"><a href="#何为线程？" class="headerlink" title="何为线程？"></a>何为线程？</h3><p>线程与进程相似，但线程是一个比进程更小的执行单位。一个进程在其执行的过程中可以产生多个线程。与进程不同的是同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多，也正因为如此，线程也被称为<strong>轻量级进程</strong>。</p>
+<p>Java 程序天生就是多线程程序，我们可以通过 JMX 来看一下一个普通的 Java 程序有哪些线程，代码如下。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiThread</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// 获取 Java 线程管理 MXBean</span></span><br><span class="line">	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();</span><br><span class="line">		<span class="comment">// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息</span></span><br><span class="line">		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(<span class="keyword">false</span>, <span class="keyword">false</span>);</span><br><span class="line">		<span class="comment">// 遍历线程信息，仅打印线程 ID 和线程名称信息</span></span><br><span class="line">		<span class="keyword">for</span> (ThreadInfo threadInfo : threadInfos) &#123;</span><br><span class="line">			System.out.println(<span class="string">&quot;[&quot;</span> + threadInfo.getThreadId() + <span class="string">&quot;] &quot;</span> + threadInfo.getThreadName());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述程序输出如下（输出内容可能不同，不用太纠结下面每个线程的作用，只用知道 main 线程执行 main 方法即可）：</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">[5] Attach Listener //添加事件</span><br><span class="line">[4] Signal Dispatcher //分发处理给 JVM 信号的线程</span><br><span class="line">[3] Finalizer //调用对象 finalize 方法的线程</span><br><span class="line">[2] Reference Handler //清除 reference 线程</span><br><span class="line">[1] main //main 线程,程序入口</span><br></pre></td></tr></table></figure>
+
+<p>从上面的输出内容可以看出：<strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong>。</p>
+<h2 id="请简要描述线程与进程的关系-区别及优缺点？"><a href="#请简要描述线程与进程的关系-区别及优缺点？" class="headerlink" title="请简要描述线程与进程的关系,区别及优缺点？"></a>请简要描述线程与进程的关系,区别及优缺点？</h2><p><strong>从 JVM 角度说进程和线程之间的关系</strong></p>
+<h3 id="图解进程和线程的关系"><a href="#图解进程和线程的关系" class="headerlink" title="图解进程和线程的关系"></a>图解进程和线程的关系</h3><p>下图是 Java 内存区域，通过下图我们从 JVM 的角度来说一下线程和进程之间的关系。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202212556937.png" style="zoom:80%;" />
+
+<p>从上图可以看出：一个进程中可以有多个线程，多个线程共享进程的<strong>堆</strong>和<strong>方法区 (JDK1.8 之后的元空间)<strong>资源，但是每个线程有自己的</strong>程序计数器</strong>、<strong>虚拟机栈</strong> 和 <strong>本地方法栈</strong>。</p>
+<p><strong>总结：</strong> <strong>线程是进程划分成的更小的运行单位。线程和进程最大的不同在于基本上各进程是独立的，而各线程则不一定，因为同一进程中的线程极有可能会相互影响。线程执行开销小，但不利于资源的管理和保护；而进程正相反。</strong></p>
+<p>下面来思考这样一个问题：为什么<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>是线程私有的呢？为什么堆和方法区是线程共享的呢？</p>
+<h3 id="程序计数器为什么是私有的？"><a href="#程序计数器为什么是私有的？" class="headerlink" title="程序计数器为什么是私有的？"></a>程序计数器为什么是私有的？</h3><p>程序计数器主要有下面两个作用：</p>
+<ol>
+<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制，如：顺序执行、选择、循环、异常处理。</li>
+<li>在多线程的情况下，程序计数器用于记录当前线程执行的位置，从而当线程被切换回来的时候能够知道该线程上次运行到哪儿了。</li>
+</ol>
+<p>需要注意的是，如果执行的是 native 方法，那么程序计数器记录的是 undefined 地址，只有执行的是 Java 代码时程序计数器记录的才是下一条指令的地址。</p>
+<p>所以，程序计数器私有主要是为了<strong>线程切换后能恢复到正确的执行位置</strong>。</p>
+<h3 id="虚拟机栈和本地方法栈为什么是私有的？"><a href="#虚拟机栈和本地方法栈为什么是私有的？" class="headerlink" title="虚拟机栈和本地方法栈为什么是私有的？"></a>虚拟机栈和本地方法栈为什么是私有的？</h3><ul>
+<li><strong>虚拟机栈：</strong>每个 Java 方法在执行的同时会创建一个栈帧用于存储<strong>局部变量表</strong>、<strong>操作数栈</strong>、<strong>常量池引用</strong>等信息。从方法调用直至执行完成的过程，就对应着一个栈帧在 Java 虚拟机栈中入栈和出栈的过程。</li>
+<li><strong>本地方法栈：</strong>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</li>
+</ul>
+<p>所以，为了<strong>保证线程中的局部变量不被别的线程访问到</strong>，虚拟机栈和本地方法栈是线程私有的。</p>
+<h3 id="一句话简单了解堆和方法区"><a href="#一句话简单了解堆和方法区" class="headerlink" title="一句话简单了解堆和方法区"></a>一句话简单了解堆和方法区</h3><p>堆和方法区是<strong>所有线程共享的资源</strong>，其中<strong>堆是进程中最大的一块内存</strong>，主要用于存放<strong>新创建的对象</strong>（几乎所有对象都在这里分配内存），方法区主要用于存放<strong>已被加载的类信息</strong>、<strong>常量</strong>、<strong>静态变量</strong>、<strong>即时编译器编译后的代码</strong>等数据。</p>
+<h2 id="说说并发与并行的区别？"><a href="#说说并发与并行的区别？" class="headerlink" title="说说并发与并行的区别？"></a>说说并发与并行的区别？</h2><p><strong>并发：</strong>同一时间段，多个任务都在执行（单位时间内不一定同时执行）；</p>
+<p><strong>并行：</strong>单位时间内（同一时刻），多个任务同时执行。</p>
+<h2 id="为什么要使用多线程呢"><a href="#为什么要使用多线程呢" class="headerlink" title="为什么要使用多线程呢?"></a>为什么要使用多线程呢?</h2><p>先从总体上来说：</p>
+<ul>
+<li><strong>从计算机底层来说：</strong>线程可以比作是轻量级的进程，是<strong>程序执行的最小单位</strong>，线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
+<li><strong>从当代互联网发展趋势来说：</strong>现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
+</ul>
+<p>再深入到计算机底层来探讨：</p>
+<ul>
+<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
+<li><strong>多核时代</strong>：多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）。</li>
+</ul>
+<h2 id="使用多线程可能带来什么问题？"><a href="#使用多线程可能带来什么问题？" class="headerlink" title="使用多线程可能带来什么问题？"></a>使用多线程可能带来什么问题？</h2><p>并发编程的目的就是为了能提高程序的执行效率提高程序运行速度，但是并发编程并不总是能提高程序运行速度的，而且并发编程可能会遇到很多问题，比如：内存泄漏、死锁、线程不安全等等。</p>
+<h2 id="说说线程的生命周期和状态"><a href="#说说线程的生命周期和状态" class="headerlink" title="说说线程的生命周期和状态?"></a>说说线程的生命周期和状态?</h2><p>Java 线程在运行的生命周期中的指定时刻只可能处于下面 6 种不同状态的其中一个状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220155953.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
+<p>线程在生命周期中并不是固定处于某一个状态而是随着代码的执行在不同状态之间切换。Java 线程状态变迁如下图所示：</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202220327647.png" alt="图源《Java 并发编程艺术》4.1.4 节"></p>
+<blockquote>
+<p>订正(来自<a href="https://github.com/Snailclimb/JavaGuide/issues/736">issue736</a>)：原图中 wait 到 runnable 状态的转换中，<code>join</code>实际上是<code>Thread</code>类的方法，但这里写成了<code>Object</code>。</p>
+</blockquote>
+<p>由上图可以看出：线程创建之后它将处于 <strong>NEW（新建）</strong> 状态，调用 <code>start()</code> 方法后开始运行，线程这时候处于 <strong>READY（可运行）</strong> 状态。可运行状态的线程获得了 CPU 时间片（timeslice）后就处于 <strong>RUNNING（运行）</strong> 状态。</p>
+<blockquote>
+<p>在操作系统中层面线程有 READY 和 RUNNING 状态，而在 JVM 层面只能看到 RUNNABLE 状态（图源：<a href="https://howtodoinjava.com/">HowToDoInJava</a>：<a href="https://howtodoinjava.com/Java/multi-threading/Java-thread-life-cycle-and-thread-states/">Java Thread Life Cycle and Thread States</a>），所以 Java 系统一般将这两个状态统称为 <strong>RUNNABLE（运行中）</strong> 状态 。</p>
+<p><strong>为什么 JVM 没有区分这两种状态呢？</strong>（摘自：<a href="https://www.zhihu.com/question/56494969/answer/154053599">java线程运行怎么有第六种状态？ - Dawell的回答</a>）现在的<strong>时分</strong>（time-sharing）<strong>多任务</strong>（multi-task）操作系统架构通常都是用所谓的“<strong>时间分片</strong>（time quantum or time slice）”方式进行<strong>抢占式</strong>（preemptive）轮转调度（round-robin式）。这个时间分片通常是很小的，一个线程一次最多只能在 CPU 上运行比如 10-20ms 的时间（此时处于 running 状态），也即大概只有 0.01 秒这一量级，时间片用后就要被切换下来放入调度队列的末尾等待再次调度。（也即回到 ready 状态）。线程切换的如此之快，区分这两种状态就没什么意义了。</p>
+</blockquote>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202221236800.png"></p>
+<p>当线程执行 <code>wait()</code>方法之后，线程进入 <strong>WAITING（等待）</strong> 状态。进入等待状态的线程需要依靠其他线程的通知才能够返回到运行状态，而 <strong>TIMED_WAITING（超时等待）</strong> 状态相当于在等待状态的基础上增加了超时限制，比如通过 <code>sleep(long millis)</code>方法或 <code>wait(long millis)</code>方法可以将 Java 线程置于 TIMED_WAITING 状态。当超时时间到达后 Java 线程将会返回到 RUNNABLE 状态。当线程调用<strong>同步方法</strong>时，在没有获取到锁的情况下，线程将会进入到 <strong>BLOCKED（阻塞）</strong> 状态。线程在执行 Runnable 的<code>run()</code>方法之后将会进入到 <strong>TERMINATED（终止）</strong> 状态。</p>
+<p>相关阅读：<a href="https://mp.weixin.qq.com/s/UOrXql_LhOD8dhTq_EPI0w">挑错 |《Java 并发编程的艺术》中关于线程状态的三处错误</a></p>
+<h2 id="什么是上下文切换"><a href="#什么是上下文切换" class="headerlink" title="什么是上下文切换?"></a>什么是上下文切换?</h2><p>线程在执行过程中会有自己的<strong>运行条件和状态</strong>（也称<strong>上下文</strong>），比如上文所说到过的<strong>程序计数器</strong>，<strong>栈信息</strong>等。当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
+<ul>
+<li>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</li>
+<li>时间片用完，因为操作系统要防止一个线程或者进程长时间占用CPU导致其他线程或者进程饿死。</li>
+<li>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</li>
+<li>被终止或结束运行。</li>
+</ul>
+<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
+<p>上下文切换是现代操作系统的基本功能，因其每次需要保存信息恢复信息，这将会占用 CPU，内存等系统资源进行处理，也就意味着效率会有一定损耗，如果频繁切换就会造成整体效率低下。</p>
+<h2 id="什么是线程死锁？如何避免死锁？"><a href="#什么是线程死锁？如何避免死锁？" class="headerlink" title="什么是线程死锁？如何避免死锁？"></a>什么是线程死锁？如何避免死锁？</h2><h3 id="认识线程死锁"><a href="#认识线程死锁" class="headerlink" title="认识线程死锁"></a>认识线程死锁</h3><p>线程死锁描述的是这样一种情况：多个线程同时被阻塞，它们中的一个或者全部都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。</p>
+<p>如下图所示，线程 A 持有资源 2，线程 B 持有资源 1，他们同时都想申请对方的资源，所以这两个线程就会互相等待而进入死锁状态。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220202222752163.png"></p>
+<p>下面通过一个例子来说明线程死锁,代码模拟了上图的死锁的情况（代码来源于《并发编程之美》）：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeadLockDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource1 = <span class="keyword">new</span> Object();<span class="comment">//资源 1</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object resource2 = <span class="keyword">new</span> Object();<span class="comment">//资源 2</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource1&quot;</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">                    System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]waiting get resource1</span><br></pre></td></tr></table></figure>
+
+<p>线程 A 通过 <code>synchronized (resource1)</code> 获得 <code>resource1</code> 的监视器锁，然后通过<code>Thread.sleep(1000);</code>让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。上面的例子符合产生死锁的四个必要条件。</p>
+<p>产生死锁必须具备以下四个条件：</p>
+<ol>
+<li>互斥条件：该资源任意一个时刻只由一个线程占用。</li>
+<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
+<li>不剥夺条件：线程已获得的资源在未使用完之前不能被其他线程强行剥夺，只有自己使用完毕后才释放资源。</li>
+<li>循环等待条件：若干进程之间形成一种头尾相接的循环等待资源关系。</li>
+</ol>
+<h3 id="如何预防和避免线程死锁"><a href="#如何预防和避免线程死锁" class="headerlink" title="如何预防和避免线程死锁?"></a>如何预防和避免线程死锁?</h3><p><strong>如何预防死锁？</strong> 破坏死锁的产生的必要条件即可：</p>
+<ol>
+<li><strong>破坏请求与保持条件</strong>：一次性申请所有的资源。</li>
+<li><strong>破坏不剥夺条件</strong> ：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以主动释放它占有的资源。</li>
+<li><strong>破坏循环等待条件</strong> ：靠按序申请资源来预防。按某一顺序申请资源，释放资源则反序释放。破坏循环等待条件。</li>
+</ol>
+<p><strong>如何避免死锁？</strong></p>
+<p>避免死锁就是在资源分配时，借助于算法（比如银行家算法）对资源分配进行计算评估，使其进入安全状态。</p>
+<p><strong>安全状态</strong> 指的是系统能够按照某种进程推进顺序（P1、P2、P3…..Pn）来为每个进程分配所需资源，直到满足每个进程对资源的最大需求，使每个进程都可顺利完成。称&lt;P1、P2、P3…..Pn&gt;序列为安全序列。</p>
+<p>我们对线程 2 的代码修改成下面这样就不会产生死锁了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">	<span class="keyword">synchronized</span> (resource1) &#123;</span><br><span class="line">		System.out.println(Thread.currentThread() + <span class="string">&quot;get resource1&quot;</span>);</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">	System.out.println(Thread.currentThread() + <span class="string">&quot;waiting get resource2&quot;</span>);</span><br><span class="line">    <span class="keyword">synchronized</span> (resource2) &#123;</span><br><span class="line">        System.out.println(Thread.currentThread() + <span class="string">&quot;get resource2&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, <span class="string">&quot;线程 2&quot;</span>).start();</span><br></pre></td></tr></table></figure>
+
+<p>Output</p>
+<figure class="highlight tex"><table><tr><td class="code"><pre><span class="line">Thread[线程 1,5,main]get resource1</span><br><span class="line">Thread[线程 1,5,main]waiting get resource2</span><br><span class="line">Thread[线程 1,5,main]get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource1</span><br><span class="line">Thread[线程 2,5,main]waiting get resource2</span><br><span class="line">Thread[线程 2,5,main]get resource2</span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure>
+
+<p>我们分析一下上面的代码为什么避免了死锁的发生?</p>
+<p>线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了。这样就破坏了破坏循环等待条件，因此避免了死锁。</p>
+<h2 id="说说-sleep-方法和-wait-方法区别和共同点"><a href="#说说-sleep-方法和-wait-方法区别和共同点" class="headerlink" title="说说 sleep() 方法和 wait() 方法区别和共同点?"></a>说说 sleep() 方法和 wait() 方法区别和共同点?</h2><ul>
+<li>两者最主要的区别在于：<strong>sleep() 方法没有释放锁，而 wait() 方法释放了锁</strong> 。</li>
+<li>两者都可以暂停线程的执行。</li>
+<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
+<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒。或者可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
+</ul>
+<h2 id="为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？"><a href="#为什么我们调用-start-方法时会执行-run-方法，为什么我们不能直接调用-run-方法？" class="headerlink" title="为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？"></a>为什么我们调用 start() 方法时会执行 run() 方法，为什么我们不能直接调用 run() 方法？</h2><p>new 一个 Thread，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程<strong>进入了就绪状态</strong>，当分配到时间片后就可以<strong>开始运行</strong>了。 <code>start()</code> 会执行线程的相应<strong>准备工作</strong>，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
+<p><strong>总结： 调用 start() 方法方可启动线程并使线程进入就绪状态，直接执行 run() 方法的话不会以多线程的方式执行。</strong></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://javaguide.cn/java/concurrent/java%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/">Java 并发常见知识点&amp;面试题总结（基础篇）</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
       </tags>
   </entry>
   <entry>
@@ -1379,6 +1379,48 @@
       <tags>
         <tag>Java</tag>
         <tag>开发规范</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Maven parent.relativePath 说明</title>
+    <url>/post/b60506ad/</url>
+    <content><![CDATA[<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p> xml 原生英文解释：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;relativePath&quot;</span> <span class="attr">minOccurs</span>=<span class="string">&quot;0&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span> <span class="attr">default</span>=<span class="string">&quot;../pom.xml&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;version&quot;</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;description&quot;</span>&gt;</span></span><br><span class="line">      The relative path of the parent <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> file within the check out.</span><br><span class="line">      The default value is <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>../pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span>.</span><br><span class="line">      Maven looks for the parent pom first in the reactor of currently building projects, then in this location on</span><br><span class="line">      the filesystem, then the local repository, and lastly in the remote repo.</span><br><span class="line">      <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>relativePath<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> allows you to select a different location,</span><br><span class="line">      for example when your structure is flat, or deeper without an intermediate parent pom.</span><br><span class="line">      However, the group ID, artifact ID and version are still required,</span><br><span class="line">      and must match the file in the location given or it will revert to the repository for the POM.</span><br><span class="line">      This feature is only for enhancing the development in a local checkout of that project.</span><br><span class="line">    <span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:element</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<ul>
+<li><p>relativePath 是Maven为了寻找父模块pom.xml所额外增加的一个寻找路径</p>
+</li>
+<li><p>relativePath 默认值为 ../pom.xml</p>
+</li>
+<li><p><strong>Maven 寻找父模块pom.xml 的顺序如下：</strong></p>
+<ol>
+<li><p>first in the reactor of currently building projects<br>这里一个maven概念 反应堆（reactor），意思就是先从工程里面有依赖相关的模块中找你引入的 parent 的pom.xml。</p>
+</li>
+<li><p>then in this location on the filesystem<br>然后从你定义的  <code>&lt;relativePath&gt;</code> 路径中找，当然你如果只是 <code>/</code>  即空值，则跳过该步骤，默认值 ../pom.xml 则是从上级目录中找。</p>
+</li>
+<li><p>then the local repository</p>
+<p>如果 （1） （2） 步骤没有则从本地仓库找。</p>
+</li>
+<li><p>and lastly in the remote repo</p>
+<p>上面都找不到了，最后只能从远程仓库找，再找不到就报错。</p>
+</li>
+</ol>
+</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://blog.csdn.net/gzt19881123/article/details/105255138">Maven parent.relativePath 说明</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>开发工具</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+        <tag>Maven</tag>
+        <tag>项目构建工具</tag>
       </tags>
   </entry>
   <entry>
@@ -2502,48 +2544,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Maven parent.relativePath 说明</title>
-    <url>/post/b60506ad/</url>
-    <content><![CDATA[<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p> xml 原生英文解释：</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">xs:element</span> <span class="attr">name</span>=<span class="string">&quot;relativePath&quot;</span> <span class="attr">minOccurs</span>=<span class="string">&quot;0&quot;</span> <span class="attr">type</span>=<span class="string">&quot;xs:string&quot;</span> <span class="attr">default</span>=<span class="string">&quot;../pom.xml&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;version&quot;</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">xs:documentation</span> <span class="attr">source</span>=<span class="string">&quot;description&quot;</span>&gt;</span></span><br><span class="line">      The relative path of the parent <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> file within the check out.</span><br><span class="line">      The default value is <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>../pom.xml<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span>.</span><br><span class="line">      Maven looks for the parent pom first in the reactor of currently building projects, then in this location on</span><br><span class="line">      the filesystem, then the local repository, and lastly in the remote repo.</span><br><span class="line">      <span class="symbol">&amp;lt;</span>code<span class="symbol">&amp;gt;</span>relativePath<span class="symbol">&amp;lt;</span>/code<span class="symbol">&amp;gt;</span> allows you to select a different location,</span><br><span class="line">      for example when your structure is flat, or deeper without an intermediate parent pom.</span><br><span class="line">      However, the group ID, artifact ID and version are still required,</span><br><span class="line">      and must match the file in the location given or it will revert to the repository for the POM.</span><br><span class="line">      This feature is only for enhancing the development in a local checkout of that project.</span><br><span class="line">    <span class="tag">&lt;/<span class="name">xs:documentation</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">xs:annotation</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">xs:element</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<ul>
-<li><p>relativePath 是Maven为了寻找父模块pom.xml所额外增加的一个寻找路径</p>
-</li>
-<li><p>relativePath 默认值为 ../pom.xml</p>
-</li>
-<li><p><strong>Maven 寻找父模块pom.xml 的顺序如下：</strong></p>
-<ol>
-<li><p>first in the reactor of currently building projects<br>这里一个maven概念 反应堆（reactor），意思就是先从工程里面有依赖相关的模块中找你引入的 parent 的pom.xml。</p>
-</li>
-<li><p>then in this location on the filesystem<br>然后从你定义的  <code>&lt;relativePath&gt;</code> 路径中找，当然你如果只是 <code>/</code>  即空值，则跳过该步骤，默认值 ../pom.xml 则是从上级目录中找。</p>
-</li>
-<li><p>then the local repository</p>
-<p>如果 （1） （2） 步骤没有则从本地仓库找。</p>
-</li>
-<li><p>and lastly in the remote repo</p>
-<p>上面都找不到了，最后只能从远程仓库找，再找不到就报错。</p>
-</li>
-</ol>
-</li>
-</ul>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://blog.csdn.net/gzt19881123/article/details/105255138">Maven parent.relativePath 说明</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>开发工具</category>
-      </categories>
-      <tags>
-        <tag>Java</tag>
-        <tag>Maven</tag>
-        <tag>项目构建工具</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Maven</title>
     <url>/post/7273cdc/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/Apache_Maven">Apache Maven</a> 是一个<a href="https://zh.wikipedia.org/wiki/%E8%BD%AF%E4%BB%B6">软件</a>（特别是<a href="https://zh.wikipedia.org/wiki/Java_(%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80)">Java</a>软件）<a href="https://zh.wikipedia.org/wiki/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86">项目管理</a>及<a href="https://zh.wikipedia.org/wiki/%E8%87%AA%E5%8A%A8%E6%9E%84%E5%BB%BA">自动构建</a>工具，由<a href="https://zh.wikipedia.org/wiki/Apache%E8%BD%AF%E4%BB%B6%E5%9F%BA%E9%87%91%E4%BC%9A">Apache软件基金会</a>所提供。基于项目对象模型（缩写：POM）概念，Maven利用一个中央信息片断能管理一个项目的构建、报告和文档等步骤。</p>
@@ -3653,72 +3653,6 @@
       </tags>
   </entry>
   <entry>
-    <title>双指针</title>
-    <url>/post/91a7e4d1/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
-<p>双指针是一种简单而又灵活的技巧和思想，单独使用可以轻松解决一些特定问题，和其他算法结合也能发挥多样的用处。</p>
-<span id="more"></span>
-
-
-<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="对撞指针"><a href="#对撞指针" class="headerlink" title="对撞指针"></a>对撞指针</h3><p><strong>对撞指针</strong>是指在有序数组中，将指向最左侧的索引定义为**左指针(left)<strong>，最右侧的定义为</strong>右指针(right)**，然后从两头向中间进行数组遍历。</p>
-<blockquote>
-<p>对撞指针适用于<strong>有序数组</strong>，也就是说当你遇到题目给定有序数组时，应该第一时间想到用对撞指针解题。</p>
-</blockquote>
-<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></td>
-<td><a href="https://leetcode-cn.com/problems/3sum/solution/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/">画解算法：15. 三数之和</a><br/><a href="https://leetcode-cn.com/problems/3sum/solution/san-shu-zhi-he-by-leetcode-solution/">官方题解</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></td>
-<td><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/">下一个排列算法详解：思路+推导+步骤，看不懂算我输！</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/sort-colors/">75. 颜色分类</a></td>
-<td><a href="https://leetcode-cn.com/problems/sort-colors/solution/yan-se-fen-lei-by-leetcode-solution/">颜色分类</a><br/><a href="https://leetcode-cn.com/problems/sort-colors/solution/kuai-su-pai-xu-partition-guo-cheng-she-ji-xun-huan/">快速排序的子过程 partition（重点在设计循环不变量）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">581. 最短无序连续子数组</a></td>
-<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/">思路清晰明了，看不懂？？不存在的！！</a><br/><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/zui-duan-wu-xu-lian-xu-zi-shu-zu-by-leet-yhlf/">官方题解</a></td>
-</tr>
-</tbody></table>
-<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p><strong>快慢指针</strong>也是双指针，但是两个指针从同一侧开始遍历数组，将这两个指针分别定义为<strong>快指针(fast)</strong> 和**慢指针(slow)**，两个指针以不同的策略移动，直到两个指针的值相等（或其他特殊条件）为止，如 <code>fast</code> 每次增长两个，<code>slow</code> 每次增长一个。</p>
-<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-<th>技巧</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></td>
-<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/">160. 相交链表（双指针，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/xiang-jiao-lian-biao-by-leetcode-solutio-a8jn/">官方题解</a></td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/sort-list/">148. 排序链表</a></td>
-<td><a href="https://leetcode-cn.com/problems/sort-list/solution/sort-list-gui-bing-pai-xu-lian-biao-by-jyd/">Sort List （归并排序链表）</a><br/><a href="https://leetcode-cn.com/problems/sort-list/solution/pai-xu-lian-biao-by-leetcode-solution/">官方题解</a></td>
-<td>链表等长拆分、归并排序</td>
-</tr>
-</tbody></table>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当遇到有序数组时，应该优先想到<strong>双指针</strong>来解决问题，因两个指针的同时遍历会减少空间复杂度和时间复杂度。</p>
-<p><strong>对撞指针</strong>主要解决数组（或者字符串）中的问题，比如二分查找；<strong>快慢指针</strong>主要解决链表中的问题，比如典型的判定链表中是否包含环。</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>双指针</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>二分</title>
     <url>/post/9947c71c/</url>
     <content><![CDATA[<h2 id="二分法"><a href="#二分法" class="headerlink" title="二分法"></a>二分法</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>二分查找（英语：binary search），也称折半搜索（英语：half-interval search）、对数搜索（英语：logarithmic search），是用来在一个有序数组中查找某一元素的算法。</p>
@@ -3930,6 +3864,204 @@
       <tags>
         <tag>二分</tag>
         <tag>三分</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>回溯</title>
+    <url>/post/f92eff5d/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
+<p>回溯法是一种选优搜索法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。</p>
+<p>许多复杂的，规模较大的问题都可以使用回溯法，有“<strong>通用解题方法</strong>”的美称。</p>
+<span id="more"></span>
+<h3 id="与穷举的联系"><a href="#与穷举的联系" class="headerlink" title="与穷举的联系"></a>与穷举的联系</h3><p>回溯法简单来说就是按照深度优先的顺序，穷举所有可能性的算法，但是回溯算法比暴力穷举法更高明的地方就是回溯算法可以随时判断当前状态是否符合问题的条件。一旦不符合条件，那么就退回到上一个状态，省去了继续往下探索的时间。</p>
+<p>回溯法的特点是<strong>深度优先遍历</strong>，也就是该问题的遍历顺序是1-&gt;2-&gt;3，然后从子节点3返回，从子节点2返回，再到1-&gt;3-&gt;2，以此类推。</p>
+<p>状态的返回只有当前的节点不再满足问题的条件或者我们已经找到了问题的一个解时，才会返回，否则会以深度优先一直在<strong>解空间树</strong>内遍历下去。</p>
+<p>当然，对于某些问题如果其解空间过大，即使用回溯法进行计算也有很高的时间复杂度，因为回溯法会尝试解空间树中所有的分支。</p>
+<h3 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h3><p>所以根据这类问题，有一些优化剪枝策略以及启发式搜索策略。</p>
+<p><strong>优化剪枝策略</strong>：判断当前的分支树是否符合问题的条件，如果当前分支树不符合条件，那么就不再遍历这个分支里的所有路径。</p>
+<p><strong>启发式搜索策略</strong>：给回溯法搜索子节点的顺序设定一个优先级，从该子节点往下遍历更有可能找到问题的解。</p>
+<h2 id="一般步骤"><a href="#一般步骤" class="headerlink" title="一般步骤"></a>一般步骤</h2><p>回溯算法也叫<strong>试探法</strong>，它是一种系统地搜索问题的解的方法。</p>
+<p>用回溯算法解决问题的一般步骤：</p>
+<ol>
+<li><strong>针对</strong>所给<strong>问题</strong>，<strong>定义问题的解空间</strong>，它至少包含问题的一个（最优）解。</li>
+<li><strong>确定</strong>易于搜索的<strong>解空间结构</strong>，使得能用回溯法方便地搜索整个解空间 。</li>
+<li><strong>以深度优先的方式搜索解空间</strong>，并且在<strong>搜索过程中</strong>用<strong>剪枝</strong>函数避免无效搜索。</li>
+</ol>
+<h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。<br><strong>回溯算法说白了就是穷举法。不过回溯算法使用剪枝函数，剪去一些不可能到达 最终状态（即答案状态）的节点，从而减少状态空间树节点的生成。</strong></p>
+<p>回溯法是一个既带有<strong>系统性</strong>又带有<strong>跳跃性</strong>的的搜索算法。</p>
+<p>它在包含问题的所有解的解空间树中，按照深度优先的策略，从根结点出发搜索解空间树。<br>算法搜索至解空间树的任一结点时，总是先判断该结点是否肯定不包含问题的解。<br>如果肯定不包含，则跳过对以该结点为根的子树的系统搜索，逐层向其祖先结点回溯。<br>否则，进入该子树，继续按深度优先的策略进行搜索。</p>
+<p>回溯法在用来求问题的所有解时，要回溯到根，且根结点的所有子树都已被搜索遍才结束。<br>而回溯法在用来求问题的任一解时，只要搜索到问题的一个解就可以结束。</p>
+<p>这种以<strong>深度优先</strong>的方式<strong>系统地搜索</strong>问题的解的算法称为回溯法，它适用于解一些<strong>组合数较大的问题</strong>。</p>
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/">17. 电话号码的字母组合</a></td>
+<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/dian-hua-hao-ma-de-zi-mu-zu-he-by-leetcode-solutio/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/">通俗易懂+动画演示 17. 电话号码的字母组合</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/combination-sum/">39. 组合总和</a></td>
+<td><a href="https://leetcode-cn.com/problems/combination-sum/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-2/">回溯算法 + 剪枝（回溯经典例题详解）</a><br/><a href="https://leetcode-cn.com/problems/combination-sum/solution/39-zu-he-zong-he-by-feyl-lj9e/">回溯 + 剪枝</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/word-search/">79. 单词搜索</a></td>
+<td><a href="https://leetcode-cn.com/problems/word-search/solution/dan-ci-sou-suo-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-search/solution/zai-er-wei-ping-mian-shang-shi-yong-hui-su-fa-pyth/">回溯算法（Java）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/">131. 分割回文串</a></td>
+<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/hui-su-you-hua-jia-liao-dong-tai-gui-hua-by-liweiw/">回溯算法、优化（使用动态规划预处理数组）</a></td>
+</tr>
+</tbody></table>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://houbb.github.io/2020/01/23/data-struct-learn-07-base-backtracking">五大基本算法之回溯算法 backtracking</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>回溯</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>位运算</title>
+    <url>/post/2633a26/</url>
+    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
+<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span></li>
+<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
+</li>
+<li><p><strong>判断两个数是否异号</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
+</li>
+<li><p><strong>不用临时变量交换两个数</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>加一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
+<li><p><strong>减一</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
+</blockquote>
+</li>
+</ol>
+<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>位运算</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串反转</title>
+    <url>/post/8de7ec78/</url>
+    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p><strong>3、stringBuffer倒序拼接</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>4、利用栈的先进后出</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5、切割递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>6、二分递归反转</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>字符串</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>双指针</title>
+    <url>/post/91a7e4d1/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>双指针顾名思义，就是同时使用两个指针，在序列、链表结构上指向的是位置，在树、图结构中指向的是节点，通过同向移动（<strong>快慢指针</strong>）或相向移动（<strong>对撞指针</strong>）来维护、统计信息，从而达到相应的目的。</p>
+<p>双指针是一种简单而又灵活的技巧和思想，单独使用可以轻松解决一些特定问题，和其他算法结合也能发挥多样的用处。</p>
+<span id="more"></span>
+
+
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><h3 id="对撞指针"><a href="#对撞指针" class="headerlink" title="对撞指针"></a>对撞指针</h3><p><strong>对撞指针</strong>是指在有序数组中，将指向最左侧的索引定义为**左指针(left)<strong>，最右侧的定义为</strong>右指针(right)**，然后从两头向中间进行数组遍历。</p>
+<blockquote>
+<p>对撞指针适用于<strong>有序数组</strong>，也就是说当你遇到题目给定有序数组时，应该第一时间想到用对撞指针解题。</p>
+</blockquote>
+<h4 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h4><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></td>
+<td><a href="https://leetcode-cn.com/problems/3sum/solution/hua-jie-suan-fa-15-san-shu-zhi-he-by-guanpengchn/">画解算法：15. 三数之和</a><br/><a href="https://leetcode-cn.com/problems/3sum/solution/san-shu-zhi-he-by-leetcode-solution/">官方题解</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></td>
+<td><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/">下一个排列算法详解：思路+推导+步骤，看不懂算我输！</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/sort-colors/">75. 颜色分类</a></td>
+<td><a href="https://leetcode-cn.com/problems/sort-colors/solution/yan-se-fen-lei-by-leetcode-solution/">颜色分类</a><br/><a href="https://leetcode-cn.com/problems/sort-colors/solution/kuai-su-pai-xu-partition-guo-cheng-she-ji-xun-huan/">快速排序的子过程 partition（重点在设计循环不变量）</a></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/">581. 最短无序连续子数组</a></td>
+<td><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/si-lu-qing-xi-ming-liao-kan-bu-dong-bu-cun-zai-de-/">思路清晰明了，看不懂？？不存在的！！</a><br/><a href="https://leetcode-cn.com/problems/shortest-unsorted-continuous-subarray/solution/zui-duan-wu-xu-lian-xu-zi-shu-zu-by-leet-yhlf/">官方题解</a></td>
+</tr>
+</tbody></table>
+<h3 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h3><p><strong>快慢指针</strong>也是双指针，但是两个指针从同一侧开始遍历数组，将这两个指针分别定义为<strong>快指针(fast)</strong> 和**慢指针(slow)**，两个指针以不同的策略移动，直到两个指针的值相等（或其他特殊条件）为止，如 <code>fast</code> 每次增长两个，<code>slow</code> 每次增长一个。</p>
+<h4 id="题目-1"><a href="#题目-1" class="headerlink" title="题目"></a>题目</h4><table>
+<thead>
+<tr>
+<th>题目</th>
+<th>题解</th>
+<th>技巧</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></td>
+<td><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/intersection-of-two-linked-lists-shuang-zhi-zhen-l/">160. 相交链表（双指针，清晰图解）</a><br/><a href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/solution/xiang-jiao-lian-biao-by-leetcode-solutio-a8jn/">官方题解</a></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://leetcode-cn.com/problems/sort-list/">148. 排序链表</a></td>
+<td><a href="https://leetcode-cn.com/problems/sort-list/solution/sort-list-gui-bing-pai-xu-lian-biao-by-jyd/">Sort List （归并排序链表）</a><br/><a href="https://leetcode-cn.com/problems/sort-list/solution/pai-xu-lian-biao-by-leetcode-solution/">官方题解</a></td>
+<td>链表等长拆分、归并排序</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当遇到有序数组时，应该优先想到<strong>双指针</strong>来解决问题，因两个指针的同时遍历会减少空间复杂度和时间复杂度。</p>
+<p><strong>对撞指针</strong>主要解决数组（或者字符串）中的问题，比如二分查找；<strong>快慢指针</strong>主要解决链表中的问题，比如典型的判定链表中是否包含环。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+      <tags>
+        <tag>双指针</tag>
       </tags>
   </entry>
   <entry>
@@ -6054,135 +6186,81 @@
       </tags>
   </entry>
   <entry>
-    <title>位运算</title>
-    <url>/post/2633a26/</url>
-    <content><![CDATA[<h2 id="常用的位操作"><a href="#常用的位操作" class="headerlink" title="常用的位操作"></a>常用的位操作</h2><ol>
-<li><p><strong>利用或操作 <code>|</code> 和空格将英文字符转换为小写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;a&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br><span class="line">(<span class="string">&#x27;A&#x27;</span> | <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>利用与操作 <code>&amp;</code> 和下划线将英文字符转换为大写</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;b&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br><span class="line">(<span class="string">&#x27;B&#x27;</span> &amp; <span class="string">&#x27;_&#x27;</span>) = <span class="string">&#x27;B&#x27;</span></span><br></pre></td></tr></table></figure>
-<span id="more"></span></li>
-<li><p><strong>利用异或操作 <code>^</code> 和空格进行英文字符大小写互换</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">(<span class="string">&#x27;d&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;D&#x27;</span></span><br><span class="line">(<span class="string">&#x27;D&#x27;</span> ^ <span class="string">&#x27; &#x27;</span>) = <span class="string">&#x27;d&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<p>以上操作能够产生奇特效果的原因在于 ASCII 编码。字符其实就是数字，恰巧这些字符对应的数字通过位运算就能得到正确的结果，有兴趣的读者可以查 ASCII 码表自己算算，本文就不展开讲了。</p>
-</li>
-<li><p><strong>判断两个数是否异号</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> x = -<span class="number">1</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> x = <span class="number">3</span>, y = <span class="number">2</span>;</span><br><span class="line">bool f = ((x ^ y) &lt; <span class="number">0</span>); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
-
-<p>这个技巧还是很实用的，利用的是补码编码的符号位。如果不用位运算来判断是否异号，需要使用 if else 分支，还挺麻烦的。读者可能想利用乘积或者商来判断两个数是否异号，但是这种处理方式可能造成溢出，从而出现错误。</p>
-</li>
-<li><p><strong>不用临时变量交换两个数</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">a ^= b;</span><br><span class="line">b ^= a;</span><br><span class="line">a ^= b;</span><br><span class="line"><span class="comment">// 现在 a = 2, b = 1</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>加一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">1</span>;</span><br><span class="line">n = -~n;</span><br><span class="line"><span class="comment">// 现在 n = 2</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>减一</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n = <span class="number">2</span>;</span><br><span class="line">n = ~-n;</span><br><span class="line"><span class="comment">// 现在 n = 1</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>PS：上面这三个操作就纯属装逼用的，没啥实际用处，大家了解了解乐呵一下就行。</p>
-</blockquote>
-</li>
-</ol>
-<p>详细理解参见 <a href="https://labuladong.gitee.io/algo/4/30/116/">常用的位操作</a> 评论区</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
-      <categories>
-        <category>算法</category>
-      </categories>
-      <tags>
-        <tag>位运算</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>回溯</title>
-    <url>/post/f92eff5d/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E5%9B%9E%E6%BA%AF%E6%B3%95">回溯算法</a> 实际上一个<strong>类似枚举的搜索尝试过程</strong>，主要是在搜索尝试过程中寻找问题的解，当发现已不满足求解条件时，就“回溯”返回，尝试别的路径。</p>
-<p>回溯法是一种选优搜索法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。</p>
-<p>许多复杂的，规模较大的问题都可以使用回溯法，有“<strong>通用解题方法</strong>”的美称。</p>
+    <title>字符集</title>
+    <url>/post/6b44eb7a/</url>
+    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
+<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
+<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
+<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
 <span id="more"></span>
-<h3 id="与穷举的联系"><a href="#与穷举的联系" class="headerlink" title="与穷举的联系"></a>与穷举的联系</h3><p>回溯法简单来说就是按照深度优先的顺序，穷举所有可能性的算法，但是回溯算法比暴力穷举法更高明的地方就是回溯算法可以随时判断当前状态是否符合问题的条件。一旦不符合条件，那么就退回到上一个状态，省去了继续往下探索的时间。</p>
-<p>回溯法的特点是<strong>深度优先遍历</strong>，也就是该问题的遍历顺序是1-&gt;2-&gt;3，然后从子节点3返回，从子节点2返回，再到1-&gt;3-&gt;2，以此类推。</p>
-<p>状态的返回只有当前的节点不再满足问题的条件或者我们已经找到了问题的一个解时，才会返回，否则会以深度优先一直在<strong>解空间树</strong>内遍历下去。</p>
-<p>当然，对于某些问题如果其解空间过大，即使用回溯法进行计算也有很高的时间复杂度，因为回溯法会尝试解空间树中所有的分支。</p>
-<h3 id="剪枝"><a href="#剪枝" class="headerlink" title="剪枝"></a>剪枝</h3><p>所以根据这类问题，有一些优化剪枝策略以及启发式搜索策略。</p>
-<p><strong>优化剪枝策略</strong>：判断当前的分支树是否符合问题的条件，如果当前分支树不符合条件，那么就不再遍历这个分支里的所有路径。</p>
-<p><strong>启发式搜索策略</strong>：给回溯法搜索子节点的顺序设定一个优先级，从该子节点往下遍历更有可能找到问题的解。</p>
-<h2 id="一般步骤"><a href="#一般步骤" class="headerlink" title="一般步骤"></a>一般步骤</h2><p>回溯算法也叫<strong>试探法</strong>，它是一种系统地搜索问题的解的方法。</p>
-<p>用回溯算法解决问题的一般步骤：</p>
-<ol>
-<li><strong>针对</strong>所给<strong>问题</strong>，<strong>定义问题的解空间</strong>，它至少包含问题的一个（最优）解。</li>
-<li><strong>确定</strong>易于搜索的<strong>解空间结构</strong>，使得能用回溯法方便地搜索整个解空间 。</li>
-<li><strong>以深度优先的方式搜索解空间</strong>，并且在<strong>搜索过程中</strong>用<strong>剪枝</strong>函数避免无效搜索。</li>
-</ol>
-<h2 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h2><p>回溯算法的基本思想是：从一条路往前走，能进则进，不能进则退回来，换一条路再试。<br><strong>回溯算法说白了就是穷举法。不过回溯算法使用剪枝函数，剪去一些不可能到达 最终状态（即答案状态）的节点，从而减少状态空间树节点的生成。</strong></p>
-<p>回溯法是一个既带有<strong>系统性</strong>又带有<strong>跳跃性</strong>的的搜索算法。</p>
-<p>它在包含问题的所有解的解空间树中，按照深度优先的策略，从根结点出发搜索解空间树。<br>算法搜索至解空间树的任一结点时，总是先判断该结点是否肯定不包含问题的解。<br>如果肯定不包含，则跳过对以该结点为根的子树的系统搜索，逐层向其祖先结点回溯。<br>否则，进入该子树，继续按深度优先的策略进行搜索。</p>
-<p>回溯法在用来求问题的所有解时，要回溯到根，且根结点的所有子树都已被搜索遍才结束。<br>而回溯法在用来求问题的任一解时，只要搜索到问题的一个解就可以结束。</p>
-<p>这种以<strong>深度优先</strong>的方式<strong>系统地搜索</strong>问题的解的算法称为回溯法，它适用于解一些<strong>组合数较大的问题</strong>。</p>
-<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><table>
-<thead>
-<tr>
-<th>题目</th>
-<th>题解</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/">17. 电话号码的字母组合</a></td>
-<td><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/dian-hua-hao-ma-de-zi-mu-zu-he-by-leetcode-solutio/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/solution/tong-su-yi-dong-dong-hua-yan-shi-17-dian-hua-hao-m/">通俗易懂+动画演示 17. 电话号码的字母组合</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/combination-sum/">39. 组合总和</a></td>
-<td><a href="https://leetcode-cn.com/problems/combination-sum/solution/hui-su-suan-fa-jian-zhi-python-dai-ma-java-dai-m-2/">回溯算法 + 剪枝（回溯经典例题详解）</a><br/><a href="https://leetcode-cn.com/problems/combination-sum/solution/39-zu-he-zong-he-by-feyl-lj9e/">回溯 + 剪枝</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/word-search/">79. 单词搜索</a></td>
-<td><a href="https://leetcode-cn.com/problems/word-search/solution/dan-ci-sou-suo-by-leetcode-solution/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/word-search/solution/zai-er-wei-ping-mian-shang-shi-yong-hui-su-fa-pyth/">回溯算法（Java）</a></td>
-</tr>
-<tr>
-<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/">131. 分割回文串</a></td>
-<td><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/">官方题解</a><br/><a href="https://leetcode-cn.com/problems/palindrome-partitioning/solution/hui-su-you-hua-jia-liao-dong-tai-gui-hua-by-liweiw/">回溯算法、优化（使用动态规划预处理数组）</a></td>
-</tr>
-</tbody></table>
+
+
+<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
+<p>不同的字符集的主要区别在于：</p>
+<ul>
+<li>可以表示的字符范围</li>
+<li>编码方式</li>
+</ul>
+<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
+<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
+<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
+<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
+<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
+<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
+<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
+<blockquote>
+<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
+</blockquote>
+<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
+<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
+<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
+<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
+<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
+<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
+<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
+<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
+<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
+<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
+<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
+<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
+<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
+<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
+<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
+<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
+<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
+<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
+<p>不过，这里有一个小坑。</p>
+<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
+<ul>
+<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
+<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
+</ul>
+<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
+<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
+<p>演示一下吧！（环境：MySQL 5.7+）</p>
+<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
+
+
+
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
 <ul>
-<li><strong><a href="https://houbb.github.io/2020/01/23/data-struct-learn-07-base-backtracking">五大基本算法之回溯算法 backtracking</a></strong></li>
+<li><strong><a href="https://javaguide.cn/database/character-set.html">字符集</a></strong></li>
 </ul>
 ]]></content>
       <categories>
-        <category>算法</category>
+        <category>数据库</category>
       </categories>
       <tags>
-        <tag>回溯</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符串反转</title>
-    <url>/post/8de7ec78/</url>
-    <content><![CDATA[<p><strong>1、用stringBuffer或者stringBuilder自带的reverse方法</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(s).reverse().toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>2、将字符串拆分为char数组后使用 <a href="https://feyl.github.io/post/2633a26/">不用临时变量交换两个数技巧</a> 依次顺序交换前后两个字符</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] charArray = s.toCharArray();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> l = <span class="number">0</span>, r = charArray.length - <span class="number">1</span>; l &lt; r; l++, r--) &#123;</span><br><span class="line">        charArray[l] ^= charArray[r];<span class="comment">//采用异或</span></span><br><span class="line">        charArray[r] ^= charArray[l];</span><br><span class="line">        charArray[l] ^= charArray[r];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(charArray);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<p><strong>3、stringBuffer倒序拼接</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = s.length() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">        sb.append(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>4、利用栈的先进后出</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    StringBuffer sb = <span class="keyword">new</span> StringBuffer();</span><br><span class="line">    Stack stk = <span class="keyword">new</span> Stack();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; s.length(); i++) &#123;</span><br><span class="line">        stk.push(s.charAt(i));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (!stk.isEmpty()) &#123;</span><br><span class="line">        sb.append(stack.pop());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sb.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>5、切割递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (s.length() &lt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> s;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reverse(s.substring(<span class="number">1</span>)) + s.substring(<span class="number">0</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>6、二分递归反转</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = s.length();</span><br><span class="line">    <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) <span class="keyword">return</span> s;</span><br><span class="line">    String l = s.substring(<span class="number">0</span>, n / <span class="number">2</span>);</span><br><span class="line">    String r = s.substring(n / <span class="number">2</span>, n);</span><br><span class="line">    <span class="keyword">return</span> reverse(r) + reverse(l);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2>]]></content>
-      <categories>
-        <category>Java</category>
-      </categories>
-      <tags>
-        <tag>字符串</tag>
+        <tag>字符集</tag>
       </tags>
   </entry>
   <entry>
@@ -6299,84 +6377,6 @@
       <tags>
         <tag>布隆过滤器</tag>
         <tag>Redis</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符集</title>
-    <url>/post/6b44eb7a/</url>
-    <content><![CDATA[<h2 id="何为字符集？"><a href="#何为字符集？" class="headerlink" title="何为字符集？"></a>何为字符集？</h2><p>字符是各种文字和符号的统称，包括各个国家文字、标点符号、表情、数字等等。 <strong>字符集</strong> 就是一系列字符的集合。字符集的种类较多，每个字符集可以表示的字符范围通常不同，就比如说有些字符集是无法表示汉字的。</p>
-<p><strong>计算机只能存储二进制的数据，那英文、汉字、表情等字符应该如何存储呢？</strong></p>
-<p>我们要将这些字符和二级制的数据一一对应起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。</p>
-<p>将字符对应二进制数据的过程称为”<strong>字符编码</strong>“，反之，二进制数据解析成字符的过程称为“<strong>字符解码</strong>”。</p>
-<span id="more"></span>
-
-
-<h2 id="有哪些常见的字符集？"><a href="#有哪些常见的字符集？" class="headerlink" title="有哪些常见的字符集？"></a>有哪些常见的字符集？</h2><p>常见的字符集有 ASCII、GB2312、GBK、UTF-8……。</p>
-<p>不同的字符集的主要区别在于：</p>
-<ul>
-<li>可以表示的字符范围</li>
-<li>编码方式</li>
-</ul>
-<h3 id="ASCII"><a href="#ASCII" class="headerlink" title="ASCII"></a>ASCII</h3><p><strong>ASCII</strong> (<strong>A</strong>merican <strong>S</strong>tandard <strong>C</strong>ode for <strong>I</strong>nformation <strong>I</strong>nterchange，美国信息交换标准代码) 是一套主要用于现代美国英语的字符集（这也是 ASCII 字符集的局限性所在）。</p>
-<p>ASCII 字符集至今为止共定义了 128 个字符，其中有 33 个控制字符（比如回车、删除）无法显示。</p>
-<p>一个 ASCII 码长度是一个字节也就是 8 个 bit，比如“a”对应的 ASCII 码是“01100001”。不过，最高位是 0 仅仅作为校验位，其余 7 位使用 0 和 1 进行组合，所以，ASCII 字符集可以定义 <strong>128（2^7）</strong>个字符。</p>
-<p>由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 <strong>ASCII 扩展字符集</strong> 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 <strong>256（2^8）</strong>个字符。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/c1c6375d08ca268690cef2b13591a5b4.png" alt="ASCII字符编码"></p>
-<h3 id="GB2312"><a href="#GB2312" class="headerlink" title="GB2312"></a>GB2312</h3><p>GB2312 字符集是一种对汉字比较友好的字符集，共收录 6700 多个汉字，基本涵盖了绝大部分常用汉字。不过，GB2312 字符集不支持绝大部分的生僻字和繁体字。</p>
-<p><strong>对于英语字符，GB2312 编码和 ASCII 码是相同的，1 字节编码即可。对于非英字符，需要 2 字节编码。</strong></p>
-<h3 id="GBK"><a href="#GBK" class="headerlink" title="GBK"></a>GBK</h3><p>GBK 字符集可以看作是 GB2312 字符集的扩展，兼容 GB2312 字符集，共收录了 20000 多个汉字。</p>
-<blockquote>
-<p>GBK 中 K 是汉语拼音 Kuo Zhan（扩展）中的“Kuo”的首字母。</p>
-</blockquote>
-<h3 id="GB18030"><a href="#GB18030" class="headerlink" title="GB18030"></a>GB18030</h3><p>GB18030 完全兼容 GB2312 和 GBK 字符集，纳入中国国内少数民族的文字，且收录了日韩汉字，是目前为止最全面的汉字字符集，共收录汉字 70000 多个。</p>
-<h3 id="BIG5"><a href="#BIG5" class="headerlink" title="BIG5"></a>BIG5</h3><p>BIG5 主要针对的是繁体中文，收录了 13000 多个汉字。</p>
-<h3 id="Unicode-amp-UTF-8编码"><a href="#Unicode-amp-UTF-8编码" class="headerlink" title="Unicode &amp; UTF-8编码"></a>Unicode &amp; UTF-8编码</h3><p>为了更加适合本国语言，诞生了很多种字符集。</p>
-<p>不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：<strong>使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。</strong></p>
-<p>就比如说使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。</p>
-<p>可以通过这个网站在线进行编码和解码：<a href="https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan">https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan</a></p>
-<p>乱码的本质： <strong>编码和解码时用了不同或者不兼容的字符集</strong> 。</p>
-<p>为了解决这个问题，人们就想：“如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了！”。</p>
-<p>然后，<strong>Unicode</strong> 带着这个使命诞生了。</p>
-<p>Unicode 字符集中包含了世界上几乎所有已知的字符。不过，Unicode 字符集并没有规定如何存储这些字符（也就是如何使用二进制数据表示这些字符）。</p>
-<p>然后，就有了 <strong>UTF-8</strong>（<strong>8</strong>-bit <strong>U</strong>nicode <strong>T</strong>ransformation <strong>F</strong>ormat）。类似的还有 UTF-16、 UTF-32。</p>
-<p>UTF-8 使用 <strong>1</strong> 到 <strong>4</strong> 个字节为每个字符编码， UTF-16 使用 <strong>2</strong> 或 <strong>4</strong> 个字节为每个字符编码，UTF-32 <strong>固定位 4</strong> 个字节为每个字符编码。</p>
-<p><strong>UTF-8 可以根据不同的符号自动选择编码的长短</strong>，像<strong>英文字符只需要 1 个字节</strong>就够了，这一点 ASCII 字符集一样 。因此，<strong>对于英语字符，UTF-8 编码和 ASCII 码是相同的</strong>。</p>
-<p>UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。</p>
-<p><strong>UTF-8</strong> 是目前使用最广的一种字符编码。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232511210.png"></p>
-<h2 id="MySQL-字符集"><a href="#MySQL-字符集" class="headerlink" title="MySQL 字符集"></a>MySQL 字符集</h2><p>MySQL 支持很多种字符编码的方式，比如 UTF-8、GB2312、GBK、BIG5… 可以通过 <code>SHOW CHARSET</code> 命令来查看。</p>
-<p><img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220121232441500.png"></p>
-<p>通常情况下，我们建议使用 UTF-8 作为默认的字符编码方式。</p>
-<p>不过，这里有一个小坑。</p>
-<p>MySQL 字符编码集中有两套 UTF-8 编码实现：</p>
-<ul>
-<li><strong><code>utf8</code></strong> ： <code>utf8</code>编码只支持<code>1-3</code>个字节 。 在 <code>utf8</code> 编码中，中文是占 3 个字节，其他数字、英文、符号占一个字节。但 emoji 符号占 4 个字节，一些较复杂的文字、繁体字也是 4 个字节。</li>
-<li><strong><code>utf8mb4</code></strong> ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号。</li>
-</ul>
-<p><strong>为什么有两套 UTF-8 编码实现呢？</strong> 原因如下：<br>        MySQL字符编码集中有两套 UTF-8 编码实现：utf8 和 utf8mb4，其中 utf8 是一个字最多占据3字节空间的编码实现；而 utf8mb4 则是一个字最多占据4字节空间的编码实现，也就是 UTF-8 的完整实现。这是由于 MySQL 在 4.1 版本开始支持 UTF-8 编码（当时参考 UTF-8草案版本为 RFC 2279）时，为2003年，并且在同年 9 月限制了其实现的 UTF-8 编码的空间占用最多为 3 字节，而 UTF-8 正式形成标准化文档(RFC 3629)是其之后。限制 UTF-8 编码实现的编码空间占用一般被认为是考虑到数据库文件设计的兼容性和读取最优化，但实际上并没有达到目的，而且在 UTF-8 编码开始出现需要存入非基本多文种平面的 Unicode 字符（例如 emoj 字符）时导致无法存入（由于 3 字节的实现只能存入基本多文种平面内的字符）。直到 2010 年在 5.5 版本推出 utf8mb4 来代替，utf8 重命名为 utf8mb3 并调整 utf8 为 utf8mb3 的别名，并不建议使用旧 utf8 编码，以此修正遗留问题。</p>
-<p>因此，如果你需要存储 <code>emoji</code> 类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为 <code>utf8mb4</code>  而不是 <code>utf8</code>  ，要不然存储的时候就会报错了。</p>
-<p>演示一下吧！（环境：MySQL 5.7+）</p>
-<p>建表语句如下，我们指定数据库 CHARSET 为 <code>utf8</code> 。</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `<span class="keyword">user</span>` (</span><br><span class="line">  `id` <span class="type">varchar</span>(<span class="number">66</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `phone` <span class="type">varchar</span>(<span class="number">33</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `password` <span class="type">varchar</span>(<span class="number">100</span>) <span class="type">CHARACTER</span> <span class="keyword">SET</span> utf8mb4 <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span></span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
-
-<p>当我们执行下面的 insert 语句插入数据到数据库时，果然报错！</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `<span class="keyword">user</span>` (`id`, `name`, `phone`, `password`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">	(<span class="string">&#x27;A00003&#x27;</span>, <span class="string">&#x27;guide哥😘😘😘&#x27;</span>, <span class="string">&#x27;181631312312&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Incorrect string value: &#x27;\xF0\x9F\x98\x98\xF0\x9F...&#x27; for column &#x27;name&#x27; at row 1</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://javaguide.cn/database/character-set.html">字符集</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>字符集</tag>
       </tags>
   </entry>
   <entry>
@@ -6498,6 +6498,163 @@
       </categories>
       <tags>
         <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数据库基础知识</title>
+    <url>/post/1ad06ab1/</url>
+    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
+<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
+<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
+<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
+<span id="more"></span>
+<p>数据库系统基本构成如下图所示：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
+<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
+<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
+<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
+<blockquote>
+<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
+</blockquote>
+<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
+<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
+<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
+<blockquote>
+<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
+</blockquote>
+<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
+<blockquote>
+<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
+</blockquote>
+<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
+<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
+<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
+</ul>
+<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
+<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
+<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
+<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
+<ol>
+<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
+<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
+<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
+<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
+<li>……</li>
+</ol>
+<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
+<ol>
+<li>保证了数据库数据的一致性和完整性；</li>
+<li>级联操作方便，减轻了程序代码量；</li>
+<li>……</li>
+</ol>
+<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
+<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
+<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
+<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
+<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
+<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
+<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
+<blockquote>
+<p>表：学号、课程号、姓名、学分</p>
+</blockquote>
+<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
+<p><strong>可能会存在问题：</strong></p>
+<ul>
+<li>数据冗余：每条记录都含有相同信息；</li>
+<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
+<li>插入异常：学生未选课，无法记录进数据库；</li>
+<li>更新异常：调整课程学分，所有行都调整。</li>
+</ul>
+<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
+<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
+<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
+<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
+</blockquote>
+<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
+<blockquote>
+<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
+</blockquote>
+<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
+<blockquote>
+<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
+</blockquote>
+<p><strong>3NF(第三范式)</strong></p>
+<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
+<p><strong>总结</strong></p>
+<ul>
+<li>1NF：属性不可再分。</li>
+<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
+<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
+</ul>
+<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
+<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
+<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
+<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以尽量的减少数据冗余</li>
+<li>数据表更新快体积小</li>
+<li>范式化的更新操作比反范式化更快</li>
+<li>范式化的表通常比反范式化更小</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对于查询需要对多个表进行关联导致性能降低</li>
+<li>更难进行索引优化</li>
+</ul>
+<p><strong>反范式化</strong></p>
+<p>优点：</p>
+<ul>
+<li>可以减少表的关联</li>
+<li>可以更好的进行索引优化</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>存在数据冗余及数据维护异常</li>
+<li>对数据的修改需要更多的成本</li>
+</ul>
+<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
+<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
+<blockquote>
+<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
+<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
+</blockquote>
+<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
+<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
+<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
+<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
+<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
+<p><strong>DML 语句和 DDL 语句区别：</strong></p>
+<ul>
+<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
+<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
+</ul>
+<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
+<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
+<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
+<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
+<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
+<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
+<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
+<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章总结来源：</p>
+<ul>
+<li><p><strong><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></strong></p>
+</li>
+<li><p><strong><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></strong></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据库</category>
+      </categories>
+      <tags>
+        <tag>基础知识</tag>
       </tags>
   </entry>
   <entry>
@@ -6880,163 +7037,6 @@
       <tags>
         <tag>开源项目</tag>
         <tag>学习经验</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>数据库基础知识</title>
-    <url>/post/1ad06ab1/</url>
-    <content><![CDATA[<h2 id="什么是数据库-数据库管理系统-数据库系统-数据库管理员"><a href="#什么是数据库-数据库管理系统-数据库系统-数据库管理员" class="headerlink" title="什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?"></a>什么是数据库, 数据库管理系统, 数据库系统, 数据库管理员?</h2><p><strong>数据库</strong> : 数据库(DataBase 简称 DB)就是信息的集合或者说数据库是由数据库管理系统管理的数据的集合。</p>
-<p><strong>数据库管理系统</strong> : 数据库管理系统(Database Management System 简称 DBMS)是一种操纵和管理数据库的大型软件，通常用于建立、使用和维护数据库。</p>
-<p><strong>数据库系统</strong> : 数据库系统(Data Base System，简称 DBS)通常由软件、数据库和数据管理员(DBA)组成。</p>
-<p><strong>数据库管理员</strong> : 数据库管理员(Database Administrator, 简称 DBA)负责全面管理和控制数据库系统。</p>
-<span id="more"></span>
-<p>数据库系统基本构成如下图所示：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/e21120184e63406526a4e873cacd23f2.png" alt="数据库系统基本构成"></p>
-<h2 id="什么是元组-码-候选码-主码-外码-主属性-非主属性？"><a href="#什么是元组-码-候选码-主码-外码-主属性-非主属性？" class="headerlink" title="什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？"></a>什么是元组, 码, 候选码, 主码, 外码, 主属性, 非主属性？</h2><p><strong>元组</strong> ： 元组（tuple）是关系数据库中的基本概念，关系是一张表，表中的每行（即数据库中的每条记录）就是一个元组，每列就是一个属性。 在二维表里，元组也称为行。</p>
-<p><strong>码</strong> ：码就是能唯一标识实体的属性，对应表中的列。</p>
-<p><strong>候选码</strong> ： 若关系中的某一属性或属性组的值能唯一的标识一个元组，而其任何、子集都不能再标识，则称该属性组为候选码。</p>
-<blockquote>
-<p>例如：在学生实体中，“学号”是能唯一的区分学生实体的，同时又假设“姓名”、“班级”的属性组合足以区分学生实体，那么{学号}和{姓名，班级}都是候选码。</p>
-</blockquote>
-<p><strong>主码</strong> : 主码也叫主键。主码是从候选码中选出来的。 一个实体集中只能有一个主码，但可以有多个候选码。</p>
-<p><strong>外码</strong> : 外码也叫外键。如果一个关系中的一个属性是另外一个关系中的主码则这个属性为外码。</p>
-<p><strong>主属性</strong> ： 候选码中出现过的属性称为主属性。</p>
-<blockquote>
-<p>比如关系 工人（工号，身份证号，姓名，性别，部门）， 显然工号和身份证号都能够唯一标示这个关系，所以都是候选码。工号、身份证号这两个属性就是主属性。如果主码是一个属性组，那么属性组中的属性都是主属性。</p>
-</blockquote>
-<p><strong>非主属性：</strong> 不包含在任何一个候选码中的属性称为非主属性。</p>
-<blockquote>
-<p>比如关系 学生（学号，姓名，年龄，性别，班级）中，主码是“学号”，那么其他的“姓名”、“年龄”、“性别”、“班级”就都可以称为非主属性。</p>
-</blockquote>
-<h2 id="主键和外键有什么区别"><a href="#主键和外键有什么区别" class="headerlink" title="主键和外键有什么区别?"></a>主键和外键有什么区别?</h2><ul>
-<li><strong>主键(主码)</strong> ：主键用于唯一标识一个元组，不能有重复，不允许为空。一个表只能有一个主键。</li>
-<li><strong>外键(外码)</strong> ：外键用来和其他表建立联系用，外键是另一表的主键，外键是可以有重复的，可以是空值。一个表可以有多个外键。</li>
-</ul>
-<h2 id="为什么不推荐使用外键与级联"><a href="#为什么不推荐使用外键与级联" class="headerlink" title="为什么不推荐使用外键与级联?"></a>为什么不推荐使用外键与级联?</h2><p>对于外键和级联，阿里巴巴开发手册这样说到：</p>
-<p>【强制】不得使用外键与级联，一切外键概念必须在应用层解决。</p>
-<p>​        说明：以学生和成绩的关系为例，学生表中的 student_id 是主键，那么成绩表中的 student_id 则为外键。如果更新学生表中的 student_id，同时触发成绩表中的 student_id 更新，即为级联更新。<strong>外键与级联更新适用于单机低并发，不适合分布式、高并发集群</strong>；<strong>级联更新是强阻塞，存在数据库更新风暴的风险</strong>；<strong>外键影响数据库的插入速度</strong>。</p>
-<p>为什么不要用外键呢？大部分人可能会这样回答：</p>
-<ol>
-<li><strong>增加了复杂性：</strong> a. 每次做DELETE 或者UPDATE都必须考虑外键约束，会导致开发的时候很痛苦，测试数据极为不方便；b. 外键的主从关系是定的，假如那天需求有变化，数据库中的这个字段根本不需要和其他表有关联的话就会增加很多麻烦。</li>
-<li><strong>增加了额外工作</strong>： 数据库需要增加维护外键的工作，比如当我们做一些涉及外键字段的增、删、更新操作之后，需要触发相关操作去检查，保证数据的的一致性和正确性，这样会不得不消耗资源；（个人觉得这个不是不用外键的原因，因为即使你不使用外键，你在应用层面也还是要保证的。所以，我觉得这个影响可以忽略不计。）</li>
-<li>外键还会因为需要请求对其他表内部加锁而容易出现死锁情况；</li>
-<li><strong>对分库分表不友好</strong> ：因为分库分表下外键是无法生效的。</li>
-<li>……</li>
-</ol>
-<p>我个人觉得上面这种回答不是特别的全面，只是说了外键存在的一个常见的问题。实际上，我们知道外键也是有很多好处的，比如：</p>
-<ol>
-<li>保证了数据库数据的一致性和完整性；</li>
-<li>级联操作方便，减轻了程序代码量；</li>
-<li>……</li>
-</ol>
-<p>所以说，不要一股脑的就抛弃了外键这个概念，既然它存在就有它存在的道理，如果系统不涉及分库分表，并发量不是很高的情况还是可以考虑使用外键的。</p>
-<h2 id="什么是-ER-图？"><a href="#什么是-ER-图？" class="headerlink" title="什么是 ER 图？"></a>什么是 ER 图？</h2><p>做一个项目的时候一定要试着画 ER 图来捋清数据库设计，这个也是面试官问你项目的时候经常会被问道的。</p>
-<p><strong>E-R 图</strong> 也称实体-联系图(Entity Relationship Diagram)，提供了表示实体类型、属性和联系的方法，用来描述现实世界的概念模型。 它是描述现实世界关系概念模型的有效方法。 是表示概念关系模型的一种方式。</p>
-<p>下图是一个学生选课的 ER 图，每个学生可以选若干门课程，同一门课程也可以被若干人选择，所以它们之间的关系是<strong>多对多（M: N）</strong>。另外，还有其他两种关系是：<strong>1 对 1（1:1）</strong>、<strong>1 对多（1: N）</strong>。</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/4717673e36966e0e4b33fccfd753f6ea.png" alt="ER图示例"></p>
-<p>试着将上面的 ER 图转换成数据库实际的关系模型（实际设计中，我们通常会将任课教师也作为一个实体来处理）：</p>
-<p><img src="https://img-blog.csdnimg.cn/img_convert/5897753dfb301dfa3a814ab06e718a5e.png" alt="关系模型"></p>
-<h2 id="数据库范式了解吗"><a href="#数据库范式了解吗" class="headerlink" title="数据库范式了解吗?"></a>数据库范式了解吗?</h2><h3 id="1NF-第一范式"><a href="#1NF-第一范式" class="headerlink" title="1NF(第一范式)"></a>1NF(第一范式)</h3><p>属性（对应于表中的字段）不能再被分割，也就是这个字段只能是一个值，不能再分为多个其他的字段了。<strong>1NF 是所有关系型数据库的最基本要求</strong> ，也就是说关系型数据库中创建的表一定满足第一范式。</p>
-<h3 id="2NF-第二范式"><a href="#2NF-第二范式" class="headerlink" title="2NF(第二范式)"></a>2NF(第二范式)</h3><p>2NF 在 1NF 的基础之上，<strong>消除了非主属性对于码的部分函数依赖</strong>。</p>
-<blockquote>
-<p>表：学号、课程号、姓名、学分</p>
-</blockquote>
-<p>这个表明显说明了两个事务：学生信息，课程信息；由于非主键字段必须依赖主键，这里<strong>学分依赖课程号</strong>，<strong>姓名依赖与学号</strong>，所以不符合二范式。</p>
-<p><strong>可能会存在问题：</strong></p>
-<ul>
-<li>数据冗余：每条记录都含有相同信息；</li>
-<li>删除异常：删除所有学生成绩，就把课程信息全删除了；</li>
-<li>插入异常：学生未选课，无法记录进数据库；</li>
-<li>更新异常：调整课程学分，所有行都调整。</li>
-</ul>
-<p>解决办法：将不符合第二范式的数据库表进行拆分。</p>
-<p><strong>正确做法:</strong><br>学生：<code>Student</code>(学号, 姓名)；<br>课程：<code>Course</code>(课程号, 学分)；<br>选课关系：<code>StudentCourse</code>(学号, 课程号, 成绩)。</p>
-<h3 id="一些重要的概念"><a href="#一些重要的概念" class="headerlink" title="一些重要的概念"></a>一些重要的概念</h3><p><strong>函数依赖（Functional dependency）</strong>：若在一张表中，在属性（或属性组）X 的值确定的情况下，必定能确定属性 Y 的值，那么就可以说 Y 函数依赖于 X，写作 X → Y。</p>
-<p><strong>部分函数依赖（Partial functional dependency）</strong>：如果 X→Y，并且存在 X 的一个真子集 X<del>0</del>，使得 X<del>0</del>→Y，则称 Y 对 X 部分函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R 中（学号，身份证号，姓名）当然学号属性取值是唯一的，在 R 关系中，（学号，身份证号）-&gt;（姓名），（学号）-&gt;（姓名），（身份证号）-&gt;（姓名）；所以姓名部分函数依赖与（学号，身份证号）；</p>
-</blockquote>
-<p><strong>完全函数依赖（Full functional dependency）</strong>：在一个关系中，若某个非主属性数据项依赖于全部关键字称之为完全函数依赖。</p>
-<blockquote>
-<p>比如学生基本信息表 R（学号，班级，姓名）假设不同的班级学号有相同的，班级内学号不能相同，在 R 关系中，（学号，班级）-&gt;（姓名），但是（学号）-&gt; (姓名)不成立，（班级）-&gt; (姓名)不成立，所以姓名完全函数依赖与（学号，班级）；</p>
-</blockquote>
-<p><strong>传递函数依赖（Transitive functional dependency）</strong>： 在关系模式 R(U)中，设 X，Y，Z 是 U 的不同的属性子集，如果 X 确定 Y、Y 确定 Z，且有 X 不包含 Y，Y 不确定 X，（X∪Y）∩Z=空集合，则称 Z 传递函数依赖(transitive functional dependency) 于 X。传<strong>递函数依赖会导致数据冗余和异常</strong>。传递函数依赖的 Y 和 Z 子集往往同属于某一个事物，因此可将其合并放到一个表中。</p>
-<blockquote>
-<p>比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖。。</p>
-</blockquote>
-<p><strong>3NF(第三范式)</strong></p>
-<p>3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。符合 3NF 要求的数据库设计，<strong>基本</strong>上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。</p>
-<p><strong>总结</strong></p>
-<ul>
-<li>1NF：属性不可再分。</li>
-<li>2NF：1NF 的基础之上，消除了非主属性对于码的部分函数依赖。</li>
-<li>3NF：3NF 在 2NF 的基础之上，消除了非主属性对于码的传递函数依赖 。</li>
-</ul>
-<h3 id="反范式化"><a href="#反范式化" class="headerlink" title="反范式化"></a>反范式化</h3><p>没有冗余的数据库设计可以做到。但是，没有冗余的数据库未必是最好的数据库，有时为了提高运行效率，就必须降低范式标准，适当保留冗余数据。具体做法是：在概念数据模型设计时遵守第三范式，降低范式标准的工作放到物理数据模型设计时考虑。降低范式就是增加字段，允许冗余，<strong>达到以空间换时间的目的</strong>。</p>
-<p>〖例〗：如订单表，“金额”这个字段的存在，表明该表的设计不满足第三范式，因为“金额”可以由“单价”乘以“数量”得到，说明“金额”是冗余字段。但是，增加“金额”这个冗余字段，可以提高查询统计的速度，这就是以空间换时间的作法。</p>
-<p>在<code>Rose 2002</code>中，规定列有两种类型：<strong>数据列</strong>和<strong>计算列</strong>。“金额”这样的列被称为“计算列”，而“单价”和“数量”这样的列被称为“数据列”。</p>
-<h3 id="范式化设计和反范式化设计的优缺点"><a href="#范式化设计和反范式化设计的优缺点" class="headerlink" title="范式化设计和反范式化设计的优缺点"></a>范式化设计和反范式化设计的优缺点</h3><p><strong>范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以尽量的减少数据冗余</li>
-<li>数据表更新快体积小</li>
-<li>范式化的更新操作比反范式化更快</li>
-<li>范式化的表通常比反范式化更小</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>对于查询需要对多个表进行关联导致性能降低</li>
-<li>更难进行索引优化</li>
-</ul>
-<p><strong>反范式化</strong></p>
-<p>优点：</p>
-<ul>
-<li>可以减少表的关联</li>
-<li>可以更好的进行索引优化</li>
-</ul>
-<p>缺点：</p>
-<ul>
-<li>存在数据冗余及数据维护异常</li>
-<li>对数据的修改需要更多的成本</li>
-</ul>
-<h2 id="什么是存储过程"><a href="#什么是存储过程" class="headerlink" title="什么是存储过程?"></a>什么是存储过程?</h2><p>可以把存储过程看成是一些 <strong>SQL 语句的集合，中间加了点逻辑控制语句</strong>。存储过程在业务比较复杂的时候是非常实用的，比如很多时候我们完成一个操作可能需要写一大串 SQL 语句，这时候就可以写有一个存储过程，这样也方便了下一次的调用。存储过程一旦调试完成通过后就能稳定运行，另外，使用存储过程比单纯 SQL 语句执行要快，因为<strong>存储过程是预编译过的</strong>。</p>
-<p><strong>存储过程在互联网公司应用不多，因为存储过程难以调试和扩展，而且没有移植性，还会消耗数据库资源。</strong></p>
-<blockquote>
-<p>阿里巴巴 Java 开发手册里要求禁止使用存储过程。</p>
-<p>【强制】禁止使用存储过程，存储过程难以调试和扩展，更没有移植性。</p>
-</blockquote>
-<h2 id="drop、delete-与-truncate-区别？"><a href="#drop、delete-与-truncate-区别？" class="headerlink" title="drop、delete 与 truncate 区别？"></a>drop、delete 与 truncate 区别？</h2><h3 id="用法不同"><a href="#用法不同" class="headerlink" title="用法不同"></a>用法不同</h3><p><strong>drop（丢弃数据）</strong>：<code>drop table 表名</code> ，直接将表都删除掉，在删除表的时候使用。</p>
-<p><strong>truncate（清空数据）</strong>：<code>truncate table 表名</code> ，只删除表中的数据，再插入数据的时候自增长 id 又从 1 开始，在清空表中数据的时候使用。</p>
-<p><strong>delete（删除数据）</strong>：<code>delete from 表名 where 列名=值</code>，删除某一行的数据，如果不加 where 子句和<code>truncate table 表名</code>作用类似。</p>
-<p>truncate 和不带 where 子句的 delete、以及 drop 都会删除表内的数据，但是 <strong>truncate 和 delete 只删除数据不删除表的结构(定义)，执行 drop 语句，此表的结构也会删除，也就是执行 drop 之后对应的表不复存在。</strong></p>
-<h3 id="属于不同的数据库语言"><a href="#属于不同的数据库语言" class="headerlink" title="属于不同的数据库语言"></a>属于不同的数据库语言</h3><p>truncate 和 drop 属于 DDL(数据定义语言)语句，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。而 delete 语句是 DML (数据库操作语言)语句，这个操作会放到 rollback segement 中，事务提交之后才生效。</p>
-<p><strong>DML 语句和 DDL 语句区别：</strong></p>
-<ul>
-<li>DML 是数据库操作语言（Data Manipulation Language）的缩写，是指对数据库中表记录的操作，主要包括表记录的插入（insert）、更新（update）、删除（delete）和查询（select），是开发人员日常使用最频繁的操作。</li>
-<li>DDL 是数据定义语言（Data Definition Language）的缩写，简单来说，就是对数据库内部的对象进行创建、删除、修改的操作语言。它和 DML 语言的最大区别是 DML 只是对表内部数据的操作，而不涉及到表的定义、结构的修改，更不会涉及到其他对象。DDL 语句更多的被数据库管理员（DBA）所使用，一般的开发人员很少使用。</li>
-</ul>
-<h3 id="执行速度不同"><a href="#执行速度不同" class="headerlink" title="执行速度不同"></a>执行速度不同</h3><p>一般来说：drop&gt;truncate&gt;delete</p>
-<h2 id="数据库设计通常分为哪几步"><a href="#数据库设计通常分为哪几步" class="headerlink" title="数据库设计通常分为哪几步?"></a>数据库设计通常分为哪几步?</h2><ol>
-<li><strong>需求分析</strong>：分析用户的需求，包括数据、功能和性能需求。</li>
-<li><strong>概念结构设计</strong>：主要采用 E-R 模型进行设计，包括画 E-R 图。</li>
-<li><strong>逻辑结构设计</strong>：通过将 E-R 图转换成表，实现从 E-R 模型到关系模型的转换。</li>
-<li><strong>物理结构设计</strong>：主要是为所设计的数据库选择合适的存储结构和存取路径。</li>
-<li><strong>数据库实施</strong>：包括编程、测试和试运行。</li>
-<li><strong>数据库的运行和维护</strong>：系统的运行与数据库的日常维护。</li>
-</ol>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章总结来源：</p>
-<ul>
-<li><p><strong><a href="https://javaguide.cn/database/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%8C%83%E5%BC%8F%E4%BA%86%E8%A7%A3%E5%90%97">数据库基础知识</a></strong></p>
-</li>
-<li><p><strong><a href="https://segmentfault.com/a/1190000013695030">数据库逻辑设计之三大范式通俗理解，一看就懂，书上说的太晦涩</a></strong></p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据库</category>
-      </categories>
-      <tags>
-        <tag>基础知识</tag>
       </tags>
   </entry>
   <entry>
@@ -7533,128 +7533,6 @@
       </tags>
   </entry>
   <entry>
-    <title>跳表</title>
-    <url>/post/2e152a56/</url>
-    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E8%B7%B3%E8%B7%83%E5%88%97%E8%A1%A8">跳跃列表</a> 的查找、插入、删除的时间复杂度都是 O(logn)，而且可以按照范围区间查找元素，当工作中遇到某些场景时，需要想到可以使用跳表解决问题即可。毕竟平时的工作都是直接使用封装好的跳表，例如：java.util.concurrent 下的 ConcurrentSkipListMap()。</p>
-<span id="more"></span>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="理解跳表，从单链表开始说起"><a href="#理解跳表，从单链表开始说起" class="headerlink" title="理解跳表，从单链表开始说起"></a>理解跳表，从单链表开始说起</h3><p>下图是一个简单的<strong>有序单链表</strong>，单链表的特性就是每个元素存放下一个元素的引用。即：通过第一个元素可以找到第二个元素，通过第二个元素可以找到第三个元素，依次类推，直到找到最后一个元素。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115621197.png" style="zoom:67%;" />
-
-<p>现在我们有个场景，想快速找到上图链表中的 10 这个元素，只能从头开始遍历链表，直到找到我们需要找的元素。查找路径：1、3、4、5、7、8、9、10。这样的查找效率很低，平均时间复杂度很高O(n)。那有没有办法提高链表的查找速度呢？如下图所示，我们从链表中每两个元素抽出来，加一级索引，一级索引指向了原始链表，即：通过一级索引 7 的down指针可以找到原始链表的 7 。那现在怎么查找 10 这个元素呢？</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115700024.png" style="zoom:67%;" />
-
-<p>先在索引找 1、4、7、9，遍历到一级索引的 9 时，发现 9 的后继节点是 13，比 10 大，于是不往后找了，而是通过 9 找到原始链表的 9，然后再往后遍历找到了我们要找的 10，遍历结束。有没有发现，加了一级索引后，查找路径：1、4、7、9、10，查找节点需要遍历的元素相对少了，我们不需要对 10 之前的所有数据都遍历，查找的效率提升了。</p>
-<p>那如果加二级索引呢？如下图所示，查找路径：1、7、9、10。是不是找 10 的效率更高了？这就是跳表的思想，用“空间换时间”，通过给链表建立索引，提高了查找的效率。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115735116.png" style="zoom:67%;" />
-
-<p>可能同学们会想，从上面案例来看，提升的效率并不明显，本来需要遍历8个元素，优化了半天，还需要遍历 4 个元素，其实是因为我们的数据量太少了，当数据量足够大时，效率提升会很大。如下图所示，假如有序单链表现在有1万个元素，分别是 0~9999。现在我们建了很多级索引，最高级的索引，就两个元素 0、5000，次高级索引四个元素 0、2500、5000、7500，依次类推，当我们查找 7890 这个元素时，查找路径为 0、5000、7500 … 7890，通过最高级索引直接跳过了5000个元素，次高层索引直接跳过了2500个元素，<strong>从而使得链表能够实现二分查找</strong>。由此可以看出，当元素数量较多时，索引提高的效率比较大，近似于二分查找。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115830967.png" style="zoom:67%;" />
-
-<p>到这里大家应该已经明白了什么是跳表。跳表是<strong>可以实现二分查找的有序链表</strong>。</p>
-<h2 id="操作-amp-时空复杂度分析"><a href="#操作-amp-时空复杂度分析" class="headerlink" title="操作 &amp; 时空复杂度分析"></a>操作 &amp; 时空复杂度分析</h2><h3 id="查找数据"><a href="#查找数据" class="headerlink" title="查找数据"></a>查找数据</h3><p>既然跳表可以提升链表查找元素的效率，那查找一个元素的时间复杂度到底是多少呢？查找元素的过程是从最高级索引开始，一层一层遍历最后下沉到原始链表。所以，时间复杂度 = 索引的高度 * 每层索引遍历元素的个数。</p>
-<p>先来求跳表的索引高度。如下图所示，假设每两个结点会抽出一个结点作为上一级索引的结点，原始的链表有n个元素，则一级索引有n/2 个元素、二级索引有 n/4 个元素、k级索引就有 n/2<sup>k</sup>个元素。最高级索引一般有2个元素，即：最高级索引 h 满足 2 = n/2<sup>h</sup>，即 h = log2<sup>n</sup> - 1，最高级索引 h 为索引层的高度加上原始数据一层，跳表的总高度 h = log2<sup>n</sup>。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120216604.png" style="zoom:67%;" />
-
-<p>我们看上图中加粗的箭头，表示查找元素 x 的路径，那查找过程中每一层索引最多遍历几个元素呢？</p>
-<p>图中所示，现在到达第 k 级索引，我们发现要查找的元素 x 比 y 大比 z 小，所以，我们需要从 y 处下降到 k-1 级索引继续查找，k-1级索引中比 y 大比 z 小的只有一个 w，所以在 k-1 级索引中，我们遍历的元素最多就是 y、w、z，发现 x 比 w大比 z 小之后，再下降到 k-2 级索引。所以，k-2 级索引最多遍历的元素为 w、u、z。其实每级索引都是类似的道理，每级索引中都是两个结点抽出一个结点作为上一级索引的结点。 现在我们得出结论：当每级索引都是两个结点抽出一个结点作为上一级索引的结点时，每一层最多遍历3个结点。</p>
-<p>跳表的索引高度 h = log2<sup>n</sup>，且每层索引最多遍历 3 个元素。所以跳表中查找一个元素的时间复杂度为 <code>O(3*logn)</code>，省略常数即：<code>O(logn)</code>。</p>
-<h3 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h3><p>跳表通过建立索引，来提高查找元素的效率，就是典型的“<strong>空间换时间</strong>”的思想，所以在空间上做了一些牺牲，那空间复杂度到底是多少呢？</p>
-<p>假如原始链表包含 n 个元素，则一级索引元素个数为 n/2、二级索引元素个数为 n/4、三级索引元素个数为 n/8 以此类推。所以，索引节点的总和是：n/2 + n/4 + n/8 + … + 8 + 4 + 2 = n-2，空间复杂度是 <code>O(n)</code>。</p>
-<p>如下图所示：如果每三个结点抽一个结点做为索引，索引总和数就是 n/3 + n/9 + n/27 + … + 9 + 3 + 1= n/2，减少了一半。所以我们可以通过较少索引数来减少空间复杂度，但是相应的肯定会造成查找效率有一定下降，我们可以根据我们的应用场景来控制这个阈值，看我们更注重时间还是空间。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120715377.png" style="zoom:67%;" />
-
-<p>但是，索引结点往往只需要存储 key 和几个指针，并不需要存储完整的对象，所以当对象比索引结点大很多时，索引占用的额外空间就可以忽略了。举个例子：我们现在需要用跳表来给所有学生建索引，学生有很多属性：学号、姓名、性别、身份证号、年龄、家庭住址、身高、体重等。学生的各种属性只需要在原始链表中存储一份即可，我们只需要用学生的学号（int 类型的数据）建立索引，所以索引相对原始数据而言，占用的空间可以忽略。</p>
-<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><p>插入数据看起来也很简单，跳表的原始链表需要保持有序，所以我们会向查找元素一样，找到元素应该插入的位置。如下图所示，要插入数据6，整个过程类似于查找6，整个的查找路径为 1、1、1、4、4、5。查找到第底层原始链表的元素 5 时，发现 5 小于 6 但是后继节点 7 大于 6，所以应该把 6 插入到 5 之后 7 之前。整个时间复杂度为查找元素的时间复杂度 <code>O(logn)</code>。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120902084.png" style="zoom:67%;" />
-
-<p>如下图所示，假如一直往原始列表中添加数据，但是不更新索引，就可能出现两个索引节点之间数据非常多的情况，极端情况，跳表退化为单链表，从而使得查找效率从 O(logn) 退化为 O(n)。那这种问题该怎么解决呢？我们需要在插入数据的时候，索引节点也需要相应的增加、或者重建索引，来避免查找效率的退化。那我们该如何去维护这个索引呢？</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208121034389.png" style="zoom:67%;" />
-
-<p>比较容易理解的做法就是完全重建索引，我们每次插入数据后，都把这个跳表的索引删掉全部重建，重建索引的时间复杂度是多少呢？因为索引的空间复杂度是 O(n)，即：索引节点的个数是 O(n) 级别，每次完全重新建一个 O(n) 级别的索引，时间复杂度也是 O(n) 。造成的后果是：为了维护索引，导致每次插入数据的时间复杂度变成了 O(n)。</p>
-<p>那有没有其他效率比较高的方式来维护索引呢？假如跳表每一层的晋升概率是 1/2，最理想的索引就是在原始链表中每隔一个元素抽取一个元素做为一级索引。换种说法，<strong>我们在原始链表中随机的选 n/2 个元素做为一级索引是不是也能通过索引提高查找的效率呢？</strong> 当然可以了，因为一般随机选的元素相对来说都是比较均匀的。如下图所示，随机选择了n/2 个元素做为一级索引，虽然不是每隔一个元素抽取一个，但是对于查找效率来讲，影响不大，比如我们想找元素 16，仍然可以通过一级索引，使得遍历路径较少了将近一半。如果抽取的一级索引的元素恰好是前一半的元素 1、3、4、5、7、8，那么查找效率确实没有提升，但是这样的概率太小了。我们可以认为：当原始链表中<strong>元素数量足够大</strong>，且<strong>抽取足够随机</strong>的话，我们得到的索引是均匀的。我们要清楚设计良好的数据结构都是为了应对大数据量的场景，如果原始链表只有 5 个元素，那么依次遍历 5 个元素也没有关系，因为数据量太少了。所以，我们可以维护一个这样的索引：<strong>随机选 n/2 个元素做为一级索引、随机选 n/4 个元素做为二级索引、随机选 n/8 个元素做为三级索引，依次类推，一直到最顶层索引</strong>。这里每层索引的元素个数已经确定，且每层索引元素选取的足够随机，所以可以通过索引来提升跳表的查找效率。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208121650431.png" style="zoom:67%;" />
-
-<p>那代码该如何实现，才能使跳表满足上述这个样子呢？可以在每次新插入元素的时候，尽量让该元素有 1/2 的几率建立一级索引、1/4 的几率建立二级索引、1/8 的几率建立三级索引，以此类推，就能满足我们上面的条件。现在我们就需要一个概率算法帮我们把控这个 1/2、1/4、1/8 … ，<strong>当每次有数据要插入时，先通过概率算法告诉我们这个元素需要插入到几级索引中</strong>，然后开始维护索引并把数据插入到原始链表中。下面开始讲解这个概率算法代码如何实现。</p>
-<p>我们可以实现一个 <code>randomLevel()</code> 方法，该方法会随机生成 <code>1~MAX_LEVEL</code> 之间的数（<code>MAX_LEVEL</code>表示索引的最高层数），且该方法<strong>有 1/2 的概率返回 1、1/4 的概率返回 2、1/8的概率返回 3，以此类推</strong>。</p>
-<ul>
-<li><code>randomLevel()</code> 方法返回 1 表示当前插入的该元素不需要建索引，只需要存储数据到原始链表即可（概率 1/2）</li>
-<li><code>randomLevel()</code> 方法返回 2 表示当前插入的该元素需要建一级索引（概率 1/4）</li>
-<li><code>randomLevel()</code> 方法返回 3 表示当前插入的该元素需要建二级索引（概率 1/8）</li>
-<li><code>randomLevel()</code> 方法返回 4 表示当前插入的该元素需要建三级索引（概率 1/16）</li>
-<li>…（以此类推）</li>
-</ul>
-<p>所以，通过 <code>randomLevel()</code> 方法，我们可以控制整个跳表各级索引中元素的个数。<strong>重点来了</strong>：<code>randomLevel()</code> 方法返回 2 的时候会建立一级索引，我们想要一级索引中元素个数占原始数据的 1/2，但是 <code>randomLevel()</code> 方法返回 2 的概率为 1/4，那是不是有矛盾呢？明明说好的 1/2，结果一级索引元素个数怎么变成了原始链表的 1/4？我们先看下图，应该就明白了。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208122204227.png" style="zoom:67%;" />
-
-<p>假设我们在插入元素 6 的时候，<code>randomLevel()</code> 方法返回 1，则我们不会为 6 建立索引。插入 7 的时候，<code>randomLevel()</code> 方法返回3 ，所以我们需要为元素 7 建立二级索引。这里我们发现了一个特点：当建立二级索引的时候，同时也会建立一级索引；当建立三级索引时，同时也会建立一级、二级索引。所以，一级索引中元素的个数等于 [ 原始链表元素个数 ] * [ <code>randomLevel()</code> 方法返回值 &gt; 1 的概率 ]。因为 <code>randomLevel()</code> 方法返回值 &gt; 1就会建索引，凡是建索引，无论几级索引必然有一级索引，<strong>所以一级索引中元素个数占原始数据个数的比率为 randomLevel() 方法返回值 &gt; 1 的概率</strong>。那 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率是多少呢？因为 <code>randomLevel()</code> 方法随机生成 <code>1~MAX_LEVEL</code> 的数字，且 <code>randomLevel()</code> 方法返回值 1 的概率为 1/2，则 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率为 1 - 1/2 = 1/2。即<strong>通过上述流程实现了一级索引中元素个数占原始数据个数的 1/2</strong>。</p>
-<p>同理，当 <code>randomLevel()</code> 方法返回值 &gt; 2 时，会建立二级或二级以上索引，都会在二级索引中增加元素，因此<strong>二级索引中元素个数占原始数据的比率为 randomLevel() 方法返回值 &gt; 2 的概率</strong>。 <code>randomLevel()</code> 方法返回值 &gt; 2 的概率为 1 减去 <code>randomLevel()</code> = 1 或 =2 的概率，即 1 - 1/2 - 1/4 = 1/4。OK，达到了我们设计的目标：<strong>二级索引中元素个数占原始数据的 1/4</strong>。</p>
-<p>以此类推，可以得出，遵守以下两个条件：</p>
-<ul>
-<li><code>randomLevel()</code> 方法，随机生成 <code>1~MAX_LEVEL</code> 之间的数（<code>MAX_LEVEL</code>表示索引的最高层数），且<strong>有 1/2的概率返回 1、1/4的概率返回 2、1/8的概率返回 3 …</strong></li>
-<li><code>randomLevel()</code> 方法返回 1 不建索引、返回 2 建一级索引、返回 3 建二级索引、返回 4 建三级索引 …</li>
-</ul>
-<p>就可以满足我们想要的结果，即：一级索引中元素个数应该占原始数据的 1/2，二级索引中元素个数占原始数据的 1/4，三级索引中元素个数占原始数据的 1/8 ，依次类推，一直到最顶层索引。</p>
-<p>但是问题又来了，怎么设计这么一个 <code>randomLevel()</code> 方法呢？直接撸代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 该 randomLevel 方法会随机生成 1~MAX_LEVEL 之间的数，且 ：</span></span><br><span class="line"><span class="comment">//        1/2 的概率返回 1</span></span><br><span class="line"><span class="comment">//        1/4 的概率返回 2</span></span><br><span class="line"><span class="comment">//        1/8 的概率返回 3 以此类推</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">randomLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> level = <span class="number">1</span>;</span><br><span class="line">  <span class="comment">// 当 level &lt; MAX_LEVEL，且随机数小于设定的晋升概率时，level + 1</span></span><br><span class="line">  <span class="keyword">while</span> (Math.random() &lt; SKIPLIST_P &amp;&amp; level &lt; MAX_LEVEL)</span><br><span class="line">    level += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> level;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述代码可以实现我们的功能，而且，我们的案例中晋升概率 SKIPLIST_P 设置的 1/2，即：每两个结点抽出一个结点作为上一级索引的结点。如果我们想节省空间利用率，可以适当的降低代码中的 SKIPLIST_P，从而减少索引元素个数，Redis 的 zset 中 SKIPLIST_P 设定的 0.25。下图所示，是Redis <a href="https://github.com/redis/redis/blob/unstable/src/t_zset.c">t_zset.c</a> 中 zslRandomLevel 函数的实现：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Returns a random level for the new skiplist node we are going to create.</span></span><br><span class="line"><span class="comment"> * The return value of this function is between 1 and ZSKIPLIST_MAXLEVEL</span></span><br><span class="line"><span class="comment"> * (both inclusive), with a powerlaw-alike distribution where higher</span></span><br><span class="line"><span class="comment"> * levels are less likely to be returned. */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">zslRandomLevel</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> level = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> ((random()&amp;<span class="number">0xFFFF</span>) &lt; (ZSKIPLIST_P * <span class="number">0xFFFF</span>))</span><br><span class="line">        level += <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (level&lt;ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Redis 源码中 <code>(random()&amp;0xFFFF) &lt; (ZSKIPLIST_P * 0xFFFF)</code>  在功能上等价于我代码中的 <code>Math.random() &lt; SKIPLIST_P</code> ，只不过 Redis 作者 <a href="https://github.com/antirez">antirez</a> 使用位运算来提高浮点数比较的效率。</p>
-<p>整体思路大家应该明白了，那插入数据时维护索引的时间复杂度是多少呢？元素插入到单链表的时间复杂度为 <code>O(1)</code>，我们索引的高度最多为 <code>logn</code>，当插入一个元素 x 时，最坏的情况就是元素 x 需要插入到每层索引中，所以插入数据到各层索引中，最坏时间复杂度是 <code>O(logn)</code>。</p>
-<p>过程大概理解了，再通过一个例子描述一下跳表插入数据的全流程。现在我们要插入数据 6 到跳表中，首先 randomLevel() 返回 3，表示<strong>需要建二级索引</strong>，即：一级索引和二级索引需要增加元素 6。该跳表目前最高三级索引，首先找到三级索引的 1，发现 6 比 1大比 13小，所以，从 1 下沉到二级索引。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125241674.png" style="zoom:67%;" />
-
-<p>下沉到二级索引后，发现 6 比 1 大比 7 小，此时需要在二级索引中 1 和 7 之间加一个元素6 ，并从元素 1 继续下沉到一级索引。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125308947.png" style="zoom:67%;" />
-
-<p>下沉到一级索引后，发现 6 比 1 大比 4 大，所以往后查找，发现 6 比 4 大比 7 小，此时需要在一级索引中 4 和 7 之间加一个元素 6 ，并把二级索引的 6 指向 一级索引的 6，最后，从元素 4 继续下沉到原始链表。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125342542.png" style="zoom:67%;" />
-
-<p>下沉到原始链表后，就比较简单了，发现 4、5 比 6小，7比6大，所以将6插入到 5 和 7 之间即可，整个插入过程结束。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125414593.png" style="zoom:67%;" />
-
-<p>整个插入过程的路径与查找元素路径类似， 每层索引中插入元素的时间复杂度 <code>O(1)</code>，所以整个插入的时间复杂度是 <code>O(logn)</code>。</p>
-<h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><p>跳表删除数据时，要把索引中对应节点也要删掉。如下图所示，如果要删除元素 9，需要把原始链表中的 9 和第一级索引的 9 都删除掉。</p>
-<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125528595.png" style="zoom:67%;" />
-
-<p>跳表中，删除元素的时间复杂度是多少呢？</p>
-<p>删除元素的过程跟查找元素的过程类似，只不过在查找的路径上如果发现了要删除的元素 x，则执行删除操作。跳表中，每一层索引其实都是一个有序的单链表，单链表删除元素的时间复杂度为 <code>O(1)</code>，索引层数为 <code>logn</code> 表示最多需要删除 <code>logn</code> 个元素，所以删除元素的总时间包含 <em>查找元素的时间</em> 加 <em>删除 logn个元素的时间</em> 为 <code>O(logn) + O(logn) = 2 O(logn)</code>，忽略常数部分，删除元素的时间复杂度为 <code>O(logn)</code>。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ol>
-<li>跳表是可以实现二分查找的有序链表；</li>
-<li>每个元素插入时随机生成它的 level；</li>
-<li>最底层包含所有的元素；</li>
-<li>如果一个元素出现在 <code>level(x)</code>，那么它肯定出现在 x 以下的 level中；</li>
-<li>每个索引节点包含两个指针，一个向下，一个向右；（笔记目前看过的各种跳表源码实现包括Redis 的zset 都没有向下的指针，那怎么从二级索引跳到一级索引呢？留个悬念，看源码吧，文末有跳表实现源码）</li>
-<li>跳表查询、插入、删除的时间复杂度为O(log n)，与平衡二叉树接近；</li>
-</ol>
-<h2 id="为什么Redis选择使用跳表而不是红黑树来实现有序集合？"><a href="#为什么Redis选择使用跳表而不是红黑树来实现有序集合？" class="headerlink" title="为什么Redis选择使用跳表而不是红黑树来实现有序集合？"></a>为什么Redis选择使用跳表而不是红黑树来实现有序集合？</h2><p>Redis 中的有序集合(<code>zset</code>) 支持的操作：</p>
-<ol>
-<li>插入一个元素</li>
-<li>删除一个元素</li>
-<li>查找一个元素</li>
-<li>有序输出所有元素</li>
-<li>按照范围区间查找元素（比如查找值在 [100, 356] 之间的数据）</li>
-</ol>
-<p>其中，前四个操作红黑树也可以完成，且时间复杂度跟跳表是一样的。但是，按照区间来查找数据这个操作，红黑树的效率没有跳表高。按照区间查找数据时，跳表可以做到 <code>O(logn)</code> 的时间复杂度定位区间的起点，然后在原始链表中顺序往后遍历就可以了，非常高效。</p>
-<h2 id="工业上其他使用跳表的场景"><a href="#工业上其他使用跳表的场景" class="headerlink" title="工业上其他使用跳表的场景"></a>工业上其他使用跳表的场景</h2><p>在博客上从来没有见过有同学讲述 HBase MemStore 的数据结构，其实 HBase MemStore 内部存储数据就使用的跳表。为什么呢？HBase 属于 LSM Tree 结构的数据库，LSM Tree 结构的数据库有个特点，实时写入的数据先写入到内存，内存达到阈值往磁盘 flush 的时候，会生成类似于 StoreFile 的<strong>有序文件</strong>，而跳表恰好就是天然有序的，所以在 flush 的时候效率很高，而且跳表查找、插入、删除性能都很高，这应该是 HBase MemStore 内部存储数据使用跳表的原因之一。HBase 使用的是 <code>java.util.concurrent</code> 下的 <code>ConcurrentSkipListMap()</code>。</p>
-<p>Google 开源的 <code>key/value</code> 存储引擎 LevelDB 以及 Facebook 基于 LevelDB 优化的 RocksDB 都是 LSM Tree 结构的数据库，他们内部的 MemTable 都是使用了跳表这种数据结构。</p>
-<h2 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h2><p><a href="https://github.com/redis/redis/blob/unstable/src/t_zset.c">Redis zset源码</a></p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
-<ul>
-<li><strong><a href="https://www.jianshu.com/p/9d8296562806">Skip List–跳表（全网最详细的跳表文章没有之一）</a></strong></li>
-</ul>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>跳表</tag>
-        <tag>双向链表</tag>
-        <tag>链表</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>贪心</title>
     <url>/post/34811d5f/</url>
     <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><strong>贪心法</strong>，又称<a href="https://zh.wikipedia.org/wiki/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95"><strong>贪心算法</strong></a>、<strong>贪婪算法</strong>、或称<strong>贪婪法</strong>，是一种在每一步选择中都采取在当前状态下最好或最优（即最有利）的选择，从而希望导致结果是最好或最优的算法。比如在旅行推销员问题中，如果旅行员每次都选择最近的城市，那这就是一种贪心算法。</p>
@@ -7805,6 +7683,134 @@
       </tags>
   </entry>
   <entry>
+    <title>跳表</title>
+    <url>/post/2e152a56/</url>
+    <content><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="https://zh.wikipedia.org/wiki/%E8%B7%B3%E8%B7%83%E5%88%97%E8%A1%A8">跳跃列表</a> 的查找、插入、删除的时间复杂度都是 O(logn)，而且可以按照范围区间查找元素，当工作中遇到某些场景时，需要想到可以使用跳表解决问题即可。毕竟平时的工作都是直接使用封装好的跳表，例如：java.util.concurrent 下的 ConcurrentSkipListMap()。</p>
+<span id="more"></span>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><h3 id="理解跳表，从单链表开始说起"><a href="#理解跳表，从单链表开始说起" class="headerlink" title="理解跳表，从单链表开始说起"></a>理解跳表，从单链表开始说起</h3><p>下图是一个简单的<strong>有序单链表</strong>，单链表的特性就是每个元素存放下一个元素的引用。即：通过第一个元素可以找到第二个元素，通过第二个元素可以找到第三个元素，依次类推，直到找到最后一个元素。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115621197.png" style="zoom:67%;" />
+
+<p>现在我们有个场景，想快速找到上图链表中的 10 这个元素，只能从头开始遍历链表，直到找到我们需要找的元素。查找路径：1、3、4、5、7、8、9、10。这样的查找效率很低，平均时间复杂度很高O(n)。那有没有办法提高链表的查找速度呢？如下图所示，我们从链表中每两个元素抽出来，加一级索引，一级索引指向了原始链表，即：通过一级索引 7 的down指针可以找到原始链表的 7 。那现在怎么查找 10 这个元素呢？</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115700024.png" style="zoom:67%;" />
+
+<p>先在索引找 1、4、7、9，遍历到一级索引的 9 时，发现 9 的后继节点是 13，比 10 大，于是不往后找了，而是通过 9 找到原始链表的 9，然后再往后遍历找到了我们要找的 10，遍历结束。有没有发现，加了一级索引后，查找路径：1、4、7、9、10，查找节点需要遍历的元素相对少了，我们不需要对 10 之前的所有数据都遍历，查找的效率提升了。</p>
+<p>那如果加二级索引呢？如下图所示，查找路径：1、7、9、10。是不是找 10 的效率更高了？这就是跳表的思想，用“空间换时间”，通过给链表建立索引，提高了查找的效率。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115735116.png" style="zoom:67%;" />
+
+<p>可能同学们会想，从上面案例来看，提升的效率并不明显，本来需要遍历8个元素，优化了半天，还需要遍历 4 个元素，其实是因为我们的数据量太少了，当数据量足够大时，效率提升会很大。如下图所示，假如有序单链表现在有1万个元素，分别是 0~9999。现在我们建了很多级索引，最高级的索引，就两个元素 0、5000，次高级索引四个元素 0、2500、5000、7500，依次类推，当我们查找 7890 这个元素时，查找路径为 0、5000、7500 … 7890，通过最高级索引直接跳过了5000个元素，次高层索引直接跳过了2500个元素，<strong>从而使得链表能够实现二分查找</strong>。由此可以看出，当元素数量较多时，索引提高的效率比较大，近似于二分查找。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208115830967.png" style="zoom:67%;" />
+
+<p>到这里大家应该已经明白了什么是跳表。跳表是<strong>可以实现二分查找的有序链表</strong>。</p>
+<h2 id="操作-amp-时空复杂度分析"><a href="#操作-amp-时空复杂度分析" class="headerlink" title="操作 &amp; 时空复杂度分析"></a>操作 &amp; 时空复杂度分析</h2><h3 id="查找数据"><a href="#查找数据" class="headerlink" title="查找数据"></a>查找数据</h3><p>既然跳表可以提升链表查找元素的效率，那查找一个元素的时间复杂度到底是多少呢？查找元素的过程是从最高级索引开始，一层一层遍历最后下沉到原始链表。所以，时间复杂度 = 索引的高度 * 每层索引遍历元素的个数。</p>
+<p>先来求跳表的索引高度。如下图所示，假设每两个结点会抽出一个结点作为上一级索引的结点，原始的链表有n个元素，则一级索引有n/2 个元素、二级索引有 n/4 个元素、k级索引就有 n/2<sup>k</sup>个元素。最高级索引一般有2个元素，即：最高级索引 h 满足 2 = n/2<sup>h</sup>，即 h = log2<sup>n</sup> - 1，最高级索引 h 为索引层的高度加上原始数据一层，跳表的总高度 h = log2<sup>n</sup>。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120216604.png" style="zoom:67%;" />
+
+<p>我们看上图中加粗的箭头，表示查找元素 x 的路径，那查找过程中每一层索引最多遍历几个元素呢？</p>
+<p>图中所示，现在到达第 k 级索引，我们发现要查找的元素 x 比 y 大比 z 小，所以，我们需要从 y 处下降到 k-1 级索引继续查找，k-1级索引中比 y 大比 z 小的只有一个 w，所以在 k-1 级索引中，我们遍历的元素最多就是 y、w、z，发现 x 比 w大比 z 小之后，再下降到 k-2 级索引。所以，k-2 级索引最多遍历的元素为 w、u、z。其实每级索引都是类似的道理，每级索引中都是两个结点抽出一个结点作为上一级索引的结点。 现在我们得出结论：当每级索引都是两个结点抽出一个结点作为上一级索引的结点时，每一层最多遍历3个结点。</p>
+<p>跳表的索引高度 h = log2<sup>n</sup>，且每层索引最多遍历 3 个元素。所以跳表中查找一个元素的时间复杂度为 <code>O(3*logn)</code>，省略常数即：<code>O(logn)</code>。</p>
+<h3 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h3><p>跳表通过建立索引，来提高查找元素的效率，就是典型的“<strong>空间换时间</strong>”的思想，所以在空间上做了一些牺牲，那空间复杂度到底是多少呢？</p>
+<p>假如原始链表包含 n 个元素，则一级索引元素个数为 n/2、二级索引元素个数为 n/4、三级索引元素个数为 n/8 以此类推。所以，索引节点的总和是：n/2 + n/4 + n/8 + … + 8 + 4 + 2 = n-2，空间复杂度是 <code>O(n)</code>。</p>
+<p>如下图所示：如果每三个结点抽一个结点做为索引，索引总和数就是 n/3 + n/9 + n/27 + … + 9 + 3 + 1= n/2，减少了一半。所以我们可以通过较少索引数来减少空间复杂度，但是相应的肯定会造成查找效率有一定下降，我们可以根据我们的应用场景来控制这个阈值，看我们更注重时间还是空间。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120715377.png" style="zoom:67%;" />
+
+<p>但是，索引结点往往只需要存储 key 和几个指针，并不需要存储完整的对象，所以当对象比索引结点大很多时，索引占用的额外空间就可以忽略了。举个例子：我们现在需要用跳表来给所有学生建索引，学生有很多属性：学号、姓名、性别、身份证号、年龄、家庭住址、身高、体重等。学生的各种属性只需要在原始链表中存储一份即可，我们只需要用学生的学号（int 类型的数据）建立索引，所以索引相对原始数据而言，占用的空间可以忽略。</p>
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><p>插入数据看起来也很简单，跳表的原始链表需要保持有序，所以我们会向查找元素一样，找到元素应该插入的位置。如下图所示，要插入数据6，整个过程类似于查找6，整个的查找路径为 1、1、1、4、4、5。查找到第底层原始链表的元素 5 时，发现 5 小于 6 但是后继节点 7 大于 6，所以应该把 6 插入到 5 之后 7 之前。整个时间复杂度为查找元素的时间复杂度 <code>O(logn)</code>。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208120902084.png" style="zoom:67%;" />
+
+<p>如下图所示，假如一直往原始列表中添加数据，但是不更新索引，就可能出现两个索引节点之间数据非常多的情况，极端情况，跳表退化为单链表，从而使得查找效率从 O(logn) 退化为 O(n)。那这种问题该怎么解决呢？我们需要在插入数据的时候，索引节点也需要相应的增加、或者重建索引，来避免查找效率的退化。那我们该如何去维护这个索引呢？</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208121034389.png" style="zoom:67%;" />
+
+<p>比较容易理解的做法就是完全重建索引，我们每次插入数据后，都把这个跳表的索引删掉全部重建，重建索引的时间复杂度是多少呢？因为索引的空间复杂度是 O(n)，即：索引节点的个数是 O(n) 级别，每次完全重新建一个 O(n) 级别的索引，时间复杂度也是 O(n) 。造成的后果是：为了维护索引，导致每次插入数据的时间复杂度变成了 O(n)。</p>
+<p>那有没有其他效率比较高的方式来维护索引呢？假如跳表每一层的晋升概率是 1/2，最理想的索引就是在原始链表中每隔一个元素抽取一个元素做为一级索引。换种说法，<strong>我们在原始链表中随机的选 n/2 个元素做为一级索引是不是也能通过索引提高查找的效率呢？</strong> 当然可以了，因为一般随机选的元素相对来说都是比较均匀的。如下图所示，随机选择了n/2 个元素做为一级索引，虽然不是每隔一个元素抽取一个，但是对于查找效率来讲，影响不大，比如我们想找元素 16，仍然可以通过一级索引，使得遍历路径较少了将近一半。如果抽取的一级索引的元素恰好是前一半的元素 1、3、4、5、7、8，那么查找效率确实没有提升，但是这样的概率太小了。我们可以认为：当原始链表中<strong>元素数量足够大</strong>，且<strong>抽取足够随机</strong>的话，我们得到的索引是均匀的。我们要清楚设计良好的数据结构都是为了应对大数据量的场景，如果原始链表只有 5 个元素，那么依次遍历 5 个元素也没有关系，因为数据量太少了。所以，我们可以维护一个这样的索引：<strong>随机选 n/2 个元素做为一级索引、随机选 n/4 个元素做为二级索引、随机选 n/8 个元素做为三级索引，依次类推，一直到最顶层索引</strong>。这里每层索引的元素个数已经确定，且每层索引元素选取的足够随机，所以可以通过索引来提升跳表的查找效率。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208121650431.png" style="zoom:67%;" />
+
+<p>那代码该如何实现，才能使跳表满足上述这个样子呢？可以在每次新插入元素的时候，尽量让该元素有 1/2 的几率建立一级索引、1/4 的几率建立二级索引、1/8 的几率建立三级索引，以此类推，就能满足我们上面的条件。现在我们就需要一个概率算法帮我们把控这个 1/2、1/4、1/8 … ，<strong>当每次有数据要插入时，先通过概率算法告诉我们这个元素需要插入到几级索引中</strong>，然后开始维护索引并把数据插入到原始链表中。下面开始讲解这个概率算法代码如何实现。</p>
+<p>我们可以实现一个 <code>randomLevel()</code> 方法，该方法会随机生成 <code>1~MAX_LEVEL</code> 之间的数（<code>MAX_LEVEL</code>表示索引的最高层数），且该方法<strong>有 1/2 的概率返回 1、1/4 的概率返回 2、1/8的概率返回 3，以此类推</strong>。</p>
+<ul>
+<li><code>randomLevel()</code> 方法返回 1 表示当前插入的该元素不需要建索引，只需要存储数据到原始链表即可（概率 1/2）</li>
+<li><code>randomLevel()</code> 方法返回 2 表示当前插入的该元素需要建一级索引（概率 1/4）</li>
+<li><code>randomLevel()</code> 方法返回 3 表示当前插入的该元素需要建二级索引（概率 1/8）</li>
+<li><code>randomLevel()</code> 方法返回 4 表示当前插入的该元素需要建三级索引（概率 1/16）</li>
+<li>…（以此类推）</li>
+</ul>
+<p>所以，通过 <code>randomLevel()</code> 方法，我们可以控制整个跳表各级索引中元素的个数。<strong>重点来了</strong>：<code>randomLevel()</code> 方法返回 2 的时候会建立一级索引，我们想要一级索引中元素个数占原始数据的 1/2，但是 <code>randomLevel()</code> 方法返回 2 的概率为 1/4，那是不是有矛盾呢？明明说好的 1/2，结果一级索引元素个数怎么变成了原始链表的 1/4？我们先看下图，应该就明白了。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208122204227.png" style="zoom:67%;" />
+
+<p>假设我们在插入元素 6 的时候，<code>randomLevel()</code> 方法返回 1，则我们不会为 6 建立索引。插入 7 的时候，<code>randomLevel()</code> 方法返回3 ，所以我们需要为元素 7 建立二级索引。这里我们发现了一个特点：当建立二级索引的时候，同时也会建立一级索引；当建立三级索引时，同时也会建立一级、二级索引。所以，一级索引中元素的个数等于 [ 原始链表元素个数 ] * [ <code>randomLevel()</code> 方法返回值 &gt; 1 的概率 ]。因为 <code>randomLevel()</code> 方法返回值 &gt; 1就会建索引，凡是建索引，无论几级索引必然有一级索引，<strong>所以一级索引中元素个数占原始数据个数的比率为 randomLevel() 方法返回值 &gt; 1 的概率</strong>。那 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率是多少呢？因为 <code>randomLevel()</code> 方法随机生成 <code>1~MAX_LEVEL</code> 的数字，且 <code>randomLevel()</code> 方法返回值 1 的概率为 1/2，则 <code>randomLevel()</code> 方法返回值 &gt; 1 的概率为 1 - 1/2 = 1/2。即<strong>通过上述流程实现了一级索引中元素个数占原始数据个数的 1/2</strong>。</p>
+<p>同理，当 <code>randomLevel()</code> 方法返回值 &gt; 2 时，会建立二级或二级以上索引，都会在二级索引中增加元素，因此<strong>二级索引中元素个数占原始数据的比率为 randomLevel() 方法返回值 &gt; 2 的概率</strong>。 <code>randomLevel()</code> 方法返回值 &gt; 2 的概率为 1 减去 <code>randomLevel()</code> = 1 或 =2 的概率，即 1 - 1/2 - 1/4 = 1/4。OK，达到了我们设计的目标：<strong>二级索引中元素个数占原始数据的 1/4</strong>。</p>
+<p>以此类推，可以得出，遵守以下两个条件：</p>
+<ul>
+<li><code>randomLevel()</code> 方法，随机生成 <code>1~MAX_LEVEL</code> 之间的数（<code>MAX_LEVEL</code>表示索引的最高层数），且<strong>有 1/2的概率返回 1、1/4的概率返回 2、1/8的概率返回 3 …</strong></li>
+<li><code>randomLevel()</code> 方法返回 1 不建索引、返回 2 建一级索引、返回 3 建二级索引、返回 4 建三级索引 …</li>
+</ul>
+<p>就可以满足我们想要的结果，即：一级索引中元素个数应该占原始数据的 1/2，二级索引中元素个数占原始数据的 1/4，三级索引中元素个数占原始数据的 1/8 ，依次类推，一直到最顶层索引。</p>
+<p>但是问题又来了，怎么设计这么一个 <code>randomLevel()</code> 方法呢？直接撸代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 该 randomLevel 方法会随机生成 1~MAX_LEVEL 之间的数，且 ：</span></span><br><span class="line"><span class="comment">//        1/2 的概率返回 1</span></span><br><span class="line"><span class="comment">//        1/4 的概率返回 2</span></span><br><span class="line"><span class="comment">//        1/8 的概率返回 3 以此类推</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">randomLevel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> level = <span class="number">1</span>;</span><br><span class="line">  <span class="comment">// 当 level &lt; MAX_LEVEL，且随机数小于设定的晋升概率时，level + 1</span></span><br><span class="line">  <span class="keyword">while</span> (Math.random() &lt; SKIPLIST_P &amp;&amp; level &lt; MAX_LEVEL)</span><br><span class="line">    level += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> level;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码可以实现我们的功能，而且，我们的案例中晋升概率 SKIPLIST_P 设置的 1/2，即：每两个结点抽出一个结点作为上一级索引的结点。如果我们想节省空间利用率，可以适当的降低代码中的 SKIPLIST_P，从而减少索引元素个数，Redis 的 zset 中 SKIPLIST_P 设定的 0.25。下图所示，是Redis <a href="https://github.com/redis/redis/blob/unstable/src/t_zset.c">t_zset.c</a> 中 zslRandomLevel 函数的实现：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Returns a random level for the new skiplist node we are going to create.</span></span><br><span class="line"><span class="comment"> * The return value of this function is between 1 and ZSKIPLIST_MAXLEVEL</span></span><br><span class="line"><span class="comment"> * (both inclusive), with a powerlaw-alike distribution where higher</span></span><br><span class="line"><span class="comment"> * levels are less likely to be returned. */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">zslRandomLevel</span><span class="params">(<span class="keyword">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> level = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> ((random()&amp;<span class="number">0xFFFF</span>) &lt; (ZSKIPLIST_P * <span class="number">0xFFFF</span>))</span><br><span class="line">        level += <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (level&lt;ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Redis 源码中 <code>(random()&amp;0xFFFF) &lt; (ZSKIPLIST_P * 0xFFFF)</code>  在功能上等价于我代码中的 <code>Math.random() &lt; SKIPLIST_P</code> ，只不过 Redis 作者 <a href="https://github.com/antirez">antirez</a> 使用位运算来提高浮点数比较的效率。</p>
+<p>整体思路大家应该明白了，那插入数据时维护索引的时间复杂度是多少呢？元素插入到单链表的时间复杂度为 <code>O(1)</code>，我们索引的高度最多为 <code>logn</code>，当插入一个元素 x 时，最坏的情况就是元素 x 需要插入到每层索引中，所以插入数据到各层索引中，最坏时间复杂度是 <code>O(logn)</code>。</p>
+<p>过程大概理解了，再通过一个例子描述一下跳表插入数据的全流程。现在我们要插入数据 6 到跳表中，首先 randomLevel() 返回 3，表示<strong>需要建二级索引</strong>，即：一级索引和二级索引需要增加元素 6。该跳表目前最高三级索引，首先找到三级索引的 1，发现 6 比 1大比 13小，所以，从 1 下沉到二级索引。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125241674.png" style="zoom:67%;" />
+
+<p>下沉到二级索引后，发现 6 比 1 大比 7 小，此时需要在二级索引中 1 和 7 之间加一个元素6 ，并从元素 1 继续下沉到一级索引。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125308947.png" style="zoom:67%;" />
+
+<p>下沉到一级索引后，发现 6 比 1 大比 4 大，所以往后查找，发现 6 比 4 大比 7 小，此时需要在一级索引中 4 和 7 之间加一个元素 6 ，并把二级索引的 6 指向 一级索引的 6，最后，从元素 4 继续下沉到原始链表。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125342542.png" style="zoom:67%;" />
+
+<p>下沉到原始链表后，就比较简单了，发现 4、5 比 6小，7比6大，所以将6插入到 5 和 7 之间即可，整个插入过程结束。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125414593.png" style="zoom:67%;" />
+
+<p>整个插入过程的路径与查找元素路径类似， 每层索引中插入元素的时间复杂度 <code>O(1)</code>，所以整个插入的时间复杂度是 <code>O(logn)</code>。</p>
+<h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><p>跳表删除数据时，要把索引中对应节点也要删掉。如下图所示，如果要删除元素 9，需要把原始链表中的 9 和第一级索引的 9 都删除掉。</p>
+<img src="https://gitee.com/Feyl/picgo/raw/master/img/image-20220208125528595.png" style="zoom:67%;" />
+
+<p>跳表中，删除元素的时间复杂度是多少呢？</p>
+<p>删除元素的过程跟查找元素的过程类似，只不过在查找的路径上如果发现了要删除的元素 x，则执行删除操作。跳表中，每一层索引其实都是一个有序的单链表，单链表删除元素的时间复杂度为 <code>O(1)</code>，索引层数为 <code>logn</code> 表示最多需要删除 <code>logn</code> 个元素，所以删除元素的总时间包含 <em>查找元素的时间</em> 加 <em>删除 logn个元素的时间</em> 为 <code>O(logn) + O(logn) = 2 O(logn)</code>，忽略常数部分，删除元素的时间复杂度为 <code>O(logn)</code>。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ol>
+<li>跳表是可以实现二分查找的有序链表；</li>
+<li>每个元素插入时随机生成它的 level；</li>
+<li>最底层包含所有的元素；</li>
+<li>如果一个元素出现在 <code>level(x)</code>，那么它肯定出现在 x 以下的 level中；</li>
+<li>每个索引节点包含两个指针，一个向下，一个向右；（笔记目前看过的各种跳表源码实现包括Redis 的zset 都没有向下的指针，那怎么从二级索引跳到一级索引呢？留个悬念，看源码吧，文末有跳表实现源码）</li>
+<li>跳表查询、插入、删除的时间复杂度为O(log n)，与平衡二叉树接近；</li>
+</ol>
+<h2 id="为什么Redis选择使用跳表而不是红黑树来实现有序集合？"><a href="#为什么Redis选择使用跳表而不是红黑树来实现有序集合？" class="headerlink" title="为什么Redis选择使用跳表而不是红黑树来实现有序集合？"></a>为什么Redis选择使用跳表而不是红黑树来实现有序集合？</h2><p>Redis 中的有序集合(<code>zset</code>) 支持的操作：</p>
+<ol>
+<li>插入一个元素</li>
+<li>删除一个元素</li>
+<li>查找一个元素</li>
+<li>有序输出所有元素</li>
+<li>按照范围区间查找元素（比如查找值在 [100, 356] 之间的数据）</li>
+</ol>
+<p>其中，前四个操作红黑树也可以完成，且时间复杂度跟跳表是一样的。但是，按照区间来查找数据这个操作，红黑树的效率没有跳表高。按照区间查找数据时，跳表可以做到 <code>O(logn)</code> 的时间复杂度定位区间的起点，然后在原始链表中顺序往后遍历就可以了，非常高效。</p>
+<h2 id="工业上其他使用跳表的场景"><a href="#工业上其他使用跳表的场景" class="headerlink" title="工业上其他使用跳表的场景"></a>工业上其他使用跳表的场景</h2><p>在博客上从来没有见过有同学讲述 HBase MemStore 的数据结构，其实 HBase MemStore 内部存储数据就使用的跳表。为什么呢？HBase 属于 LSM Tree 结构的数据库，LSM Tree 结构的数据库有个特点，实时写入的数据先写入到内存，内存达到阈值往磁盘 flush 的时候，会生成类似于 StoreFile 的<strong>有序文件</strong>，而跳表恰好就是天然有序的，所以在 flush 的时候效率很高，而且跳表查找、插入、删除性能都很高，这应该是 HBase MemStore 内部存储数据使用跳表的原因之一。HBase 使用的是 <code>java.util.concurrent</code> 下的 <code>ConcurrentSkipListMap()</code>。</p>
+<p>Google 开源的 <code>key/value</code> 存储引擎 LevelDB 以及 Facebook 基于 LevelDB 优化的 RocksDB 都是 LSM Tree 结构的数据库，他们内部的 MemTable 都是使用了跳表这种数据结构。</p>
+<h2 id="推荐阅读"><a href="#推荐阅读" class="headerlink" title="推荐阅读"></a>推荐阅读</h2><p><a href="https://github.com/redis/redis/blob/unstable/src/t_zset.c">Redis zset源码</a></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>文章转载来源：</p>
+<ul>
+<li><strong><a href="https://www.jianshu.com/p/9d8296562806">Skip List–跳表（全网最详细的跳表文章没有之一）</a></strong></li>
+</ul>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>跳表</tag>
+        <tag>双向链表</tag>
+        <tag>链表</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里Java开发手册</title>
+    <url>/post/a5aab1c5/</url>
+    <content><![CDATA[<span id="more"></span>
+]]></content>
+  </entry>
+  <entry>
     <title>面试规则</title>
     <url>/post/d13fc60c/</url>
     <content><![CDATA[<p><strong>规则一：面试的本质是寻找同类（同道中人）</strong></p>
@@ -7872,11 +7878,5 @@
       <tags>
         <tag>面试软技能</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>阿里Java开发手册</title>
-    <url>/post/a5aab1c5/</url>
-    <content><![CDATA[<span id="more"></span>
-]]></content>
   </entry>
 </search>
