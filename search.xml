@@ -3,17 +3,7 @@
   <entry>
     <title>index</title>
     <url>/post/80736701/</url>
-    <content><![CDATA[<hr>
-<p>title: about<br>date: 2022-01-16 23:17:01<br>type: “about”</p>
-<hr>
-<blockquote class="blockquote-center">
-            <i class="fa fa-quote-left"></i>
-            <p>纸上得来终觉浅，绝知此事要躬行。 </p>
-
-            <i class="fa fa-quote-right"></i>
-          </blockquote>
-
-<p><a href="https://github.com/">GitHub</a></p>
+    <content><![CDATA[<p><a href="https://github.com/">GitHub</a></p>
 <p><a href="https://stackoverflow.com/">Stack Overflow</a></p>
 <p><a href="https://leetcode.cn/problemset/all/">LeetCode</a></p>
 <p><a href="https://www.nowcoder.com/intelligentTest">NowCoder</a></p>
